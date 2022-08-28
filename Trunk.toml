@@ -1,0 +1,12 @@
+[build]
+target = "index.html"
+release = false
+dist = "dist"
+
+[serve]
+open = true
+
+[[hooks]]
+stage = "pre_build"
+command = "tailwindcss"
+command_arguments = ["-o", "./style.css"]

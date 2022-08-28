@@ -1,14 +1,71 @@
-use dioxus::prelude::*;
+use dioxus::core::UiEvent;
 use dioxus::events::*;
 use dioxus::fermi::use_atom_state;
-use dioxus::core::UiEvent;
+use dioxus::prelude::*;
 
-use crate::PLAYERS;
 use crate::statics;
+use crate::PLAYERS;
 
-pub fn score_table(cx: Scope) -> Element{
+static FINAL_SCORE: i32 = 1000;
+
+fn is_game_ongoing(cx: Scope) -> bool {
     let state = use_atom_state(&cx, PLAYERS);
-    let columns = statics::COLUMN_NUMBERS[state.len()-2];
+    let mut game_ongoing = true;
+    let mut has_reached_max = false;
+
+    for player in state.iter() {
+        if player.score.iter().sum::<i32>() >= FINAL_SCORE {
+            has_reached_max = true;
+        }
+    }
+
+    if has_reached_max {
+        let mut min = 9999;
+        let mut max = 0;
+
+        for player in state.iter() {
+            if player.score.len() > max {
+                max = player.score.len();
+            }
+            if player.score.len() < min {
+                min = player.score.len();
+            }
+        }
+
+        if min == max {
+            game_ongoing = false;
+        }
+    }
+
+    game_ongoing
+}
+
+fn get_winner(cx: Scope) -> String {
+    let state = use_atom_state(&cx, PLAYERS);
+    let mut winner_name = String::new();
+    let mut max = 0;
+
+    for player in state.iter() {
+        if player.score.iter().sum::<i32>() > max {
+            max = player.score.iter().sum::<i32>();
+            winner_name = player.name.to_string();
+        }
+    }
+
+    winner_name
+}
+
+pub fn score_table(cx: Scope) -> Element {
+    let state = use_atom_state(&cx, PLAYERS);
+    let columns = statics::COLUMN_NUMBERS[state.len() - 2];
+
+    let game_continues = is_game_ongoing(cx);
+    let show_winner = !game_continues;
+    let winner = if game_continues {
+        String::new()
+    } else {
+        get_winner(cx)
+    };
 
     cx.render(rsx! (
         div{
@@ -46,9 +103,12 @@ pub fn score_table(cx: Scope) -> Element{
                         }
                         div {
                             //Input box
-                            crate::score_table::score_input{
-                                id: player.id
-                            }
+                            game_continues.then( ||
+                                rsx!(
+                                crate::score_table::score_input{
+                                    id: player.id
+                                })
+                            )
                         }
                         div {
                             //Total box
@@ -61,39 +121,65 @@ pub fn score_table(cx: Scope) -> Element{
                     }
                 )
             })
-        }
+        },
+        show_winner.then(|| 
+            rsx! (
+                div {
+                    class: "mt-5",
+                    p {
+                        class: "text-center",
+                        "{winner} wins!"
+                    }
+                }
+            )
+        )
     ))
 }
 
-#[inline_props]
-pub fn score_input(cx: Scope, id: usize) -> Element {
-    let buffer = use_state(&cx, || String::new());
-    let onkeypress = move |evt: UiEvent<KeyboardData>| {
-        if evt.key.as_str() == "Enter"{
-            match buffer.parse::<i32>() {
-                Ok(number) => {
-                    let state = use_atom_state(&cx, PLAYERS);
+#[derive(Props, PartialEq, Eq)]
+pub struct ScoreInputProps {
+    id: usize,
+}
 
-                    state.with_mut(|mut_state| {
-                        for player in mut_state.iter_mut() {
-                            if *id == player.id {
-                                player.score.push(number);
-                            }
+pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
+    let id = cx.props.id;
+    let buffer = use_state(&cx, String::new);
+    let onfocusout = move |_| {
+        if let Ok(number) = buffer.parse::<i32>() {
+            let state = use_atom_state(&cx, PLAYERS);
+
+            state.with_mut(|mut_state| {
+                for player in mut_state.iter_mut() {
+                    if id == player.id {
+                        player.score.push(number);
+                    }
+                }
+            });
+        }
+        buffer.set(String::new());
+    };
+
+    let onkeypress = move |evt: UiEvent<KeyboardData>| {
+        if evt.key.as_str() == "Enter" {
+            if let Ok(number) = buffer.parse::<i32>() {
+                let state = use_atom_state(&cx, PLAYERS);
+
+                state.with_mut(|mut_state| {
+                    for player in mut_state.iter_mut() {
+                        if id == player.id {
+                            player.score.push(number);
                         }
-                    })
-                }
-                Err(_) => {
-                    ()
-                }
-            };
+                    }
+                });
+            }
             buffer.set(String::new());
         }
     };
-    let oninput = move |evt:UiEvent<FormData>| {
+    let oninput = move |evt: UiEvent<FormData>| {
         buffer.set(evt.value.clone());
     };
-    let caret = statics::CARET_COLORS[id-1];
-    let border = statics::FOCUS_OUTLINE_COLORS[id-1];
+    let caret = statics::CARET_COLORS[id - 1];
+    let border = statics::FOCUS_OUTLINE_COLORS[id - 1];
 
     cx.render(rsx!(
         input {
@@ -102,6 +188,7 @@ pub fn score_input(cx: Scope, id: usize) -> Element {
             value: "{buffer}",
             onkeypress: onkeypress,
             oninput: oninput,
+            onfocusout: onfocusout,
         }
     ))
 }

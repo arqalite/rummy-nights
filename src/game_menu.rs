@@ -1,22 +1,18 @@
-use dioxus::prelude::*;
 use dioxus::fermi::use_atom_state;
+use dioxus::prelude::*;
 
 static MENU_TOGGLE: Atom<bool> = |_| false;
 
-pub fn game_menu(cx: Scope) -> Element {
+pub fn menu(cx: Scope) -> Element {
     let state = use_atom_state(&cx, MENU_TOGGLE);
-    let hidden = match *state.get() {
-        true => {
-            "hidden h-0"
-        },
-        false => {
-            "relative h-60"
-        }
+    let hidden = if *state.get() { 
+        "hidden h-0" 
+    } else { 
+        "relative h-60" 
     };
 
     cx.render(
         rsx! (
-            
             div {
                 class: "grid grid-cols-1 absolute bottom-8 left-8",
                 div {
@@ -26,27 +22,22 @@ pub fn game_menu(cx: Scope) -> Element {
                         "Clicked!"
                     },
                 }
-                crate::game_menu::game_menu_button()
+                crate::game_menu::menu_button()
             }
-            
-
-
         )
     )
 }
 
-pub fn game_menu_button(cx: Scope) -> Element {
+pub fn menu_button(cx: Scope) -> Element {
     let state = use_atom_state(&cx, MENU_TOGGLE);
 
-    cx.render(
-        rsx!{
-            img {
-                src: "img/menu_button.svg",
-                class: "",
-                onclick: move |_| {
-                    state.modify(|value| !value)
-                },
-            }
+    cx.render(rsx! {
+        img {
+            src: "img/menu_button.svg",
+            class: "",
+            onclick: move |_| {
+                state.modify(|value| !value);
+            },
         }
-    )
+    })
 }

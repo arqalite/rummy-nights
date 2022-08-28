@@ -1,10 +1,18 @@
+#![warn(
+    clippy::all,
+    clippy::pedantic,
+    clippy::nursery,
+    clippy::cargo,
+)] //keep these until 1.0 I guess.
+
 use dioxus::prelude::*;
 
-mod statics;
-mod score_table;
 mod game_menu;
+mod score_table;
+mod statics;
 
-static PLAYERS: Atom<Vec<Player>> = |_| vec![
+static PLAYERS: Atom<Vec<Player>> = |_| {
+    vec![
         Player {
             id: 1,
             name: "Antonio".to_string(),
@@ -24,8 +32,9 @@ static PLAYERS: Atom<Vec<Player>> = |_| vec![
             id: 4,
             name: "Daniel".to_string(),
             score: vec![],
-        }
-];
+        },
+    ]
+};
 
 fn main() {
     dioxus::web::launch(app);
@@ -34,8 +43,10 @@ fn main() {
 fn app(cx: Scope) -> Element {
     cx.render(rsx! (
         score_table::score_table(),
+
         div {
-            crate::game_menu::game_menu()
+            class: "hidden",
+            crate::game_menu::menu()
         }
     ))
 }
@@ -44,5 +55,5 @@ fn app(cx: Scope) -> Element {
 struct Player {
     id: usize,
     name: String,
-    score: Vec<i32>
+    score: Vec<i32>,
 }

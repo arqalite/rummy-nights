@@ -4,7 +4,7 @@ release = false
 dist = "dist"
 
 [serve]
-open = true
+open = false
 
 [[hooks]]
 stage = "pre_build"

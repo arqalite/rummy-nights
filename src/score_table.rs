@@ -1,5 +1,5 @@
 use dioxus::core::UiEvent;
-use dioxus::events::*;
+use dioxus::events::{FormData, KeyboardData};
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 
@@ -7,65 +7,80 @@ use crate::statics;
 use crate::PLAYERS;
 
 static FINAL_SCORE: i32 = 1000;
+static GAME_CONTINUES: Atom<bool> = |_| true;
+static SHOW_WINNER: Atom<bool> = |_| false;
 
-fn is_game_ongoing(cx: Scope) -> bool {
-    let state = use_atom_state(&cx, PLAYERS);
-    let mut game_ongoing = true;
+fn get_game_status(cx: Scope) -> GameStatus {
+    let players = use_atom_state(&cx, PLAYERS);
     let mut has_reached_max = false;
+    let mut no_of_winners = 0;
 
-    for player in state.iter() {
-        if player.score.iter().sum::<i32>() >= FINAL_SCORE {
+    for player in players.iter() {
+        if player.score.values().sum::<i32>() >= FINAL_SCORE {
             has_reached_max = true;
         }
     }
 
+    let mut are_columns_equal = true;
+
     if has_reached_max {
-        let mut min = 9999;
-        let mut max = 0;
-
-        for player in state.iter() {
-            if player.score.len() > max {
-                max = player.score.len();
+        for i in 0..players.len() - 1 {
+            if players[i].score.len() != players[i + 1].score.len() {
+                are_columns_equal = false;
+                break;
             }
-            if player.score.len() < min {
-                min = player.score.len();
-            }
-        }
-
-        if min == max {
-            game_ongoing = false;
         }
     }
 
-    game_ongoing
-}
-
-fn get_winner(cx: Scope) -> String {
-    let state = use_atom_state(&cx, PLAYERS);
     let mut winner_name = String::new();
     let mut max = 0;
 
-    for player in state.iter() {
-        if player.score.iter().sum::<i32>() > max {
-            max = player.score.iter().sum::<i32>();
-            winner_name = player.name.to_string();
+    if are_columns_equal {
+        for player in players.iter() {
+            if player.score.values().sum::<i32>() > max {
+                max = player.score.values().sum::<i32>();
+            }
+        }
+        for player in players.iter() {
+            if player.score.values().sum::<i32>() >= max {
+                if no_of_winners > 0 {
+                    winner_name.push_str(" and ");
+                }
+
+                winner_name.push_str(&player.name);
+
+                no_of_winners += 1;
+            }
         }
     }
 
-    winner_name
+    if has_reached_max && are_columns_equal {
+        GameStatus::Winner(winner_name)
+    } else {
+        GameStatus::Ongoing
+    }
 }
 
 pub fn score_table(cx: Scope) -> Element {
     let state = use_atom_state(&cx, PLAYERS);
-    let columns = statics::COLUMN_NUMBERS[state.len() - 2];
+    let show_winner = use_atom_state(&cx, SHOW_WINNER);
+    let game_continues = use_atom_state(&cx, GAME_CONTINUES);
 
-    let game_continues = is_game_ongoing(cx);
-    let show_winner = !game_continues;
-    let winner = if game_continues {
-        String::new()
-    } else {
-        get_winner(cx)
-    };
+    let columns = statics::COLUMN_NUMBERS[state.len() - 2];
+    let mut winner = String::new();
+    let game_status = get_game_status(cx);
+
+    match game_status {
+        GameStatus::Winner(name) => {
+            show_winner.set(true);
+            winner = name;
+            game_continues.set(false);
+        }
+        GameStatus::Ongoing => {
+            show_winner.set(false);
+            game_continues.set(true);
+        }
+    }
 
     cx.render(rsx! (
         div{
@@ -73,7 +88,7 @@ pub fn score_table(cx: Scope) -> Element {
             class: "grid {columns} mx-auto px-5 max-w-md mt-16 gap-x-5",
 
             state.iter().map(|player| {
-                let sum = player.score.iter().sum::<i32>().to_string();
+                let sum = player.score.values().sum::<i32>().to_string();
                 let background = statics::TITLE_COLORS[player.id-1];
                 let border = statics::BORDER_COLORS[player.id-1];
 
@@ -85,17 +100,17 @@ pub fn score_table(cx: Scope) -> Element {
                             // Name - first cell
                             class: "rounded-full h-8 {background} py-1 mb-2 shadow",
                             p {
-                                class: "text-center my-auto",
+                                class: "text-center my-auto text-white font-semibold",
                                 "{player.name}"
                             }
                         }
                         div {
                             //Scores - dynamic
-                            player.score.iter().map(|score| {
+                            player.score.values().map(|score| {
                                 let score_text = score.to_string();
                                 rsx!(
                                     p {
-                                        class: "rounded text-center border-b-2 mb-2 h-8 {border}",
+                                        class: "rounded text-sm text-center border-b-2 mb-2 h-8 {border}",
                                         "{score_text}"
                                     }
                                 )
@@ -112,27 +127,34 @@ pub fn score_table(cx: Scope) -> Element {
                         }
                         div {
                             //Total box
-                            class: "rounded border-y-4 {border} h-8",
+                            class: "rounded text-sm border-b-[6px] {border} h-8",
                             p {
-                                class: "text-center font-semibold",
+                                class: "text-center text-lg font-semibold",
                                 "{sum}"
                             }
                         }
                     }
                 )
             })
+            
         },
-        show_winner.then(|| 
+        show_winner.then(||
             rsx! (
                 div {
                     class: "mt-5",
                     p {
                         class: "text-center",
-                        "{winner} wins!"
+                        "{winner} won!"
                     }
                 }
             )
-        )
+        ),
+        div {
+                class: "hidden absolute w-96 h-56 -bottom-[2%] -right-[30%]",
+                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                border_radius: "111px",
+                transform: "rotate(-50deg)",
+        }
     ))
 }
 
@@ -144,20 +166,6 @@ pub struct ScoreInputProps {
 pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     let id = cx.props.id;
     let buffer = use_state(&cx, String::new);
-    let onfocusout = move |_| {
-        if let Ok(number) = buffer.parse::<i32>() {
-            let state = use_atom_state(&cx, PLAYERS);
-
-            state.with_mut(|mut_state| {
-                for player in mut_state.iter_mut() {
-                    if id == player.id {
-                        player.score.push(number);
-                    }
-                }
-            });
-        }
-        buffer.set(String::new());
-    };
 
     let onkeypress = move |evt: UiEvent<KeyboardData>| {
         if evt.key.as_str() == "Enter" {
@@ -167,7 +175,7 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
                 state.with_mut(|mut_state| {
                     for player in mut_state.iter_mut() {
                         if id == player.id {
-                            player.score.push(number);
+                            player.score.insert(player.score.len(), number);
                         }
                     }
                 });
@@ -180,15 +188,20 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     };
     let caret = statics::CARET_COLORS[id - 1];
     let border = statics::FOCUS_OUTLINE_COLORS[id - 1];
+    let border2 = statics::BORDER_COLORS[id-1];
 
     cx.render(rsx!(
         input {
-            class: "{caret} appearance-none bg-transparent h-8 w-full mb-2 text-center rounded-full focus:outline-1 {border}",
+            class: "{caret} {border2} text-sm appearance-none font-light bg-transparent h-8 w-full mb-2 text-center rounded focus:outline-1 border-b-2 {border}",
             placeholder: "Insert score",
             value: "{buffer}",
             onkeypress: onkeypress,
             oninput: oninput,
-            onfocusout: onfocusout,
         }
     ))
+}
+
+enum GameStatus {
+    Ongoing,
+    Winner(String),
 }

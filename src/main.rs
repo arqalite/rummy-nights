@@ -1,13 +1,10 @@
-#![warn(
-    clippy::all,
-    clippy::pedantic,
-    clippy::nursery,
-    clippy::cargo,
-)] //keep these until 1.0 I guess.
+#![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)] // Happy Clippy, happy life
+#![allow(clippy::used_underscore_binding)] // Clippy doesn't understand Dioxus's Props macro tho
 
 use dioxus::prelude::*;
+use std::collections::BTreeMap;
 
-mod game_menu;
+// mod game_menu;
 mod score_table;
 mod statics;
 
@@ -16,44 +13,40 @@ static PLAYERS: Atom<Vec<Player>> = |_| {
         Player {
             id: 1,
             name: "Antonio".to_string(),
-            score: vec![],
+            score: BTreeMap::new(),
         },
         Player {
             id: 2,
             name: "Vlad".to_string(),
-            score: vec![],
+            score: BTreeMap::new(),
         },
-        Player {
-            id: 3,
-            name: "Dalmina".to_string(),
-            score: vec![],
-        },
-        Player {
-            id: 4,
-            name: "Daniel".to_string(),
-            score: vec![],
-        },
+        // Player {
+        //     id: 3,
+        //     name: "Dalmina".to_string(),
+        //     score: BTreeMap::new(),
+        // },
+        // Player {
+        //     id: 4,
+        //     name: "Daniel".to_string(),
+        //     score: BTreeMap::new(),
+        // },
     ]
 };
-
-fn main() {
-    dioxus::web::launch(app);
-}
-
-fn app(cx: Scope) -> Element {
-    cx.render(rsx! (
-        score_table::score_table(),
-
-        div {
-            class: "hidden",
-            crate::game_menu::menu()
-        }
-    ))
-}
 
 #[derive(PartialEq, Clone)]
 struct Player {
     id: usize,
     name: String,
-    score: Vec<i32>,
+    score: BTreeMap<usize, i32>,
+}
+
+fn app(cx: Scope) -> Element {
+    cx.render(rsx! (
+        score_table::score_table(),
+        // game_menu::menu()
+    ))
+}
+
+fn main() {
+    dioxus::web::launch(app);
 }

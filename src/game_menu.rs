@@ -5,10 +5,10 @@ static MENU_TOGGLE: Atom<bool> = |_| false;
 
 pub fn menu(cx: Scope) -> Element {
     let state = use_atom_state(&cx, MENU_TOGGLE);
-    let hidden = if *state.get() { 
-        "hidden h-0" 
-    } else { 
-        "relative h-60" 
+    let hidden = if *state.get() {
+        "hidden h-0"
+    } else {
+        "relative h-60"
     };
 
     cx.render(

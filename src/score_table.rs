@@ -8,7 +8,12 @@ use crate::PLAYERS;
 
 static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
-static SHOW_WINNER: Atom<bool> = |_| false;
+
+#[derive(PartialEq)]
+enum GameStatus {
+    Ongoing,
+    Winner(String),
+}
 
 fn get_game_status(cx: Scope) -> GameStatus {
     let players = use_atom_state(&cx, PLAYERS);
@@ -61,26 +66,42 @@ fn get_game_status(cx: Scope) -> GameStatus {
     }
 }
 
-pub fn score_table(cx: Scope) -> Element {
-    let state = use_atom_state(&cx, PLAYERS);
-    let show_winner = use_atom_state(&cx, SHOW_WINNER);
-    let game_continues = use_atom_state(&cx, GAME_CONTINUES);
-
-    let columns = statics::COLUMN_NUMBERS[state.len() - 2];
-    let mut winner = String::new();
+pub fn show_winner(cx: Scope) -> Element {
     let game_status = get_game_status(cx);
 
     match game_status {
         GameStatus::Winner(name) => {
-            show_winner.set(true);
-            winner = name;
+            cx.render(rsx! (
+                div {
+                    class: "mt-5",
+                    p {
+                        class: "text-center",
+                        "{name} won!"
+                    }
+                }
+            ))
+        }
+        GameStatus::Ongoing => {
+            None
+        }
+    }
+}
+
+pub fn score_table(cx: Scope) -> Element {
+    let state = use_atom_state(&cx, PLAYERS);
+    let game_continues = use_atom_state(&cx, GAME_CONTINUES);
+    let columns = statics::COLUMN_NUMBERS[state.len() - 2];
+
+    let game_status = get_game_status(cx);
+
+    match game_status {
+        GameStatus::Winner(_) => {
             game_continues.set(false);
         }
         GameStatus::Ongoing => {
-            show_winner.set(false);
             game_continues.set(true);
         }
-    }
+    };
 
     cx.render(rsx! (
         div{
@@ -136,25 +157,14 @@ pub fn score_table(cx: Scope) -> Element {
                     }
                 )
             })
-            
         },
-        show_winner.then(||
-            rsx! (
-                div {
-                    class: "mt-5",
-                    p {
-                        class: "text-center",
-                        "{winner} won!"
-                    }
-                }
-            )
-        ),
-        div {
-                class: "hidden absolute w-96 h-56 -bottom-[2%] -right-[30%]",
-                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                border_radius: "111px",
-                transform: "rotate(-50deg)",
-        }
+        crate::score_table::show_winner(),
+            div {
+                    class: "hidden absolute w-96 h-56 -bottom-[2%] -right-[30%]",
+                    background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    border_radius: "111px",
+                    transform: "rotate(-50deg)",
+            } //pill thing
     ))
 }
 
@@ -201,7 +211,3 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     ))
 }
 
-enum GameStatus {
-    Ongoing,
-    Winner(String),
-}

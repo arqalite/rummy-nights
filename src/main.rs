@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 
 // mod game_menu;
 mod score_table;
-mod statics;
+mod css;
 
 static PLAYERS: Atom<Vec<Player>> = |_| {
     vec![

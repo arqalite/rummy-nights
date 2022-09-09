@@ -11,12 +11,6 @@ pub static BORDER_COLORS: [&str; 4] = [
     "border-green-400",
     "border-violet-400",
 ];
-pub static FOCUS_OUTLINE_COLORS: [&str; 4] = [
-    "focus:outline-rose-400",
-    "focus:outline-cyan-400",
-    "focus:outline-green-400",
-    "focus:outline-violet-400",
-];
 
 pub static CARET_COLORS: [&str; 4] = [
     "caret-rose-400",

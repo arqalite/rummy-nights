@@ -3,7 +3,7 @@ use dioxus::events::{FormData, KeyboardData};
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 
-use crate::statics;
+use crate::css;
 use crate::PLAYERS;
 
 static FINAL_SCORE: i32 = 1000;
@@ -90,7 +90,7 @@ pub fn show_winner(cx: Scope) -> Element {
 pub fn score_table(cx: Scope) -> Element {
     let state = use_atom_state(&cx, PLAYERS);
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
-    let columns = statics::COLUMN_NUMBERS[state.len() - 2];
+    let columns = css::COLUMN_NUMBERS[state.len() - 2];
 
     let game_status = get_game_status(cx);
 
@@ -110,8 +110,8 @@ pub fn score_table(cx: Scope) -> Element {
 
             state.iter().map(|player| {
                 let sum = player.score.values().sum::<i32>().to_string();
-                let background = statics::TITLE_COLORS[player.id-1];
-                let border = statics::BORDER_COLORS[player.id-1];
+                let background = css::TITLE_COLORS[player.id-1];
+                let border = css::BORDER_COLORS[player.id-1];
 
                 rsx!(
                     div{
@@ -148,7 +148,7 @@ pub fn score_table(cx: Scope) -> Element {
                         }
                         div {
                             //Total box
-                            class: "rounded text-sm border-b-[6px] {border} h-8",
+                            class: "rounded text-sm border-b-[7px] {border} h-8",
                             p {
                                 class: "text-center text-lg font-semibold",
                                 "{sum}"
@@ -196,17 +196,17 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     let oninput = move |evt: UiEvent<FormData>| {
         buffer.set(evt.value.clone());
     };
-    let caret = statics::CARET_COLORS[id - 1];
-    let border = statics::FOCUS_OUTLINE_COLORS[id - 1];
-    let border2 = statics::BORDER_COLORS[id-1];
+    let caret = css::CARET_COLORS[id - 1];
+    let border = css::BORDER_COLORS[id-1];
 
     cx.render(rsx!(
         input {
-            class: "{caret} {border2} text-sm appearance-none font-light bg-transparent h-8 w-full mb-2 text-center rounded focus:outline-1 border-b-2 {border}",
+            class: "{caret} {border} text-sm appearance-none font-light bg-transparent h-8 w-full mb-2 text-center rounded focus:border-b-4 border-b-2",
             placeholder: "Insert score",
             value: "{buffer}",
             onkeypress: onkeypress,
             oninput: oninput,
+            outline: "none",
         }
     ))
 }

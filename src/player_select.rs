@@ -67,7 +67,7 @@ fn player_input(cx: Scope) -> Element {
                     onsubmit: onsubmit,
                     prevent_default: "onsubmit",
                     input {
-                        class: "rounded-full mx-auto h-8 py-1 mb-2 w-full shadow ring-1 ring-black text-center my-auto",
+                        class: "rounded-full mx-auto h-8 py-1 mb-2 w-full shadow ring-1 ring-grey text-center my-auto",
                         placeholder: "Insert player name",
                         value: "{buffer}",
                         oninput: oninput,          

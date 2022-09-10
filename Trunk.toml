@@ -2,6 +2,8 @@
 target = "index.html"
 release = false
 dist = "dist"
+filehash = false
+public_url = "/"
 
 [serve]
 open = false

@@ -4,23 +4,18 @@ use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 
 use crate::css;
-use crate::PLAYERS;
+use crate::STATE;
+use crate::GameStatus;
 
 static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
 
-#[derive(PartialEq)]
-enum GameStatus {
-    Ongoing,
-    Winner(String),
-}
-
 fn get_game_status(cx: Scope) -> GameStatus {
-    let players = use_atom_state(&cx, PLAYERS);
+    let state = use_atom_state(&cx, STATE);
     let mut has_reached_max = false;
     let mut no_of_winners = 0;
 
-    for player in players.iter() {
+    for player in state.players.iter() {
         if player.score.values().sum::<i32>() >= FINAL_SCORE {
             has_reached_max = true;
         }
@@ -29,8 +24,8 @@ fn get_game_status(cx: Scope) -> GameStatus {
     let mut are_columns_equal = true;
 
     if has_reached_max {
-        for i in 0..players.len() - 1 {
-            if players[i].score.len() != players[i + 1].score.len() {
+        for i in 0..state.players.len() - 1 {
+            if state.players[i].score.len() != state.players[i + 1].score.len() {
                 are_columns_equal = false;
                 break;
             }
@@ -41,12 +36,12 @@ fn get_game_status(cx: Scope) -> GameStatus {
     let mut max = 0;
 
     if are_columns_equal {
-        for player in players.iter() {
+        for player in state.players.iter() {
             if player.score.values().sum::<i32>() > max {
                 max = player.score.values().sum::<i32>();
             }
         }
-        for player in players.iter() {
+        for player in state.players.iter() {
             if player.score.values().sum::<i32>() >= max {
                 if no_of_winners > 0 {
                     winner_name.push_str(" and ");
@@ -60,7 +55,7 @@ fn get_game_status(cx: Scope) -> GameStatus {
     }
 
     if has_reached_max && are_columns_equal {
-        GameStatus::Winner(winner_name)
+        GameStatus::Finished(winner_name)
     } else {
         GameStatus::Ongoing
     }
@@ -70,7 +65,7 @@ pub fn show_winner(cx: Scope) -> Element {
     let game_status = get_game_status(cx);
 
     match game_status {
-        GameStatus::Winner(name) => {
+        GameStatus::Finished(name) => {
             cx.render(rsx! (
                 div {
                     class: "mt-5",
@@ -81,24 +76,24 @@ pub fn show_winner(cx: Scope) -> Element {
                 }
             ))
         }
-        GameStatus::Ongoing => {
+        GameStatus::Ongoing | GameStatus::NotStarted => {
             None
         }
     }
 }
 
 pub fn score_table(cx: Scope) -> Element {
-    let state = use_atom_state(&cx, PLAYERS);
+    let state = use_atom_state(&cx, STATE);
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
-    let columns = css::COLUMN_NUMBERS[state.len() - 2];
+    let columns = css::COLUMN_NUMBERS[state.players.len() - 2];
 
     let game_status = get_game_status(cx);
 
     match game_status {
-        GameStatus::Winner(_) => {
+        GameStatus::Finished(_) => {
             game_continues.set(false);
         }
-        GameStatus::Ongoing => {
+        GameStatus::Ongoing | GameStatus::NotStarted => {
             game_continues.set(true);
         }
     };
@@ -108,7 +103,7 @@ pub fn score_table(cx: Scope) -> Element {
             //Main table
             class: "grid {columns} mx-auto px-5 max-w-md mt-16 gap-x-5",
 
-            state.iter().map(|player| {
+            state.players.iter().map(|player| {
                 let sum = player.score.values().sum::<i32>().to_string();
                 let background = css::TITLE_COLORS[player.id-1];
                 let border = css::BORDER_COLORS[player.id-1];
@@ -159,12 +154,6 @@ pub fn score_table(cx: Scope) -> Element {
             })
         },
         crate::score_table::show_winner(),
-            div {
-                    class: "hidden absolute w-96 h-56 -bottom-[2%] -right-[30%]",
-                    background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    border_radius: "111px",
-                    transform: "rotate(-50deg)",
-            } //pill thing
     ))
 }
 
@@ -180,10 +169,10 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     let onkeypress = move |evt: UiEvent<KeyboardData>| {
         if evt.key.as_str() == "Enter" {
             if let Ok(number) = buffer.parse::<i32>() {
-                let state = use_atom_state(&cx, PLAYERS);
+                let state = use_atom_state(&cx, STATE);
 
                 state.with_mut(|mut_state| {
-                    for player in mut_state.iter_mut() {
+                    for player in mut_state.players.iter_mut() {
                         if id == player.id {
                             player.score.insert(player.score.len(), number);
                         }

@@ -104,17 +104,21 @@ fn player_input(cx: Scope) -> Element {
         buffer.set(evt.value.clone());
     };
     
-    cx.render(
-        rsx!(
-            input {
-                class: "rounded-full mx-auto h-8 py-1 mb-2 w-full shadow ring-1 ring-black text-center my-auto",
-                placeholder: "Insert player name",
-                value: "{buffer}",
-                onkeypress: onkeypress,
-                oninput: oninput,
-            }
+    if state.len() <= 3 {
+        cx.render(
+            rsx!(
+                input {
+                    class: "rounded-full mx-auto h-8 py-1 mb-2 w-full shadow ring-1 ring-black text-center my-auto",
+                    placeholder: "Insert player name",
+                    value: "{buffer}",
+                    onkeypress: onkeypress,
+                    oninput: oninput,
+                }
+            )
         )
-    )
+    } else {
+        None
+    }
 }
 
 fn main() {

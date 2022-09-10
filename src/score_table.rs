@@ -196,6 +196,7 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
             onkeypress: onkeypress,
             oninput: oninput,
             outline: "none",
+            r#type: "number",
         }
     ))
 }

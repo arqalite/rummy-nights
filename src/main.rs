@@ -4,7 +4,7 @@
 use dioxus::prelude::*;
 use std::collections::BTreeMap;
 use dioxus::core::UiEvent;
-use dioxus::events::{FormData, KeyboardData};
+use dioxus::events::{FormData};
 use dioxus::fermi::use_atom_state;
 
 // mod game_menu;
@@ -83,23 +83,21 @@ fn player_input(cx: Scope) -> Element {
     let buffer = use_state(&cx, String::new);
     let state = use_atom_state(&cx, PLAYERS);
 
-    let onkeypress = move |evt: UiEvent<KeyboardData>| {
-        if evt.key.as_str() == "Enter" {
-            state.with_mut(|players| {
-                if players.len() < 4 {
-                    players.push(
-                        Player {
-                            id: players.len() + 1,
-                            name: buffer.to_string(),
-                            score: BTreeMap::new(),
-                        }
-                    );
-                };
-            });
-
+    let onsubmit = move |_| {
+        state.with_mut(|players| {
+            if players.len() < 4 {
+                players.push(
+                    Player {
+                        id: players.len() + 1,
+                        name: buffer.to_string(),
+                        score: BTreeMap::new(),
+                    }
+                );
+            };
             buffer.set(String::new());
-        };
+        });
     };
+
     let oninput = move |evt: UiEvent<FormData>| {
         buffer.set(evt.value.clone());
     };
@@ -107,12 +105,15 @@ fn player_input(cx: Scope) -> Element {
     if state.len() <= 3 {
         cx.render(
             rsx!(
-                input {
-                    class: "rounded-full mx-auto h-8 py-1 mb-2 w-full shadow ring-1 ring-black text-center my-auto",
-                    placeholder: "Insert player name",
-                    value: "{buffer}",
-                    onkeypress: onkeypress,
-                    oninput: oninput,
+                form {
+                    onsubmit: onsubmit,
+                    prevent_default: "onsubmit",
+                    input {
+                        class: "rounded-full mx-auto h-8 py-1 mb-2 w-full shadow ring-1 ring-black text-center my-auto",
+                        placeholder: "Insert player name",
+                        value: "{buffer}",
+                        oninput: oninput,          
+                    }
                 }
             )
         )

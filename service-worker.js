@@ -1,9 +1,11 @@
+
+
 var cacheName = 'rummy-nights';
 var filesToCache = [
   './',
   './index.html',
-  './pkg/bundle.js',
-  './pkg/yew_wasm_pack_minimal_bg.wasm'
+  './rummy-nights.js',
+  './rummy-nights_bg.wasm'
 ];
 
 

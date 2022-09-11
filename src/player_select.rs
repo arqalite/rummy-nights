@@ -17,47 +17,42 @@ pub fn player_select(cx: Scope) -> Element {
 
     let onclick = |_| {
         if players.len() >= 2 {
-            state.with_mut(|state| 
-                state.game_status = GameStatus::Ongoing
-            )
+            state.with_mut(|state| state.game_status = GameStatus::Ongoing)
         };
     };
 
     cx.render(rsx!(
+        //Navbar
         div {
-            class: "mx-auto px-6 max-w-md",
-            //Navbar
-            div {
-                class: "h-16 grid grid-cols-3",
-                button {
-                    class: "mx-auto h-16 relative left-[-20%]",
-                    //onclick:
-                    img {
-                        class: "h-8 w-8",
-                        src: "img/back.svg",
-                    }
-                }
-                button {
-                    class: "mx-auto h-16 relative justify-self-center",
-                    //onclick:
-                    img {
-                        class: "h-8 w-8",
-                        src: "img/home.svg",
-                    }
-                }
-                button {
-                    class: "mx-auto h-16 relative right-[-20%]",
-                    //onclick:
-                    img {
-                        class: "h-8 w-8",
-                        src: "img/save.svg",
-                    }
+            class: "h-16 grid grid-cols-3",
+            button {
+                class: "mx-auto h-16 relative left-[-30%]",
+                //onclick:
+                img {
+                    class: "h-8 w-8",
+                    src: "img/back.svg",
                 }
             }
+            button {
+                class: "mx-auto h-16 relative justify-self-center",
+                //onclick:
+                img {
+                    class: "h-8 w-8",
+                    src: "img/home.svg",
+                }
+            }
+            button {
+                class: "mx-auto h-16 relative right-[-30%]",
+                //onclick:
+                img {
+                    class: "h-8 w-8",
+                    src: "img/save.svg",
+                }
+            }
+        },
             //Player select
             div {
-                class: "",
-
+                class: "pt-2",
                 //Player list
                 players.iter().map(|player| {
                     let background = css::TITLE_COLORS[player.id-1];
@@ -100,8 +95,7 @@ pub fn player_select(cx: Scope) -> Element {
                             }
                         }
                     )
-                })
-
+                }),
                 //Name input
                 player_input(),
             }
@@ -118,10 +112,9 @@ pub fn player_select(cx: Scope) -> Element {
                     img {
                         class: "h-8 w-8 inline-block",
                         src: "img/arrow.svg"
-                    }    
-                }        
+                    }
+                }
             }
-        }
     ))
 }
 
@@ -185,12 +178,10 @@ fn player_input(cx: Scope) -> Element {
 fn add_player(cx: Scope, name: String) {
     let state = use_atom_state(&cx, STATE);
 
-    let mut lowest_available_id= 0;
+    let mut lowest_available_id = 0;
 
     for i in 1..5 {
-        let slot = state.players.iter().find(|item| {
-            item.id == i
-        });
+        let slot = state.players.iter().find(|item| item.id == i);
 
         if slot == None {
             lowest_available_id = i;

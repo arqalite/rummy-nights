@@ -95,9 +95,31 @@ pub fn score_table(cx: Scope) -> Element {
     };
 
     cx.render(rsx! (
+        div {
+            class: "h-16 grid grid-cols-3",
+            button {
+                class: "mx-auto h-16 relative left-[-30%]",
+                //onclick:
+                img {
+                    class: "h-8 w-8",
+                    src: "img/back.svg",
+                }
+            }
+            p {
+                ""
+            }
+            button {
+                class: "mx-auto h-16 relative right-[-30%]",
+                //onclick:
+                img {
+                    class: "h-8 w-8",
+                    src: "img/exit.svg",
+                }
+            }
+        },
         div{
             //Main table
-            class: "grid {columns} mx-auto px-4 max-w-md mt-16 gap-x-5",
+            class: "grid {columns} mx-auto gap-x-5 pt-2",
 
             state.players.iter().map(|player| {
                 let sum = player.score.values().sum::<i32>().to_string();

@@ -1,39 +1,69 @@
-use dioxus::prelude::*;
-use dioxus::fermi::*;
-use dioxus::events::FormData;
+//! The player selection screen.
+
 use dioxus::core::UiEvent;
+use dioxus::events::FormData;
+use dioxus::fermi::*;
+use dioxus::prelude::*;
 use std::collections::BTreeMap;
 
 use crate::css;
-use crate::STATE;
+use crate::GameStatus;
 use crate::Player;
+use crate::STATE;
 
-pub fn input_screen(cx: Scope) -> Element {
+pub fn player_select(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
+    let players = &state.players;
 
-    cx.render(rsx! (
-            p {
-                class: "text-center",
-                "Add players:"
-            }
+    let onclick = |_| {
+        if players.len() >= 2 {
+            state.with_mut(|state| 
+                state.game_status = GameStatus::Ongoing
+            )
+        };
+    };
+
+    cx.render(rsx!(
+        div {
+            class: "mx-auto px-4 max-w-md",
+            //Navbar
             div {
-                class: "mx-auto px-5 max-w-md mt-4 gap-x-5",
-                state.players.iter().map(|player| {
+                class: "h-16",
+            }
+            //Player select
+            div {
+                class: "",
+
+                //Player list
+                players.iter().map(|player| {
                     let background = css::TITLE_COLORS[player.id-1];
+
                     rsx!(
                         div {
-                            // Name - first cell
-                            class: "rounded-full h-8 {background} py-1 mb-2 shadow",
-                            p {
-                                class: "text-center my-auto text-white font-semibold",
-                                "{player.name}"
+                            class: "grid grid-cols-3 gap-4 h-16 rounded-full bg-slate-200 my-2",
+                            div {
+                                class: "ml-4 my-auto h-8 col-span-2 rounded-full {background}",
+                                p {
+                                    class: "text-center mx-auto pt-0.5 text-white font-semibold",
+                                    "{player.name}"
+                                }
                             }
                         }
-                    ) 
-                }),
+                    )
+                })
+
+                //Name input
                 player_input(),
             }
-            
+            //Start button
+            div {
+                button {
+                    class: "w-full text-center my-2",
+                    onclick: onclick,
+                    "Start"
+                }        
+            }
+        }
     ))
 }
 
@@ -44,13 +74,11 @@ fn player_input(cx: Scope) -> Element {
     let onsubmit = move |_| {
         state.with_mut(|state| {
             if state.players.len() < 4 {
-                state.players.push(
-                    Player {
-                        id: state.players.len() + 1,
-                        name: buffer.to_string(),
-                        score: BTreeMap::new(),
-                    }
-                );
+                state.players.push(Player {
+                    id: state.players.len() + 1,
+                    name: buffer.to_string(),
+                    score: BTreeMap::new(),
+                });
             };
             buffer.set(String::new());
         });
@@ -59,7 +87,7 @@ fn player_input(cx: Scope) -> Element {
     let oninput = move |evt: UiEvent<FormData>| {
         buffer.set(evt.value.clone());
     };
-    
+
     if state.players.len() <= 3 {
         cx.render(
             rsx!(
@@ -67,10 +95,10 @@ fn player_input(cx: Scope) -> Element {
                     onsubmit: onsubmit,
                     prevent_default: "onsubmit",
                     input {
-                        class: "rounded-full mx-auto h-8 py-1 mb-2 w-full shadow ring-1 ring-grey text-center my-auto",
+                        class: "rounded-full mx-auto h-8 w-full shadow ring-1 ring-grey text-center",
                         placeholder: "Insert player name",
                         value: "{buffer}",
-                        oninput: oninput,          
+                        oninput: oninput,
                     }
                 }
             )

@@ -4,8 +4,8 @@ use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 
 use crate::css;
-use crate::STATE;
 use crate::GameStatus;
+use crate::STATE;
 
 static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
@@ -65,20 +65,16 @@ pub fn show_winner(cx: Scope) -> Element {
     let game_status = get_game_status(cx);
 
     match game_status {
-        GameStatus::Finished(name) => {
-            cx.render(rsx! (
-                div {
-                    class: "mt-5",
-                    p {
-                        class: "text-center",
-                        "{name} won!"
-                    }
+        GameStatus::Finished(name) => cx.render(rsx! (
+            div {
+                class: "mt-5",
+                p {
+                    class: "text-center",
+                    "{name} won!"
                 }
-            ))
-        }
-        GameStatus::Ongoing | GameStatus::NotStarted => {
-            None
-        }
+            }
+        )),
+        GameStatus::Ongoing | GameStatus::NotStarted => None,
     }
 }
 
@@ -101,7 +97,7 @@ pub fn score_table(cx: Scope) -> Element {
     cx.render(rsx! (
         div{
             //Main table
-            class: "grid {columns} mx-auto px-5 max-w-md mt-16 gap-x-5",
+            class: "grid {columns} mx-auto px-4 max-w-md mt-16 gap-x-5",
 
             state.players.iter().map(|player| {
                 let sum = player.score.values().sum::<i32>().to_string();
@@ -186,7 +182,7 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
         buffer.set(evt.value.clone());
     };
     let caret = css::CARET_COLORS[id - 1];
-    let border = css::BORDER_COLORS[id-1];
+    let border = css::BORDER_COLORS[id - 1];
 
     cx.render(rsx!(
         input {
@@ -200,4 +196,3 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
         }
     ))
 }
-

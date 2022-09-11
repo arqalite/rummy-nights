@@ -1,5 +1,5 @@
 use dioxus::core::UiEvent;
-use dioxus::events::{FormData, KeyboardData};
+use dioxus::events::FormData;
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 
@@ -160,24 +160,22 @@ pub struct ScoreInputProps {
 
 pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     let id = cx.props.id;
+    let state = use_atom_state(&cx, STATE);
     let buffer = use_state(&cx, String::new);
 
-    let onkeypress = move |evt: UiEvent<KeyboardData>| {
-        if evt.key.as_str() == "Enter" {
-            if let Ok(number) = buffer.parse::<i32>() {
-                let state = use_atom_state(&cx, STATE);
-
-                state.with_mut(|mut_state| {
-                    for player in mut_state.players.iter_mut() {
-                        if id == player.id {
-                            player.score.insert(player.score.len(), number);
-                        }
+    let onsubmit = move |_| {
+        if let Ok(number) = buffer.parse::<i32>() {
+            state.with_mut(|mut_state| {
+                for player in mut_state.players.iter_mut() {
+                    if id == player.id {
+                        player.score.insert(player.score.len(), number);
                     }
-                });
-            }
-            buffer.set(String::new());
+                }
+            });
         }
+        buffer.set(String::new());
     };
+
     let oninput = move |evt: UiEvent<FormData>| {
         buffer.set(evt.value.clone());
     };
@@ -185,14 +183,20 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     let border = css::BORDER_COLORS[id - 1];
 
     cx.render(rsx!(
-        input {
-            class: "{caret} {border} text-sm appearance-none font-light bg-transparent h-8 w-full mb-2 text-center rounded focus:border-b-4 border-b-2",
-            placeholder: "Insert score",
-            value: "{buffer}",
-            onkeypress: onkeypress,
-            oninput: oninput,
-            outline: "none",
-            r#type: "number",
+        form {
+            onsubmit: onsubmit,
+            prevent_default: "onsubmit",
+            input {
+                class: "{caret} {border} text-sm appearance-none font-light bg-transparent h-8 w-full mb-2 text-center rounded focus:border-b-4 border-b-2",
+                style: "-moz-appearance:textfield",
+                placeholder: "Insert score",
+                value: "{buffer}",
+                onsubmit: onsubmit,
+                prevent_default: "onsubmit",
+                oninput: oninput,
+                outline: "none",
+                r#type: "number",
+            }
         }
     ))
 }

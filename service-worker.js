@@ -2,10 +2,7 @@
 
 var cacheName = 'rummy-nights';
 var filesToCache = [
-  './',
-  './index.html',
   './rummy-nights.js',
-  './rummy-nights_bg.wasm'
 ];
 
 

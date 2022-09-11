@@ -28,10 +28,30 @@ pub fn player_select(cx: Scope) -> Element {
             class: "mx-auto px-6 max-w-md",
             //Navbar
             div {
-                class: "h-16",
-                p {
-                    class: "pt-6 text-center w-full",
-                    "Add players:"
+                class: "h-16 grid grid-cols-3",
+                button {
+                    class: "mx-auto h-16 relative left-[-20%]",
+                    //onclick:
+                    img {
+                        class: "h-8 w-8",
+                        src: "img/back.svg",
+                    }
+                }
+                button {
+                    class: "mx-auto h-16 relative justify-self-center",
+                    //onclick:
+                    img {
+                        class: "h-8 w-8",
+                        src: "img/home.svg",
+                    }
+                }
+                button {
+                    class: "mx-auto h-16 relative right-[-20%]",
+                    //onclick:
+                    img {
+                        class: "h-8 w-8",
+                        src: "img/save.svg",
+                    }
                 }
             }
             //Player select
@@ -41,6 +61,13 @@ pub fn player_select(cx: Scope) -> Element {
                 //Player list
                 players.iter().map(|player| {
                     let background = css::TITLE_COLORS[player.id-1];
+                    let delete_button = |_| {
+                        state.with_mut(|mut_state| {
+                            mut_state.players.retain(|item|{
+                                item.id != player.id
+                            });
+                        })
+                    };
 
                     rsx!(
                         div {
@@ -52,6 +79,25 @@ pub fn player_select(cx: Scope) -> Element {
                                     "{player.name}"
                                 }
                             }
+                            div {
+                                class: "col-span-1 my-auto",
+                                button {
+                                    class: "mx-auto h-16 px-2",
+                                    onclick: delete_button,
+                                    img {
+                                        class: "h-8 w-8",
+                                        src: "img/remove.svg",
+                                    }
+                                }
+                                button {
+                                    class: "mx-auto h-16 px-2",
+                                    //onclick:
+                                    img {
+                                        class: "h-8 w-8",
+                                        src: "img/menu.svg",
+                                    }
+                                }
+                            }
                         }
                     )
                 })
@@ -61,10 +107,18 @@ pub fn player_select(cx: Scope) -> Element {
             }
             //Start button
             div {
+                class: "w-32 h-12 mt-16 border-b-4 border-emerald-300 relative left-2/3",
                 button {
                     class: "w-full text-center my-2",
                     onclick: onclick,
-                    "Start"
+                    p {
+                        class: "inline-block pr-2 font-bold",
+                        "Start game"
+                    }
+                    img {
+                        class: "h-8 w-8 inline-block",
+                        src: "img/arrow.svg"
+                    }    
                 }        
             }
         }
@@ -116,13 +170,9 @@ fn player_input(cx: Scope) -> Element {
                         class: "col-span-1 mx-auto text-center h-16",
                         onclick: onclick,
                         img {
-                            class: "h-7 w-7 inline-block",
+                            class: "h-8 w-8",
                             src: "img/add-player.svg",
                         },
-                        p {
-                            class: "inline-block px-2 pt-0.5",
-                            "Add"
-                        }
                     }
                 }
             )
@@ -135,10 +185,23 @@ fn player_input(cx: Scope) -> Element {
 fn add_player(cx: Scope, name: String) {
     let state = use_atom_state(&cx, STATE);
 
+    let mut lowest_available_id= 0;
+
+    for i in 1..5 {
+        let slot = state.players.iter().find(|item| {
+            item.id == i
+        });
+
+        if slot == None {
+            lowest_available_id = i;
+            break;
+        };
+    }
+
     state.with_mut(|state| {
-        if state.players.len() < 4 {
+        if state.players.len() < 4 && lowest_available_id != 0 {
             state.players.push(Player {
-                id: state.players.len() + 1,
+                id: lowest_available_id,
                 name: name,
                 score: BTreeMap::new(),
             });

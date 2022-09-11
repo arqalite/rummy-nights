@@ -25,10 +25,14 @@ pub fn player_select(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "mx-auto px-4 max-w-md",
+            class: "mx-auto px-6 max-w-md",
             //Navbar
             div {
                 class: "h-16",
+                p {
+                    class: "pt-6 text-center w-full",
+                    "Add players:"
+                }
             }
             //Player select
             div {
@@ -72,16 +76,16 @@ fn player_input(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
 
     let onsubmit = move |_| {
-        state.with_mut(|state| {
-            if state.players.len() < 4 {
-                state.players.push(Player {
-                    id: state.players.len() + 1,
-                    name: buffer.to_string(),
-                    score: BTreeMap::new(),
-                });
-            };
+        if buffer.len() > 0 {
+            add_player(cx, buffer.to_string());
             buffer.set(String::new());
-        });
+        }
+    };
+    let onclick = move |_| {
+        if buffer.len() > 0 {
+            add_player(cx, buffer.to_string());
+            buffer.set(String::new());
+        }
     };
 
     let oninput = move |evt: UiEvent<FormData>| {
@@ -91,14 +95,34 @@ fn player_input(cx: Scope) -> Element {
     if state.players.len() <= 3 {
         cx.render(
             rsx!(
-                form {
-                    onsubmit: onsubmit,
-                    prevent_default: "onsubmit",
-                    input {
-                        class: "rounded-full mx-auto h-8 w-full shadow ring-1 ring-grey text-center",
-                        placeholder: "Insert player name",
-                        value: "{buffer}",
-                        oninput: oninput,
+                div {
+                    class: "grid grid-cols-3 h-16 rounded-full bg-slate-200 my-2",
+                    div {
+                        class: "ml-4 my-auto h-8 col-span-2 rounded-full",
+                        form {
+                            onsubmit: onsubmit,
+                            prevent_default: "onsubmit",
+                            input {
+                                class: "rounded-full mx-auto h-8 w-full shadow ring-1 ring-grey text-center",
+                                placeholder: "Insert player name",
+                                value: "{buffer}",
+                                oninput: oninput,
+                                onsubmit: onsubmit,
+                                prevent_default: "onsubmit",
+                            }
+                        }
+                    }
+                    button {
+                        class: "col-span-1 mx-auto text-center h-16",
+                        onclick: onclick,
+                        img {
+                            class: "h-7 w-7 inline-block",
+                            src: "img/add-player.svg",
+                        },
+                        p {
+                            class: "inline-block px-2 pt-0.5",
+                            "Add"
+                        }
                     }
                 }
             )
@@ -106,4 +130,18 @@ fn player_input(cx: Scope) -> Element {
     } else {
         None
     }
+}
+
+fn add_player(cx: Scope, name: String) {
+    let state = use_atom_state(&cx, STATE);
+
+    state.with_mut(|state| {
+        if state.players.len() < 4 {
+            state.players.push(Player {
+                id: state.players.len() + 1,
+                name: name,
+                score: BTreeMap::new(),
+            });
+        };
+    });
 }

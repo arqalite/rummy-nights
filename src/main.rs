@@ -65,15 +65,17 @@ enum GameStatus {
 fn app(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
     let game_status = &state.game_status;
+    let screen;
 
     match game_status {
-        GameStatus::NotStarted => cx.render(rsx!(
-            player_select::player_select()
-        )),
-        GameStatus::Ongoing | GameStatus::Finished(_) => cx.render(rsx!(
-            score_table::score_table()
-        ))
-    }
+        GameStatus::NotStarted => screen = rsx!(player_select::player_select()),
+        GameStatus::Ongoing | GameStatus::Finished(_) => screen = rsx!(score_table::score_table()),
+    };
+
+    cx.render(rsx!(div {
+        class: "mx-auto px-2 max-w-md bg-slate-50 shadow-2xl h-screen",
+        screen,
+    }))
 }
 
 fn main() {

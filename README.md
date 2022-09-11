@@ -1,2 +1,22 @@
-# rummy-nights
+# Rummy Nights
 A rummy score counter web app written with Rust/Dioxus and Tailwind CSS.
+
+It's meant as an experiment to see if it's possible to develop an app entirely in Rust (or more specifically, only in *.rs files), without any hand-written JS, CSS or HTML.
+
+Currently, Dioxus + Tailwind gets you 95% the way there, but there has to be a basic index.html file for Dioxus to hook into, and a service-worker.js for PWA installability.
+
+## Try the app
+The latest commits are automatically built and uploaded to Vercel at https://rummy-nights.vercel.app/.
+
+Once we reach a stable version, we'll have a separate server for releases.
+
+## Building from source
+In order to build the app, you need:
+- [Rust](https://www.rust-lang.org/)
+- [Trunk](https://trunkrs.dev/) (you can get it with `cargo install trunk`)
+- [Tailwind CSS](https://tailwindcss.com/) - make sure to have the [standalone CLI executable](https://tailwindcss.com/blog/standalone-cli) in your PATH (Trunk needs it to generate the CSS on-the-fly)
+
+Once set-up, run `trunk serve --open` and it should be good to go.
+
+## Contributing
+PRs are welcome!

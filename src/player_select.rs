@@ -10,6 +10,7 @@ use crate::css;
 use crate::GameStatus;
 use crate::Player;
 use crate::STATE;
+use crate::Screen;
 
 pub fn player_select(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
@@ -17,7 +18,10 @@ pub fn player_select(cx: Scope) -> Element {
 
     let onclick = |_| {
         if players.len() >= 2 {
-            state.with_mut(|state| state.game_status = GameStatus::Ongoing)
+            state.with_mut(|state| {
+                state.game_status = GameStatus::Ongoing;
+                state.screen = Screen::Game;
+            })
         };
     };
 

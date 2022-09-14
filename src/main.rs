@@ -85,7 +85,7 @@ fn app(cx: Scope) -> Element {
     cx.render(rsx!(div {
         // For now we design for mobile, 
         // so we're restricting the max-width on desktop to match how a phone would look.
-        class: "mx-auto px-2 max-w-md bg-slate-50 shadow-2xl h-screen",
+        class: "mx-auto max-w-md bg-slate-50 shadow-2xl border-x border-black h-screen",
         screen,
     }))
 }

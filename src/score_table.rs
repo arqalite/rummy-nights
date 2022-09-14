@@ -119,7 +119,7 @@ pub fn score_table(cx: Scope) -> Element {
         },
         div{
             //Main table
-            class: "grid {columns} mx-auto gap-x-5 pt-2",
+            class: "grid {columns} mx-auto gap-x-5 pt-2 px-2",
 
             state.players.iter().map(|player| {
                 let sum = player.score.values().sum::<i32>().to_string();

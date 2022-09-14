@@ -56,7 +56,7 @@ pub fn player_select(cx: Scope) -> Element {
         },
             //Player select
             div {
-                class: "pt-2",
+                class: "pt-2 px-2",
                 //Player list
                 players.iter().map(|player| {
                     let background = css::TITLE_COLORS[player.id-1];

@@ -17,6 +17,7 @@ use std::collections::BTreeMap;
 // plus the css.rs file which holds some Tailwind CSS classes as static arrays
 // so we can add them programmatically to each player.
 mod css;
+mod intro_screen;
 mod player_select;
 mod score_table;
 
@@ -29,12 +30,14 @@ mod score_table;
 static STATE: Atom<Model> = |_| Model {
     players: Vec::new(),
     game_status: GameStatus::NotStarted,
+    screen: Screen::Intro,
 };
 
 #[derive(Clone)]
 struct Model {
     players: Vec<Player>,
     game_status: GameStatus,
+    screen: Screen,
 }
 
 #[derive(PartialEq, Clone)]
@@ -58,21 +61,30 @@ enum GameStatus {
     Ongoing,
     Finished(String), //This String holds the winner's name
 }
+#[derive(PartialEq, Clone)]
+enum Screen {
+    Intro,
+    PlayerSelect,
+    Game
+}
 
 // This is the actual entry-point, and it should be kept as simple as possible.
 // For now just managing the various screens is enough.
 // Other work should be done in its respective modules.
+
 fn app(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
-    let game_status = &state.game_status;
     let screen;
 
-    match game_status {
-        GameStatus::NotStarted => screen = rsx!(player_select::player_select()),
-        GameStatus::Ongoing | GameStatus::Finished(_) => screen = rsx!(score_table::score_table()),
+    match state.screen {
+        Screen::Intro => screen = rsx!(intro_screen::intro()),
+        Screen::PlayerSelect => screen = rsx!(player_select::player_select()),
+        Screen::Game => screen = rsx!(score_table::score_table()),
     };
 
     cx.render(rsx!(div {
+        // For now we design for mobile, 
+        // so we're restricting the max-width on desktop to match how a phone would look.
         class: "mx-auto px-2 max-w-md bg-slate-50 shadow-2xl h-screen",
         screen,
     }))

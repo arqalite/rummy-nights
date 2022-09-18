@@ -20,6 +20,7 @@ mod css;
 mod intro_screen;
 mod player_select;
 mod score_table;
+mod winner_screen;
 
 // All the data that concerns the entire app functionality,
 // i.e. players, game status, options (soon), is stored in one single place.
@@ -65,7 +66,8 @@ enum GameStatus {
 enum Screen {
     Intro,
     PlayerSelect,
-    Game
+    Game,
+    Winner
 }
 
 // This is the actual entry-point, and it should be kept as simple as possible.
@@ -74,18 +76,47 @@ enum Screen {
 
 fn app(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
-    let screen;
+    let mut screen;
 
     match state.screen {
         Screen::Intro => screen = rsx!(intro_screen::intro()),
         Screen::PlayerSelect => screen = rsx!(player_select::player_select()),
         Screen::Game => screen = rsx!(score_table::score_table()),
+        Screen::Winner => screen = rsx!(winner_screen::winner_screen())
     };
+
+    //TODO: Remove after final screen is done.
+    state.with_mut(|mut_state| {
+        mut_state.players = vec![
+            Player {
+                name: "Antonio".to_string(),
+                id: 1,
+                score: BTreeMap::new(), 
+            },
+            Player {
+                name: "Vlad".to_string(),
+                id: 2,
+                score: BTreeMap::new(), 
+            },
+            Player {
+                name: "Dani".to_string(),
+                id: 3,
+                score: BTreeMap::new(), 
+            },
+            Player {
+                name: "Dalmina".to_string(),
+                id: 4,
+                score: BTreeMap::new(), 
+            },
+        ]
+    });
+
+    screen = rsx!(winner_screen::winner_screen());
 
     cx.render(rsx!(div {
         // For now we design for mobile, 
         // so we're restricting the max-width on desktop to match how a phone would look.
-        class: "mx-auto px-2 max-w-md bg-slate-50 shadow-2xl h-screen",
+        class: "mx-auto max-w-md bg-slate-50 shadow-2xl border-x border-black h-screen",
         screen,
     }))
 }

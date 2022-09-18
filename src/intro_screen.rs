@@ -19,7 +19,16 @@ pub fn intro(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "h-16 grid grid-cols-3",
+            class: "h-36 grid grid-cols-3 overflow-hidden",
+            div {
+                class: "w-60 h-60 relative top-[-100px] left-[-100px] rounded-full",
+                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                p {
+                    class: "-rotate-45 text-white text-2xl font-semibold relative w-8 top-[60%] left-[55%]",
+                    "Rummy Nights"
+                }
+            }
+            
             button {
                 class: "mx-auto h-16 col-start-3 relative right-[-30%]",
                 //onclick:
@@ -32,24 +41,20 @@ pub fn intro(cx: Scope) -> Element {
         div {
             //As the name and image suggests, this will fly away from the app soon.
             img {
-                class: "",
+                class: "h-96 w-96 mx-auto",
                 src: "img/fly-away.svg",
-            }    
-            p {
-                class: "font-semibold text-center",
-                "Welcome to Rummy Nights!"
             }
         }
         button {
             class: "w-full h-32 mx-auto pt-8",
             onclick: go_to_player_select,
-            img {
-                class: "h-24 w-24 inline align-middle",
-                src: "img/new.svg", 
-            }
             p {
-                class: "font-bold text-center ml-4 text-lg inline drop-shadow-2xl",
-                "New game"
+                class: "font-bold text-center mr-8 text-lg inline",
+                "Start Game"
+            }
+            img {
+                class: "h-20 w-20 inline align-middle",
+                src: "img/new.svg", 
             }
         }
     ))

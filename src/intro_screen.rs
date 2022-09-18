@@ -23,11 +23,12 @@ pub fn intro(cx: Scope) -> Element {
             div {
                 class: "w-60 h-60 relative top-[-100px] left-[-100px] rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                p {
+                    class: "-rotate-45 text-white text-2xl font-semibold relative w-8 top-[60%] left-[55%]",
+                    "Rummy Nights"
+                }
             }
-            p {
-                class: "-rotate-45 text-white text-2xl font-semibold w-8 absolute top-10 left-12",
-                "Rummy Nights"
-            }
+            
             button {
                 class: "mx-auto h-16 col-start-3 relative right-[-30%]",
                 //onclick:

@@ -5,6 +5,7 @@ use dioxus::prelude::*;
 
 use crate::css;
 use crate::GameStatus;
+use crate::Screen;
 use crate::STATE;
 
 static FINAL_SCORE: i32 = 1000;
@@ -61,23 +62,6 @@ fn get_game_status(cx: Scope) -> GameStatus {
     }
 }
 
-pub fn show_winner(cx: Scope) -> Element {
-    let game_status = get_game_status(cx);
-
-    match game_status {
-        GameStatus::Finished(name) => cx.render(rsx! (
-            div {
-                class: "mt-5",
-                p {
-                    class: "text-center",
-                    "{name} won!"
-                }
-            }
-        )),
-        GameStatus::Ongoing | GameStatus::NotStarted => None,
-    }
-}
-
 pub fn score_table(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
@@ -88,6 +72,9 @@ pub fn score_table(cx: Scope) -> Element {
     match game_status {
         GameStatus::Finished(_) => {
             game_continues.set(false);
+            state.with_mut(|state| {
+                state.screen = Screen::Winner;
+            })
         }
         GameStatus::Ongoing | GameStatus::NotStarted => {
             game_continues.set(true);
@@ -170,8 +157,7 @@ pub fn score_table(cx: Scope) -> Element {
                     }
                 )
             })
-        },
-        crate::score_table::show_winner(),
+        }
     ))
 }
 

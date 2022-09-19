@@ -41,7 +41,7 @@ struct Model {
     screen: Screen,
 }
 
-#[derive(PartialEq, Clone)]
+#[derive(Eq, Ord, PartialEq, PartialOrd, Clone)]
 struct Player {
     id: usize,
     name: String,

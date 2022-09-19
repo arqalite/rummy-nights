@@ -10,6 +10,7 @@ use crate::STATE;
 
 static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
+static SHOW_END_ONCE: Atom<bool> = |_| true;
 
 fn get_game_status(cx: Scope) -> GameStatus {
     let state = use_atom_state(&cx, STATE);
@@ -66,15 +67,19 @@ pub fn score_table(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
     let columns = css::COLUMN_NUMBERS[state.players.len() - 2];
+    let mut show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
 
     let game_status = get_game_status(cx);
 
     match game_status {
         GameStatus::Finished(_) => {
             game_continues.set(false);
-            state.with_mut(|state| {
-                state.screen = Screen::Winner;
-            })
+            if **show_end_once {
+                state.with_mut(|state| {
+                    state.screen = Screen::Winner;
+                });
+                show_end_once.set(false);
+            }
         }
         GameStatus::Ongoing | GameStatus::NotStarted => {
             game_continues.set(true);

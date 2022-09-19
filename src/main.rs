@@ -86,32 +86,32 @@ fn app(cx: Scope) -> Element {
     };
 
     //TODO: Remove after final screen is done.
-    state.with_mut(|mut_state| {
-        mut_state.players = vec![
-            Player {
-                name: "Antonio".to_string(),
-                id: 1,
-                score: BTreeMap::new(), 
-            },
-            Player {
-                name: "Vlad".to_string(),
-                id: 2,
-                score: BTreeMap::new(), 
-            },
-            Player {
-                name: "Dani".to_string(),
-                id: 3,
-                score: BTreeMap::new(), 
-            },
-            Player {
-                name: "Dalmina".to_string(),
-                id: 4,
-                score: BTreeMap::new(), 
-            },
-        ]
-    });
+    // state.with_mut(|mut_state| {
+    //     mut_state.players = vec![
+    //         Player {
+    //             name: "Antonio".to_string(),
+    //             id: 1,
+    //             score: BTreeMap::new(), 
+    //         },
+    //         Player {
+    //             name: "Vlad".to_string(),
+    //             id: 2,
+    //             score: BTreeMap::new(), 
+    //         },
+    //         Player {
+    //             name: "Dani".to_string(),
+    //             id: 3,
+    //             score: BTreeMap::new(), 
+    //         },
+    //         Player {
+    //             name: "Dalmina".to_string(),
+    //             id: 4,
+    //             score: BTreeMap::new(), 
+    //         },
+    //     ]
+    // });
 
-    screen = rsx!(winner_screen::winner_screen());
+    // screen = rsx!(winner_screen::winner_screen());
 
     cx.render(rsx!(div {
         // For now we design for mobile, 

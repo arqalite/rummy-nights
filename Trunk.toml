@@ -6,6 +6,10 @@ filehash = false
 public_url = "/"
 
 [serve]
+# The address to serve on.
+address = "127.0.0.2"
+# The port to serve on.
+port = 8080
 open = false
 
 [[hooks]]

@@ -2,7 +2,7 @@
 
 use dioxus::core::UiEvent;
 use dioxus::events::FormData;
-use dioxus::fermi::*;
+use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 use std::collections::BTreeMap;
 
@@ -21,7 +21,7 @@ pub fn player_select(cx: Scope) -> Element {
             state.with_mut(|state| {
                 state.game_status = GameStatus::Ongoing;
                 state.screen = Screen::Game;
-            })
+            });
         };
     };
 
@@ -65,7 +65,7 @@ pub fn player_select(cx: Scope) -> Element {
                             mut_state.players.retain(|item|{
                                 item.id != player.id
                             });
-                        })
+                        });
                     };
 
                     rsx!(
@@ -197,7 +197,7 @@ fn add_player(cx: Scope, name: String) {
         if state.players.len() < 4 && lowest_available_id != 0 {
             state.players.push(Player {
                 id: lowest_available_id,
-                name: name,
+                name,
                 score: BTreeMap::new(),
             });
         };

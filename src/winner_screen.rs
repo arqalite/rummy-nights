@@ -13,7 +13,7 @@ pub fn winner_screen(cx: Scope) -> Element {
     let return_to_table = |_| {
         state.with_mut(|state| {
             state.screen = Screen::Game;
-        })
+        });
     };
     
     state.with_mut(|mut_state| {
@@ -70,11 +70,11 @@ pub fn winner_screen(cx: Scope) -> Element {
 
             if player_count == 0 {
                 style = "h-20 w-20 rounded-full text-white font-bold text-lg ".to_string();
-                style = style + background;
+                style.push_str(background);
                 style2 = "relative top-[50%] -translate-y-1/2".to_string();
             } else {
                 style = "border-b-[7px] rounded-md my-auto w-20 ".to_string();
-                style = style + border;
+                style.push_str(border);
                 style2 = String::new();
             };
 

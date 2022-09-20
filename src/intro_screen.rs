@@ -14,17 +14,17 @@ pub fn intro(cx: Scope) -> Element {
     let go_to_player_select = |_| {
         state.with_mut(|mut_state| {
             mut_state.screen = Screen::PlayerSelect;
-        })
+        });
     };
 
     cx.render(rsx!(
         div {
             class: "h-36 grid grid-cols-3 overflow-hidden",
             div {
-                class: "w-60 h-60 relative top-[-100px] left-[-100px] rounded-full",
+                class: "w-56 h-56 relative top-[-100px] left-[-100px] rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
                 p {
-                    class: "-rotate-45 text-white text-2xl font-semibold relative w-8 top-[60%] left-[55%]",
+                    class: "-rotate-45 text-white text-2xl font-semibold relative w-8 top-[60%] left-[52%]",
                     "Rummy Nights"
                 }
             }

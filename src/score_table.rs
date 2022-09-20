@@ -17,7 +17,7 @@ fn get_game_status(cx: Scope) -> GameStatus {
     let mut has_reached_max = false;
     let mut no_of_winners = 0;
 
-    for player in state.players.iter() {
+    for player in &state.players {
         if player.score.values().sum::<i32>() >= FINAL_SCORE {
             has_reached_max = true;
         }
@@ -38,12 +38,12 @@ fn get_game_status(cx: Scope) -> GameStatus {
     let mut max = 0;
 
     if are_columns_equal {
-        for player in state.players.iter() {
+        for player in &state.players {
             if player.score.values().sum::<i32>() > max {
                 max = player.score.values().sum::<i32>();
             }
         }
-        for player in state.players.iter() {
+        for player in &state.players {
             if player.score.values().sum::<i32>() >= max {
                 if no_of_winners > 0 {
                     winner_name.push_str(" and ");
@@ -67,7 +67,7 @@ pub fn score_table(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
     let columns = css::COLUMN_NUMBERS[state.players.len() - 2];
-    let mut show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
+    let show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
 
     let game_status = get_game_status(cx);
 
@@ -179,7 +179,7 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     let onsubmit = move |_| {
         if let Ok(number) = buffer.parse::<i32>() {
             state.with_mut(|mut_state| {
-                for player in mut_state.players.iter_mut() {
+                for player in &mut mut_state.players {
                     if id == player.id {
                         player.score.insert(player.score.len(), number);
                     }

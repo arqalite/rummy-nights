@@ -76,42 +76,13 @@ enum Screen {
 
 fn app(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
-    let mut screen;
 
-    match state.screen {
-        Screen::Intro => screen = rsx!(intro_screen::intro()),
-        Screen::PlayerSelect => screen = rsx!(player_select::player_select()),
-        Screen::Game => screen = rsx!(score_table::score_table()),
-        Screen::Winner => screen = rsx!(winner_screen::winner_screen())
+    let screen = match state.screen {
+        Screen::Intro => rsx!(intro_screen::intro()),
+        Screen::PlayerSelect => rsx!(player_select::player_select()),
+        Screen::Game => rsx!(score_table::score_table()),
+        Screen::Winner => rsx!(winner_screen::winner_screen())
     };
-
-    //TODO: Remove after final screen is done.
-    // state.with_mut(|mut_state| {
-    //     mut_state.players = vec![
-    //         Player {
-    //             name: "Antonio".to_string(),
-    //             id: 1,
-    //             score: BTreeMap::new(), 
-    //         },
-    //         Player {
-    //             name: "Vlad".to_string(),
-    //             id: 2,
-    //             score: BTreeMap::new(), 
-    //         },
-    //         Player {
-    //             name: "Dani".to_string(),
-    //             id: 3,
-    //             score: BTreeMap::new(), 
-    //         },
-    //         Player {
-    //             name: "Dalmina".to_string(),
-    //             id: 4,
-    //             score: BTreeMap::new(), 
-    //         },
-    //     ]
-    // });
-
-    // screen = rsx!(winner_screen::winner_screen());
 
     cx.render(rsx!(div {
         // For now we design for mobile, 

@@ -3,10 +3,15 @@ use dioxus::events::FormData;
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 
-use crate::css;
-use crate::GameStatus;
-use crate::Screen;
 use crate::STATE;
+use crate::data::{
+    GameStatus,
+    Screen,
+    COLUMN_NUMBERS,
+    TITLE_COLORS,
+    BORDER_COLORS,
+    CARET_COLORS
+};
 
 static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
@@ -66,7 +71,7 @@ fn get_game_status(cx: Scope) -> GameStatus {
 pub fn score_table(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
-    let columns = css::COLUMN_NUMBERS[state.players.len() - 2];
+    let columns = COLUMN_NUMBERS[state.players.len() - 2];
     let show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
 
     let game_status = get_game_status(cx);
@@ -115,8 +120,8 @@ pub fn score_table(cx: Scope) -> Element {
 
             state.players.iter().map(|player| {
                 let sum = player.score.values().sum::<i32>().to_string();
-                let background = css::TITLE_COLORS[player.id-1];
-                let border = css::BORDER_COLORS[player.id-1];
+                let background = TITLE_COLORS[player.id-1];
+                let border = BORDER_COLORS[player.id-1];
 
                 rsx!(
                     div{
@@ -192,8 +197,8 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     let oninput = move |evt: UiEvent<FormData>| {
         buffer.set(evt.value.clone());
     };
-    let caret = css::CARET_COLORS[id - 1];
-    let border = css::BORDER_COLORS[id - 1];
+    let caret = CARET_COLORS[id - 1];
+    let border = BORDER_COLORS[id - 1];
 
     cx.render(rsx!(
         form {

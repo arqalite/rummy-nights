@@ -6,11 +6,13 @@ use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 use std::collections::BTreeMap;
 
-use crate::css;
-use crate::GameStatus;
-use crate::Player;
 use crate::STATE;
-use crate::Screen;
+use crate::data::{
+    GameStatus, 
+    Player, 
+    Screen,
+    TITLE_COLORS
+};
 
 pub fn player_select(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
@@ -59,7 +61,7 @@ pub fn player_select(cx: Scope) -> Element {
                 class: "pt-2 px-2",
                 //Player list
                 players.iter().map(|player| {
-                    let background = css::TITLE_COLORS[player.id-1];
+                    let background = TITLE_COLORS[player.id-1];
                     let delete_button = |_| {
                         state.with_mut(|mut_state| {
                             mut_state.players.retain(|item|{

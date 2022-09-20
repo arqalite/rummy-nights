@@ -3,8 +3,12 @@ use dioxus::prelude::*;
 use dioxus::fermi::use_atom_state;
 
 use crate::STATE;
-use crate::Screen;
-use crate::css;
+use crate::data::{
+    Screen,
+    TITLE_COLORS,
+    BORDER_COLORS
+};
+
 
 pub fn winner_screen(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
@@ -62,8 +66,8 @@ pub fn winner_screen(cx: Scope) -> Element {
             }
         },
         state.players.iter().map(|player| {
-            let background = css::TITLE_COLORS[player.id-1];
-            let border = css::BORDER_COLORS[player.id-1];
+            let background = TITLE_COLORS[player.id-1];
+            let border = BORDER_COLORS[player.id-1];
             let score = player.score.values().sum::<i32>();
             let mut style;
             let style2;

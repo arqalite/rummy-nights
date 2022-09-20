@@ -14,3 +14,4 @@ publish = false
 
 [dependencies]
 dioxus = { version = "0.2.4", features = ["web", "fermi"] }
+gloo-storage = "0.2.2"

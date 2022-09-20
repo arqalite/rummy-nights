@@ -6,7 +6,7 @@ use dioxus::prelude::*;
 use dioxus::fermi::use_atom_state;
 
 use crate::STATE;
-use crate::Screen;
+use crate::data::Screen;
 
 pub fn intro(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
@@ -19,34 +19,36 @@ pub fn intro(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "h-36 grid grid-cols-3 overflow-hidden",
+            class: "grid grid-cols-6",
             div {
-                class: "w-56 h-56 relative top-[-100px] left-[-100px] rounded-full",
+                class: "w-[200px] h-[200px] relative top-[-75px] left-[-75px] rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                p {
-                    class: "-rotate-45 text-white text-2xl font-semibold relative w-8 top-[60%] left-[52%]",
-                    "Rummy Nights"
-                }
+            },
+            p {
+                class: "-rotate-45 text-white text-2xl text-justify font-semibold relative w-6 top-6",
+                "Rummy Nights"
             }
-            
             button {
-                class: "mx-auto h-16 col-start-3 relative right-[-30%]",
+                class: "mx-auto h-16 col-start-6",
                 //onclick:
                 img {
-                    class: "h-8 w-8",
+                    class: "",
                     src: "img/user.svg",
                 }
             }
         }
         div {
-            //As the name and image suggests, this will fly away from the app soon.
             img {
-                class: "h-96 w-96 mx-auto",
-                src: "img/fly-away.svg",
+                class: "mx-auto my-16",
+                src: "img/intro.gif",
             }
+            // p {
+            //     class: "mx-auto font-semibold text-2xl text-center pt-8",
+            //     "Welcome to Rummy Nights!"
+            // }
         }
         button {
-            class: "w-full h-32 mx-auto pt-8",
+            class: "w-full mx-auto mt-32",
             onclick: go_to_player_select,
             p {
                 class: "font-bold text-center mr-8 text-lg inline",

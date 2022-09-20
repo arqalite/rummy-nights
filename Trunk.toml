@@ -1,6 +1,5 @@
 [build]
 target = "index.html"
-release = false
 dist = "dist"
 filehash = false
 public_url = "/"
@@ -15,4 +14,4 @@ open = false
 [[hooks]]
 stage = "pre_build"
 command = "tailwindcss"
-command_arguments = ["-o", "./style.css", "--minify"]
+command_arguments = ["-c", "src/js/tailwind.config.js", "-o", "src/style.css", "--minify"]

@@ -30,6 +30,7 @@ static STATE: Atom<Model> = |_| Model {
     screen: data::Screen::Intro,
 };
 
+
 // This is the actual entry-point, and it should be kept as simple as possible.
 // For now just managing the various screens is enough.
 // Other work should be done in its respective modules.

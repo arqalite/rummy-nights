@@ -2,11 +2,12 @@
 //! Here we should only have structs, enums and vectors of Tailwind CSS classes.
 
 use std::collections::BTreeMap;
+use serde::{Serialize, Deserialize};
 
 // MVC-style model, keeping all the app data in one place, so we have a single source of truth.
 // Fermi allows us to have access available everywhere in the app while avoiding complex state management,
 // or passing down values from component to component, which gets complicated, messy and tiresome easily.
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Model {
     pub players: Vec<Player>,
     pub game_status: GameStatus,
@@ -14,7 +15,7 @@ pub struct Model {
 }
 
 // Player data - one of these is constructed for each player in the game 
-#[derive(Eq, Ord, PartialEq, PartialOrd, Clone)]
+#[derive(Eq, Ord, PartialEq, PartialOrd, Clone, Serialize, Deserialize)]
 pub struct Player {
     pub id: usize, //for tracking in the Vec, as order might change (e.g. deletion, sorting)
     pub name: String,
@@ -29,7 +30,7 @@ pub struct Player {
 // Using an enum for the game status might not be the best idea,
 // but it looks neater and removes the need for multiple booleans
 // scattered across the code and passed down from component to component.
-#[derive(PartialEq, Eq, Clone)]
+#[derive(PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum GameStatus {
     NotStarted,
     Ongoing,
@@ -38,7 +39,7 @@ pub enum GameStatus {
 
 // Another enum but for screen management.
 // Add a new entry here if you need to add a screen, then edit the match arms in main.rs.
-#[derive(PartialEq, Eq, Clone)]
+#[derive(PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum Screen {
     Intro,
     PlayerSelect,

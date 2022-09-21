@@ -2,7 +2,10 @@ use dioxus::core::UiEvent;
 use dioxus::events::FormData;
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
+use gloo_storage::{LocalStorage, Storage};
+use gloo_console::log;
 
+use crate::Model;
 use crate::STATE;
 use crate::data::{
     GameStatus,
@@ -70,8 +73,22 @@ fn get_game_status(cx: Scope) -> GameStatus {
 
 pub fn score_table(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
+
+    match LocalStorage::set("state", state.get()) {
+        Ok(_) => (),
+        Err(_) => {
+            log!("Failed to save data.");
+        }
+    };
+
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
-    let columns = COLUMN_NUMBERS[state.players.len() - 2];
+  
+    let columns = if state.players.len() >= 2 {
+        COLUMN_NUMBERS[state.players.len() - 2]
+    } else {
+        "grid-cols-4"
+    };
+    
     let show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
 
     let game_status = get_game_status(cx);
@@ -91,6 +108,18 @@ pub fn score_table(cx: Scope) -> Element {
         }
     };
 
+    let delete_and_exit_game = |_| {
+        LocalStorage::clear();
+        state.set(
+            Model {
+                players: Vec::new(),
+                game_status: GameStatus::NotStarted,
+                screen: Screen::Intro,
+            }
+        );
+  
+    };
+
     cx.render(rsx! (
         div {
             class: "h-16 grid grid-cols-3",
@@ -107,7 +136,7 @@ pub fn score_table(cx: Scope) -> Element {
             }
             button {
                 class: "mx-auto h-16 relative right-[-30%]",
-                //onclick:
+                onclick: delete_and_exit_game,
                 img {
                     class: "h-8 w-8",
                     src: "img/exit.svg",

@@ -4,17 +4,47 @@
 
 use dioxus::prelude::*;
 use dioxus::fermi::use_atom_state;
+use gloo_storage::{LocalStorage, Storage};
+use gloo_console::log;
 
 use crate::STATE;
-use crate::data::Screen;
+use crate::data::{Screen, GameStatus};
 
 pub fn intro(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
+    let mut screen = Screen::PlayerSelect;
 
-    let go_to_player_select = |_| {
+    match LocalStorage::get::<serde_json::Value>("state") {
+        Ok(value) => {
+            match serde_json::from_value::<crate::Model>(value) {
+                Ok(new_state) => {
+                    if new_state.game_status == GameStatus::Ongoing {
+                        state.with_mut(|mut_state| {
+                            log!("State read correctly.");
+                            *mut_state = new_state;
+                            mut_state.screen = Screen::Intro;
+                            screen = Screen::Game;
+                        });
+                    } else {
+                        screen = Screen::PlayerSelect;
+                    };
+                },
+                Err(_) => {
+                    log!("Failed to read state in second match.");
+                    screen = Screen::PlayerSelect;
+                }
+            }
+        },
+        Err(_) => {
+            log!("Failed to read state in first match.");
+            screen = Screen::PlayerSelect;
+        }
+    }
+
+    let go_to_player_select = move |_| {
         state.with_mut(|mut_state| {
-            mut_state.screen = Screen::PlayerSelect;
-        });
+            mut_state.screen = screen.clone();
+        })
     };
 
     cx.render(rsx!(

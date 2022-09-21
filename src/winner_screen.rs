@@ -1,6 +1,7 @@
 
 use dioxus::prelude::*;
 use dioxus::fermi::use_atom_state;
+use gloo_storage::{LocalStorage, Storage};
 
 use crate::STATE;
 use crate::data::{
@@ -30,6 +31,8 @@ pub fn winner_screen(cx: Scope) -> Element {
 
         mut_state.players.reverse();
     });
+
+    LocalStorage::clear();
 
     cx.render(rsx!(
         div {

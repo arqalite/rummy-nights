@@ -3,6 +3,7 @@
 
 use std::collections::BTreeMap;
 use serde::{Serialize, Deserialize};
+use gloo_storage::{LocalStorage, Storage};
 
 // MVC-style model, keeping all the app data in one place, so we have a single source of truth.
 // Fermi allows us to have access available everywhere in the app while avoiding complex state management,
@@ -45,6 +46,19 @@ pub enum Screen {
     PlayerSelect,
     Game,
     Winner
+}
+
+// We use LocalStorage to keep track of unfinished games.
+// This is helpful in case of accidental refreshes, or just browsers bugging out for no reason.
+// However error handling is mostly inexistent for now.
+pub fn read_local_storage() -> Result<Model, &'static str> {
+    match LocalStorage::get::<serde_json::Value>("state") {
+        Ok(json_state) => match serde_json::from_value::<crate::Model>(json_state) {
+                Ok(new_state) => Ok(new_state),
+                Err(_) => Err("Could not parse local storage.")
+        },
+        Err(_) => Err("Could not read local storage.")
+    }
 }
 
 //

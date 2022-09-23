@@ -1,92 +1,91 @@
 //! The intro screen.
-//! It doesn't do much besides showing a Start button and looking nice, 
-//! so the users don't get thrown directly into player select.
+//! It should only handle starting a new game or resuming an ongoing game.
 
 use dioxus::prelude::*;
 use dioxus::fermi::use_atom_state;
-use gloo_storage::{LocalStorage, Storage};
-use gloo_console::log;
 
 use crate::STATE;
-use crate::data::{Screen, GameStatus};
+use crate::data::GameStatus;
+use crate::data::Screen;
+use crate::data::read_local_storage;
 
 pub fn intro(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
-    let mut screen = Screen::PlayerSelect;
+    let mut display_resume = String::from("hidden");
 
-    match LocalStorage::get::<serde_json::Value>("state") {
-        Ok(value) => {
-            match serde_json::from_value::<crate::Model>(value) {
-                Ok(new_state) => {
-                    if new_state.game_status == GameStatus::Ongoing {
-                        state.with_mut(|mut_state| {
-                            log!("State read correctly.");
-                            *mut_state = new_state;
-                            mut_state.screen = Screen::Intro;
-                            screen = Screen::Game;
-                        });
-                    } else {
-                        screen = Screen::PlayerSelect;
-                    };
-                },
-                Err(_) => {
-                    log!("Failed to read state in second match.");
-                    screen = Screen::PlayerSelect;
-                }
-            }
+    match read_local_storage() {
+        Ok(new_state) => {
+            state.with_mut(|mut_state| {
+                mut_state.players = new_state.players;
+                mut_state.game_status = new_state.game_status;
+                if mut_state.game_status == GameStatus::Ongoing {
+                    display_resume = String::from("");
+                };
+            })
         },
-        Err(_) => {
-            log!("Failed to read state in first match.");
-            screen = Screen::PlayerSelect;
-        }
-    }
+        Err(error) => gloo_console::log!(error)
+    };
 
-    let go_to_player_select = move |_| {
+    let new_game = |_| {
         state.with_mut(|mut_state| {
-            mut_state.screen = screen.clone();
+            mut_state.players = Vec::new();
+            mut_state.screen = Screen::PlayerSelect;
+        })
+    };
+
+    let resume_game = |_| {
+        state.with_mut(|mut_state| {
+            mut_state.screen = Screen::Game;
         })
     };
 
     cx.render(rsx!(
         div {
-            class: "grid grid-cols-6",
+            class: "z-0 absolute h-screen w-screen",
             div {
-                class: "w-[200px] h-[200px] relative top-[-75px] left-[-75px] rounded-full",
+                class: "w-[250px] h-[250px] top-[-125px] left-[-125px] absolute rounded-full z-0",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
             },
-            p {
-                class: "-rotate-45 text-white text-2xl text-justify font-semibold relative w-6 top-6",
-                "Rummy Nights"
-            }
-            button {
-                class: "mx-auto h-16 col-start-6",
-                //onclick:
-                img {
-                    class: "",
-                    src: "img/user.svg",
-                }
-            }
+            div {
+                class: "w-[250px] h-[250px] bottom-[-125px] right-[-125px] absolute rounded-full z-0",
+                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+            },
         }
         div {
-            img {
-                class: "mx-auto my-16",
-                src: "img/intro.gif",
+            class: "flex grow flex-col z-10 place-content-evenly",
+            div {
+                class: "",
+                img {
+                    class: "mx-auto max-w-md mt-32",
+                    src: "img/intro.gif",
+                }
             }
-            // p {
-            //     class: "mx-auto font-semibold text-2xl text-center pt-8",
-            //     "Welcome to Rummy Nights!"
-            // }
-        }
-        button {
-            class: "w-full mx-auto mt-32",
-            onclick: go_to_player_select,
-            p {
-                class: "font-bold text-center mr-8 text-lg inline",
-                "Start Game"
-            }
-            img {
-                class: "h-20 w-20 inline align-middle",
-                src: "img/new.svg", 
+            div {
+                class: "w-full mx-auto relative justify-center content-center",
+                button {
+                    class: "grid grid-cols-2 items-center w-full mx-auto my-8",
+                    onclick: new_game,
+                    p {
+                        class: "font-bold text-center text-lg justify-self-end mr-4",
+                        "Start Game"
+                    }
+                    img {
+                        class: "h-20 w-20 justify-self-start ml-4",
+                        src: "img/new.svg", 
+                    }
+                },
+                button {
+                    class: "grid grid-cols-2 items-center w-full mx-auto {display_resume}",
+                    onclick: resume_game,
+                    p {
+                        class: "font-bold text-center text-lg justify-self-end mr-4",
+                        "Resume Game"
+                    }
+                    img {
+                        class: "h-20 w-20 justify-self-start ml-4",
+                        src: "img/resume.svg", 
+                    }
+                }
             }
         }
     ))

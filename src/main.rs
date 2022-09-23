@@ -30,6 +30,7 @@ static STATE: Atom<Model> = |_| Model {
     screen: data::Screen::Intro,
 };
 
+
 // This is the actual entry-point, and it should be kept as simple as possible.
 // For now just managing the various screens is enough.
 // Other work should be done in its respective modules.
@@ -45,9 +46,7 @@ fn app(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            // For now we design for mobile, 
-            // so we're restricting the max-width on desktop to match how a phone would look.
-            class: "mx-auto max-w-md h-screen overflow-hidden",
+            class: "mx-auto h-screen w-screen overflow-hidden relative flex flex-col",
             screen,
         }
     ))

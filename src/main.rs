@@ -6,7 +6,7 @@
 // Make Clippy annoying so the code looks and works somewhat fine.
 // It doesn't understand Dioxus' quirks though, so the warning for underscore bindings stays disabled.
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)] 
-#![allow(clippy::used_underscore_binding)] 
+#![allow(clippy::used_underscore_binding, clippy::use_self)] 
 
 // The code is split into multiple modules:
 //      css.rs holds Tailwind CSS classes so we can change colors programmatically.
@@ -38,7 +38,7 @@ fn app(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
 
     let screen = match state.screen {
-        Screen::Intro => rsx!(intro_screen::intro()),
+        Screen::Intro => rsx!(intro_screen::intro_screen()),
         Screen::PlayerSelect => rsx!(player_select::player_select()),
         Screen::Game => rsx!(score_table::score_table()),
         Screen::Winner => rsx!(winner_screen::winner_screen())
@@ -46,7 +46,7 @@ fn app(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "mx-auto h-screen w-screen overflow-hidden relative flex flex-col",
+            class: "flex flex-col relative mx-auto h-screen w-screen overflow-hidden",
             screen,
         }
     ))

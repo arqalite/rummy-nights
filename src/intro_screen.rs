@@ -40,17 +40,32 @@ pub fn intro_screen(cx: Scope) -> Element {
             },
         }
         div {
-            class: "flex grow flex-col z-10 place-content-evenly",
-            div {
-                class: "",
+            class: "flex flex-col grow z-10 place-content-evenly mt-32",
+            button {
+                class: "absolute top-4 right-4",
+                // TODO: Settings menu.
                 img {
-                    class: "mx-auto max-w-sm md:max-w-md mt-32",
-                    src: "img/intro.gif",
+                    class: "w-10 h-10",
+                    src: "img/user.svg"
                 }
+            },
+            img {
+                class: "mx-auto max-w-sm md:max-w-md",
+                src: "img/intro.gif",
             }
-            div {
-                class: "w-full mx-auto relative justify-center content-center",
-                menu(),
+            menu(),
+            button {
+                class: "flex flex-row items-center justify-center gap-4 w-8/12 h-16 md:w-64 bottom-2 left-2 absolute rounded-full",
+                background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
+                img {
+                    class: "w-10 h-10",
+                    src: "img/share.svg",
+                },
+                p {
+                    class: "text-white font-semibold text-lg text-center",
+                    // TODO: Share functionality.
+                    "Share the app!"
+                }
             }
         }
     ))
@@ -74,31 +89,34 @@ fn menu(cx: Scope) -> Element {
     };
 
     cx.render(rsx!(
-        button {
-            class: "grid grid-cols-2 items-center w-full mx-auto my-8",
-            onclick: new_game,
-            p {
-                class: "font-bold text-center text-lg justify-self-end mr-4",
-                "Start Game"
-            }
-            img {
-                class: "h-20 w-20 justify-self-start ml-4",
-                src: "img/new.svg", 
-            }
-        },
-        is_game_ongoing.then(|| rsx!(
+        div {
+            class: "flex flex-col gap-y-8 max-w-md mx-auto relative mb-16",
             button {
-                class: "grid grid-cols-2 items-center w-full mx-auto",
-                onclick: resume_game,
+                class: "grid grid-cols-6 items-center w-full mx-auto",
+                onclick: new_game,
                 p {
-                    class: "font-bold text-center text-lg justify-self-end mr-4",
-                    "Resume Game"
+                    class: "font-semibold text-center text-2xl col-span-2 col-start-2 justify-self-end",
+                    "Start Game"
                 }
                 img {
-                    class: "h-20 w-20 justify-self-start ml-4",
-                    src: "img/resume.svg", 
+                    class: "h-24 w-24 col-start-5 col-span-2",
+                    src: "img/new.svg", 
                 }
-            }
-        ))
+            },
+            is_game_ongoing.then(|| rsx!(
+                button {
+                    class: "grid grid-cols-6 items-center w-full mx-auto",
+                    onclick: resume_game,
+                    p {
+                        class: "font-semibold text-center text-2xl col-span-3 col-start-1 justify-self-end",
+                        "Resume Game"
+                    }
+                    img {
+                        class: "h-24 w-24 col-start-5 col-span-2",
+                        src: "img/resume.svg", 
+                    }
+                }
+            ))
+        }
     ))
 }

@@ -122,7 +122,7 @@ pub fn score_table(cx: Scope) -> Element {
 
     cx.render(rsx! (
         div {
-            class: "h-16 grid grid-cols-3",
+            class: "h-16 grid grid-cols-3 px-8",
             button {
                 class: "mx-auto h-16 relative left-[-30%]",
                 //onclick:
@@ -145,7 +145,7 @@ pub fn score_table(cx: Scope) -> Element {
         },
         div{
             //Main table
-            class: "grid {columns} mx-auto gap-x-5 pt-2 px-2",
+            class: "grid {columns} mx-auto gap-x-4 pt-2 px-8",
 
             state.players.iter().map(|player| {
                 let sum = player.score.values().sum::<i32>().to_string();

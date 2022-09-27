@@ -30,7 +30,7 @@ pub fn player_select(cx: Scope) -> Element {
     cx.render(rsx!(
         //Navbar
         div {
-            class: "h-16 grid grid-cols-3",
+            class: "h-16 grid grid-cols-3 mx-8 my-4",
             button {
                 class: "mx-auto h-16 relative left-[-30%]",
                 //onclick:
@@ -58,7 +58,7 @@ pub fn player_select(cx: Scope) -> Element {
         },
             //Player select
             div {
-                class: "pt-2 px-2",
+                class: "pt-2 px-8",
                 //Player list
                 players.iter().map(|player| {
                     let background = TITLE_COLORS[player.id-1];
@@ -72,18 +72,18 @@ pub fn player_select(cx: Scope) -> Element {
 
                     rsx!(
                         div {
-                            class: "grid grid-cols-3 gap-4 h-16 rounded-full bg-slate-200 my-2",
+                            class: "grid grid-cols-3 gap-6 items-center h-20 rounded-full bg-slate-200 mb-6 space-x-2",
                             div {
-                                class: "ml-4 my-auto h-8 col-span-2 rounded-full {background}",
+                                class: "flex justify-center items-center ml-4 w-full h-12 col-span-2 rounded-full {background}",
                                 p {
-                                    class: "text-center mx-auto pt-0.5 text-white font-semibold",
+                                    class: "text-white font-semibold",
                                     "{player.name}"
                                 }
                             }
                             div {
-                                class: "col-span-1 my-auto",
+                                class: "col-span-1 my-auto space-x-4",
                                 button {
-                                    class: "mx-auto h-16 px-2",
+                                    class: "mx-auto h-16",
                                     onclick: delete_button,
                                     img {
                                         class: "h-8 w-8",
@@ -91,7 +91,7 @@ pub fn player_select(cx: Scope) -> Element {
                                     }
                                 }
                                 button {
-                                    class: "mx-auto h-16 px-2",
+                                    class: "mx-auto h-16",
                                     //onclick:
                                     img {
                                         class: "h-8 w-8",
@@ -107,16 +107,16 @@ pub fn player_select(cx: Scope) -> Element {
             }
             //Start button
             div {
-                class: "w-32 h-12 mt-16 border-b-4 border-emerald-300 relative left-2/3",
+                class: "w-48 h-18 mt-16 border-b-[6px] border-emerald-300 ml-auto mr-8",
                 button {
                     class: "w-full text-center my-2",
                     onclick: onclick,
                     p {
-                        class: "inline-block pr-2 font-bold",
+                        class: "inline-block pr-2 text-xl font-bold align-middle",
                         "Start game"
                     }
                     img {
-                        class: "h-8 w-8 inline-block",
+                        class: "h-12 w-12 inline-block align-middle",
                         src: "img/arrow.svg"
                     }
                 }
@@ -149,24 +149,22 @@ fn player_input(cx: Scope) -> Element {
         cx.render(
             rsx!(
                 div {
-                    class: "grid grid-cols-3 h-16 rounded-full bg-slate-200 my-2",
-                    div {
-                        class: "ml-4 my-auto h-8 col-span-2 rounded-full",
-                        form {
+                    class: "grid grid-cols-3 items-center h-20 rounded-full bg-slate-200",
+                    form {
+                        class: "col-span-2 w-full",
+                        onsubmit: onsubmit,
+                        prevent_default: "onsubmit",
+                        input {
+                            class: "ml-4 rounded-full w-full mx-auto h-12 ring-1 ring-grey text-center",
+                            placeholder: "Insert player name",
+                            value: "{buffer}",
+                            oninput: oninput,
                             onsubmit: onsubmit,
                             prevent_default: "onsubmit",
-                            input {
-                                class: "rounded-full mx-auto h-8 w-full shadow ring-1 ring-grey text-center",
-                                placeholder: "Insert player name",
-                                value: "{buffer}",
-                                oninput: oninput,
-                                onsubmit: onsubmit,
-                                prevent_default: "onsubmit",
-                            }
                         }
-                    }
+                    },
                     button {
-                        class: "col-span-1 mx-auto text-center h-16",
+                        class: "col-span-1 mx-auto text-center",
                         onclick: onclick,
                         img {
                             class: "h-8 w-8",

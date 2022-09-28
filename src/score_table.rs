@@ -120,12 +120,18 @@ pub fn score_table(cx: Scope) -> Element {
   
     };
 
+    let return_to_select = |_| {
+        state.with_mut(|state| {
+            state.screen = Screen::PlayerSelect;
+        });
+    };
+
     cx.render(rsx! (
         div {
             class: "h-16 grid grid-cols-3 px-8",
             button {
                 class: "mx-auto h-16 relative left-[-30%]",
-                //onclick:
+                onclick: return_to_select,
                 img {
                     class: "h-8 w-8",
                     src: "img/back.svg",

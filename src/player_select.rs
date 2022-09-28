@@ -27,28 +27,34 @@ pub fn player_select(cx: Scope) -> Element {
         };
     };
 
+    let return_to_menu = |_| {
+        state.with_mut(|state|{
+            state.screen = Screen::Intro;
+        });
+    };
+
     cx.render(rsx!(
         //Navbar
         div {
             class: "h-16 grid grid-cols-3 mx-8 my-4",
             button {
                 class: "mx-auto h-16 relative left-[-30%]",
-                //onclick:
+                onclick: return_to_menu,
                 img {
                     class: "h-8 w-8",
                     src: "img/back.svg",
                 }
             }
+            // button {
+            //     class: "mx-auto h-16 relative justify-self-center",
+            //     //onclick:
+            //     img {
+            //         class: "h-8 w-8",
+            //         src: "img/home.svg",
+            //     }
+            // }
             button {
-                class: "mx-auto h-16 relative justify-self-center",
-                //onclick:
-                img {
-                    class: "h-8 w-8",
-                    src: "img/home.svg",
-                }
-            }
-            button {
-                class: "mx-auto h-16 relative right-[-30%]",
+                class: "mx-auto h-16 relative col-start-3 right-[-30%]",
                 //onclick:
                 img {
                     class: "h-8 w-8",

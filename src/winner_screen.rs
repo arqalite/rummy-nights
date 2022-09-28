@@ -5,6 +5,8 @@ use gloo_storage::{LocalStorage, Storage};
 
 use crate::STATE;
 use crate::data::{
+    Model,
+    GameStatus,
     Screen,
     TITLE_COLORS,
     BORDER_COLORS
@@ -19,6 +21,18 @@ pub fn winner_screen(cx: Scope) -> Element {
         state.with_mut(|state| {
             state.screen = Screen::Game;
         });
+    };
+
+    let delete_and_exit_game = |_| {
+        LocalStorage::clear();
+        state.set(
+            Model {
+                players: Vec::new(),
+                game_status: GameStatus::NotStarted,
+                screen: Screen::Intro,
+            }
+        );
+  
     };
     
     state.with_mut(|mut_state| {
@@ -50,7 +64,7 @@ pub fn winner_screen(cx: Scope) -> Element {
             }
             button {
                 class: "mx-auto h-16 relative right-[-30%]",
-                //onclick:
+                onclick: delete_and_exit_game,
                 img {
                     class: "h-8 w-8",
                     src: "img/exit.svg",

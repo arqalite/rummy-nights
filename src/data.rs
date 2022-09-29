@@ -1,13 +1,20 @@
 //! data.rs - data structures and custom types
 //! Here we should only have structs, enums and vectors of Tailwind CSS classes.
 
-use std::collections::BTreeMap;
-use serde::{Serialize, Deserialize};
 use gloo_storage::{LocalStorage, Storage};
+use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
+use dioxus::fermi::Atom;
 
 // MVC-style model, keeping all the app data in one place, so we have a single source of truth.
 // Fermi allows us to have access available everywhere in the app while avoiding complex state management,
 // or passing down values from component to component, which gets complicated, messy and tiresome easily.
+pub static STATE: Atom<Model> = |_| Model {
+    players: Vec::new(),
+    game_status: GameStatus::NotStarted,
+    screen: Screen::Intro,
+};
+
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Model {
     pub players: Vec<Player>,
@@ -15,7 +22,7 @@ pub struct Model {
     pub screen: Screen,
 }
 
-// Player data - one of these is constructed for each player in the game 
+// Player data - one of these is constructed for each player in the game
 #[derive(Eq, Ord, PartialEq, PartialOrd, Clone, Serialize, Deserialize)]
 pub struct Player {
     pub id: usize, //for tracking in the Vec, as order might change (e.g. deletion, sorting)
@@ -45,7 +52,7 @@ pub enum Screen {
     Intro,
     PlayerSelect,
     Game,
-    Winner
+    Winner,
 }
 
 // We use LocalStorage to keep track of unfinished games.
@@ -54,10 +61,10 @@ pub enum Screen {
 pub fn read_local_storage() -> Result<Model, &'static str> {
     match LocalStorage::get::<serde_json::Value>("state") {
         Ok(json_state) => match serde_json::from_value::<crate::Model>(json_state) {
-                Ok(new_state) => Ok(new_state),
-                Err(_) => Err("Could not parse local storage.")
+            Ok(new_state) => Ok(new_state),
+            Err(_) => Err("Could not parse local storage."),
         },
-        Err(_) => Err("Could not read local storage.")
+        Err(_) => Err("Could not read local storage."),
     }
 }
 
@@ -85,8 +92,4 @@ pub static CARET_COLORS: [&str; 4] = [
     "caret-violet-400",
 ];
 
-pub static COLUMN_NUMBERS: [&str; 3] = [
-    "grid-cols-2",
-    "grid-cols-3",
-    "grid-cols-4"
-];
+pub static COLUMN_NUMBERS: [&str; 3] = ["grid-cols-2", "grid-cols-3", "grid-cols-4"];

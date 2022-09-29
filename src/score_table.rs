@@ -2,19 +2,12 @@ use dioxus::core::UiEvent;
 use dioxus::events::FormData;
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
-use gloo_storage::{LocalStorage, Storage};
 use gloo_console::log;
+use gloo_storage::{LocalStorage, Storage};
 
+use crate::data::{GameStatus, Screen, BORDER_COLORS, CARET_COLORS, COLUMN_NUMBERS, TITLE_COLORS};
 use crate::Model;
 use crate::STATE;
-use crate::data::{
-    GameStatus,
-    Screen,
-    COLUMN_NUMBERS,
-    TITLE_COLORS,
-    BORDER_COLORS,
-    CARET_COLORS
-};
 
 static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
@@ -82,13 +75,13 @@ pub fn score_table(cx: Scope) -> Element {
     };
 
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
-  
+
     let columns = if state.players.len() >= 2 {
         COLUMN_NUMBERS[state.players.len() - 2]
     } else {
         "grid-cols-4"
     };
-    
+
     let show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
 
     let game_status = get_game_status(cx);
@@ -110,14 +103,11 @@ pub fn score_table(cx: Scope) -> Element {
 
     let delete_and_exit_game = |_| {
         LocalStorage::clear();
-        state.set(
-            Model {
-                players: Vec::new(),
-                game_status: GameStatus::NotStarted,
-                screen: Screen::Intro,
-            }
-        );
-  
+        state.set(Model {
+            players: Vec::new(),
+            game_status: GameStatus::NotStarted,
+            screen: Screen::Intro,
+        });
     };
 
     let return_to_select = |_| {
@@ -241,7 +231,7 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
             prevent_default: "onsubmit",
             input {
                 class: "{caret} {border} text-sm appearance-none font-light bg-transparent h-8 w-full mb-2 text-center rounded focus:border-b-4 border-b-2",
-                style: "-moz-appearance:textfield",
+                style: "-moz-appearance:textfield; -webkit-appearance: none; margin: 0;",
                 placeholder: "Insert score",
                 value: "{buffer}",
                 onsubmit: onsubmit,

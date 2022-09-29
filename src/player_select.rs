@@ -6,20 +6,14 @@ use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 use std::collections::BTreeMap;
 
+use crate::data::{GameStatus, Player, Screen, TITLE_COLORS};
 use crate::STATE;
-use crate::data::{
-    GameStatus, 
-    Player, 
-    Screen,
-    TITLE_COLORS
-};
 
 pub fn player_select(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
-    let players = &state.players;
 
     let onclick = |_| {
-        if players.len() >= 2 {
+        if state.players.len() >= 2 {
             state.with_mut(|state| {
                 state.game_status = GameStatus::Ongoing;
                 state.screen = Screen::Game;
@@ -28,45 +22,46 @@ pub fn player_select(cx: Scope) -> Element {
     };
 
     let return_to_menu = |_| {
-        state.with_mut(|state|{
+        state.with_mut(|state| {
             state.screen = Screen::Intro;
         });
     };
 
     cx.render(rsx!(
-        //Navbar
         div {
-            class: "h-16 grid grid-cols-3 mx-8 my-4",
-            button {
-                class: "mx-auto h-16 relative left-[-30%]",
-                onclick: return_to_menu,
-                img {
-                    class: "h-8 w-8",
-                    src: "img/back.svg",
+            class: "flex flex-col relative mx-auto h-screen w-screen overflow-hidden",    
+            div {
+                class: "h-16 grid grid-cols-3 mx-8 my-4",
+                button {
+                    class: "mx-auto h-16 relative left-[-30%]",
+                    onclick: return_to_menu,
+                    img {
+                        class: "h-8 w-8",
+                        src: "img/back.svg",
+                    }
                 }
-            }
-            // button {
-            //     class: "mx-auto h-16 relative justify-self-center",
-            //     //onclick:
-            //     img {
-            //         class: "h-8 w-8",
-            //         src: "img/home.svg",
-            //     }
-            // }
-            button {
-                class: "mx-auto h-16 relative col-start-3 right-[-30%]",
-                //onclick:
-                img {
-                    class: "h-8 w-8",
-                    src: "img/save.svg",
+                // button {
+                //     class: "mx-auto h-16 relative justify-self-center",
+                //     //onclick:
+                //     img {
+                //         class: "h-8 w-8",
+                //         src: "img/home.svg",
+                //     }
+                // }
+                button {
+                    class: "mx-auto h-16 relative col-start-3 right-[-30%]",
+                    //onclick:
+                    img {
+                        class: "h-8 w-8",
+                        src: "img/save.svg",
+                    }
                 }
-            }
-        },
+            },
             //Player select
             div {
                 class: "pt-2 px-8",
                 //Player list
-                players.iter().map(|player| {
+                state.players.iter().map(|player| {
                     let background = TITLE_COLORS[player.id-1];
                     let delete_button = |_| {
                         state.with_mut(|mut_state| {
@@ -110,7 +105,7 @@ pub fn player_select(cx: Scope) -> Element {
                 }),
                 //Name input
                 player_input(),
-            }
+            },
             //Start button
             div {
                 class: "w-48 h-18 mt-16 border-b-[6px] border-emerald-300 ml-auto mr-8",
@@ -127,6 +122,7 @@ pub fn player_select(cx: Scope) -> Element {
                     }
                 }
             }
+        }
     ))
 }
 
@@ -152,34 +148,32 @@ fn player_input(cx: Scope) -> Element {
     };
 
     if state.players.len() <= 3 {
-        cx.render(
-            rsx!(
-                div {
-                    class: "grid grid-cols-3 items-center h-20 rounded-full bg-slate-200",
-                    form {
-                        class: "col-span-2 w-full",
+        cx.render(rsx!(
+            div {
+                class: "grid grid-cols-3 items-center h-20 rounded-full bg-slate-200",
+                form {
+                    class: "col-span-2 w-full",
+                    onsubmit: onsubmit,
+                    prevent_default: "onsubmit",
+                    input {
+                        class: "ml-4 rounded-full w-full mx-auto h-12 ring-1 ring-grey text-center",
+                        placeholder: "Insert player name",
+                        value: "{buffer}",
+                        oninput: oninput,
                         onsubmit: onsubmit,
                         prevent_default: "onsubmit",
-                        input {
-                            class: "ml-4 rounded-full w-full mx-auto h-12 ring-1 ring-grey text-center",
-                            placeholder: "Insert player name",
-                            value: "{buffer}",
-                            oninput: oninput,
-                            onsubmit: onsubmit,
-                            prevent_default: "onsubmit",
-                        }
-                    },
-                    button {
-                        class: "col-span-1 mx-auto text-center",
-                        onclick: onclick,
-                        img {
-                            class: "h-8 w-8",
-                            src: "img/add-player.svg",
-                        },
                     }
+                },
+                button {
+                    class: "col-span-1 mx-auto text-center",
+                    onclick: onclick,
+                    img {
+                        class: "h-8 w-8",
+                        src: "img/add-player.svg",
+                    },
                 }
-            )
-        )
+            }
+        ))
     } else {
         None
     }

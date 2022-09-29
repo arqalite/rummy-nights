@@ -1,17 +1,9 @@
-
-use dioxus::prelude::*;
 use dioxus::fermi::use_atom_state;
+use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, Storage};
 
+use crate::data::{GameStatus, Model, Screen, BORDER_COLORS, TITLE_COLORS};
 use crate::STATE;
-use crate::data::{
-    Model,
-    GameStatus,
-    Screen,
-    TITLE_COLORS,
-    BORDER_COLORS
-};
-
 
 pub fn winner_screen(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
@@ -25,21 +17,18 @@ pub fn winner_screen(cx: Scope) -> Element {
 
     let delete_and_exit_game = |_| {
         LocalStorage::clear();
-        state.set(
-            Model {
-                players: Vec::new(),
-                game_status: GameStatus::NotStarted,
-                screen: Screen::Intro,
-            }
-        );
-  
+        state.set(Model {
+            players: Vec::new(),
+            game_status: GameStatus::NotStarted,
+            screen: Screen::Intro,
+        });
     };
-    
+
     state.with_mut(|mut_state| {
-        mut_state.players.sort_by(|a,b| {
+        mut_state.players.sort_by(|a, b| {
             let temp_sum_a = a.score.values().sum::<i32>();
             let temp_sum_b = b.score.values().sum::<i32>();
-            
+
             temp_sum_a.cmp(&temp_sum_b)
         });
 

@@ -13,5 +13,6 @@
         }
     ],
     "start_url": "/",
+    "id": "/",
     "display": "standalone"
 }

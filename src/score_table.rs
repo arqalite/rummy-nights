@@ -119,19 +119,18 @@ pub fn score_table(cx: Scope) -> Element {
     cx.render(rsx! (
         div {
             class: "h-16 grid grid-cols-3 px-8",
-            button {
-                class: "mx-auto h-16 relative left-[-30%]",
-                onclick: return_to_select,
-                img {
-                    class: "h-8 w-8",
-                    src: "img/back.svg",
+            game_continues.then(|| rsx!(
+                button {
+                    class: "mx-auto h-16 col-start-1 relative left-[-30%]",
+                    onclick: return_to_select,
+                    img {
+                        class: "h-8 w-8",
+                        src: "img/back.svg",
+                    }
                 }
-            }
-            p {
-                ""
-            }
+            )),
             button {
-                class: "mx-auto h-16 relative right-[-30%]",
+                class: "mx-auto h-16 col-start-3 relative right-[-30%]",
                 onclick: delete_and_exit_game,
                 img {
                     class: "h-8 w-8",

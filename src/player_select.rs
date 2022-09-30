@@ -2,7 +2,7 @@
 
 use dioxus::core::UiEvent;
 use dioxus::events::FormData;
-use dioxus::fermi::use_atom_state;
+use fermi::use_atom_state;
 use dioxus::prelude::*;
 use std::collections::BTreeMap;
 
@@ -104,7 +104,7 @@ pub fn player_select(cx: Scope) -> Element {
                     )
                 }),
                 //Name input
-                player_input(),
+                player_input(cx),
             },
             //Start button
             div {

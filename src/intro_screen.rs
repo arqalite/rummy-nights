@@ -2,7 +2,7 @@
 //! It should only look nice and serve as a starting point
 //! for creating a new game or resuming an existing one.
 
-use dioxus::fermi::use_atom_state;
+use fermi::use_atom_state;
 use dioxus::prelude::*;
 
 use crate::data::read_local_storage;
@@ -55,7 +55,7 @@ pub fn intro_screen(cx: Scope) -> Element {
                     class: "mx-auto max-w-sm md:max-w-md",
                     src: "img/intro.gif",
                 }
-                menu(),
+                menu(cx),
                 button {
                     class: "flex flex-row items-center justify-center gap-4 w-8/12 h-16 md:w-64 bottom-2 left-2 absolute rounded-full",
                     background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",

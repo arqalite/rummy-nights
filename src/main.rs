@@ -20,7 +20,7 @@ mod score_table;
 mod winner_screen;
 
 use data::{Model, Screen, STATE};
-use dioxus::fermi::use_atom_state;
+use fermi::use_atom_state;
 use dioxus::prelude::*;
 
 // Here we should just show the individual screens depending on the state.
@@ -29,13 +29,13 @@ fn app(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
 
     match state.screen {
-        Screen::Intro => cx.render(rsx!(intro_screen::intro_screen())),
-        Screen::PlayerSelect => cx.render(rsx!(player_select::player_select())),
-        Screen::Game => cx.render(rsx!(score_table::score_table())),
-        Screen::Winner => cx.render(rsx!(winner_screen::winner_screen())),
+        Screen::Intro => cx.render(rsx!(intro_screen::intro_screen(cx))),
+        Screen::PlayerSelect => cx.render(rsx!(player_select::player_select(cx))),
+        Screen::Game => cx.render(rsx!(score_table::score_table(cx))),
+        Screen::Winner => cx.render(rsx!(winner_screen::winner_screen(cx))),
     }
 }
 
 fn main() {
-    dioxus::web::launch(app);
+    dioxus_web::launch(app);
 }

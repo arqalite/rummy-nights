@@ -4,7 +4,7 @@
 use gloo_storage::{LocalStorage, Storage};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use dioxus::fermi::Atom;
+use fermi::Atom;
 
 // MVC-style model, keeping all the app data in one place, so we have a single source of truth.
 // Fermi allows us to have access available everywhere in the app while avoiding complex state management,

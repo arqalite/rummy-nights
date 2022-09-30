@@ -230,7 +230,7 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
             prevent_default: "onsubmit",
             input {
                 class: "{caret} {border} text-sm appearance-none font-light bg-transparent h-8 w-full mb-2 text-center rounded focus:border-b-4 border-b-2",
-                style: "-moz-appearance:textfield; -webkit-appearance: none; margin: 0;",
+                style: "-moz-appearance:textfield",
                 placeholder: "Insert score",
                 value: "{buffer}",
                 onsubmit: onsubmit,

@@ -57,7 +57,7 @@ fn get_game_status(cx: Scope) -> GameStatus {
         }
     }
 
-    if has_reached_max && are_columns_equal {
+    if has_reached_max && are_columns_equal && no_of_winners == 1 {
         GameStatus::Finished(winner_name)
     } else {
         GameStatus::Ongoing

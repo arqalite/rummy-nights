@@ -13,9 +13,7 @@ publish = false
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-dioxus = {git = "https://github.com/dioxuslabs/dioxus.git"}
-dioxus-web = {git = "https://github.com/dioxuslabs/dioxus.git"}
-fermi = { git = "https://github.com/dioxuslabs/dioxus.git"}
+dioxus = {version = "0.2", features = ["web", "fermi"]}
 gloo-storage = "0.2.2"
 gloo-console = "0.2.3"
 serde = { version = "1.0.144", features = ["derive"] }

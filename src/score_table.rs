@@ -1,6 +1,6 @@
 use dioxus::core::UiEvent;
 use dioxus::events::FormData;
-use fermi::{use_atom_state, Atom};
+use dioxus::fermi::{use_atom_state, Atom};
 use dioxus::prelude::*;
 use gloo_console::log;
 use gloo_storage::{LocalStorage, Storage};

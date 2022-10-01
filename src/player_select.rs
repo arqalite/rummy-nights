@@ -2,7 +2,7 @@
 
 use dioxus::core::UiEvent;
 use dioxus::events::FormData;
-use fermi::use_atom_state;
+use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 use std::collections::BTreeMap;
 
@@ -104,7 +104,7 @@ pub fn player_select(cx: Scope) -> Element {
                     )
                 }),
                 //Name input
-                player_input(cx),
+                player_input(),
             },
             //Start button
             div {
@@ -127,7 +127,7 @@ pub fn player_select(cx: Scope) -> Element {
 }
 
 fn player_input(cx: Scope) -> Element {
-    let buffer = use_state(&cx, String::new);
+    let buffer = use_state(&cx, || String::new());
     let state = use_atom_state(&cx, STATE);
 
     let onsubmit = move |_| {
@@ -143,7 +143,7 @@ fn player_input(cx: Scope) -> Element {
         }
     };
 
-    let oninput = move |evt: UiEvent<FormData>| {
+    let oninput = |evt: UiEvent<FormData>| {
         buffer.set(evt.value.clone());
     };
 

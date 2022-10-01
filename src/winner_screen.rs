@@ -1,4 +1,4 @@
-use fermi::use_atom_state;
+use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, Storage};
 

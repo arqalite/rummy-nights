@@ -58,7 +58,7 @@ fn get_game_status(cx: Scope) -> GameStatus {
     }
 
     if has_reached_max && are_columns_equal && no_of_winners == 1 {
-        GameStatus::Finished(winner_name)
+        GameStatus::Finished
     } else {
         GameStatus::Ongoing
     }
@@ -87,7 +87,7 @@ pub fn score_table(cx: Scope) -> Element {
     let game_status = get_game_status(cx);
 
     match game_status {
-        GameStatus::Finished(_) => {
+        GameStatus::Finished => {
             game_continues.set(false);
             if **show_end_once {
                 state.with_mut(|state| {
@@ -118,79 +118,97 @@ pub fn score_table(cx: Scope) -> Element {
 
     cx.render(rsx! (
         div {
-            class: "h-16 grid grid-cols-3 px-8",
-            game_continues.then(|| rsx!(
-                button {
-                    class: "mx-auto h-16 col-start-1 relative left-[-30%]",
-                    onclick: return_to_select,
-                    img {
-                        class: "h-8 w-8",
-                        src: "img/back.svg",
-                    }
-                }
-            )),
-            button {
-                class: "mx-auto h-16 col-start-3 relative right-[-30%]",
-                onclick: delete_and_exit_game,
-                img {
-                    class: "h-8 w-8",
-                    src: "img/exit.svg",
+            class: "flex flex-col relative mx-auto h-screen w-screen overflow-hidden px-8",
+            div {
+                class: "z-0 absolute h-screen w-screen",
+                div {
+                    class: "w-[500px] h-[500px] bottom-[-250px] right-[-250px] absolute rounded-full z-0",
+                    background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
                 }
             }
-        },
-        div{
-            //Main table
-            class: "grid {columns} mx-auto gap-x-4 pt-2 px-8",
-
-            state.players.iter().map(|player| {
-                let sum = player.score.values().sum::<i32>().to_string();
-                let background = TITLE_COLORS[player.id-1];
-                let border = BORDER_COLORS[player.id-1];
-
-                rsx!(
-                    div{
-                        //Column for each player
-                        class: "",
-                        div {
-                            // Name - first cell
-                            class: "rounded-full h-8 {background} py-1 mb-2 shadow",
-                            p {
-                                class: "text-center my-auto text-white font-semibold",
-                                "{player.name}"
-                            }
-                        }
-                        div {
-                            //Scores - dynamic
-                            player.score.values().map(|score| {
-                                let score_text = score.to_string();
-                                rsx!(
-                                    p {
-                                        class: "rounded text-sm text-center border-b-2 mb-2 h-8 {border}",
-                                        "{score_text}"
-                                    }
-                                )
-                            })
-                        }
-                        div {
-                            //Input box
-                            game_continues.then( ||
-                                rsx!(
-                                crate::score_table::score_input{
-                                    id: player.id
-                                })
-                            )
-                        }
-                        div {
-                            //Total box
-                            class: "rounded text-sm border-b-[7px] {border} h-8",
-                            p {
-                                class: "text-center text-lg font-semibold",
-                                "{sum}"
-                            }
+            div {
+                class: "z-10 h-16 grid grid-cols-3",
+                game_continues.then(|| rsx!(
+                    button {
+                        class: "mx-auto h-16 col-start-1 relative left-[-50%]",
+                        onclick: return_to_select,
+                        img {
+                            class: "h-8 w-8",
+                            src: "img/back.svg",
                         }
                     }
-                )
-            })
+                )),
+                button {
+                    class: "mx-auto h-16 col-start-3 relative right-[-50%]",
+                    onclick: delete_and_exit_game,
+                    img {
+                        class: "h-8 w-8",
+                        src: "img/exit.svg",
+                    }
+                }
+            },
+            div {
+                class: "w-full rounded-full flex self-center mx-auto mb-8",
+                //background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                p {
+                    class: "mx-auto self-center font-semibold text-lg text-black border-b-2 border-emerald-300",
+                    "Good luck and have fun!"
+                }
+            },
+            div{
+                //Main table
+                class: "z-10 grid {columns} mx-auto gap-x-4 pt-2",
+
+                state.players.iter().map(|player| {
+                    let sum = player.score.values().sum::<i32>().to_string();
+                    let background = TITLE_COLORS[player.id-1];
+                    let border = BORDER_COLORS[player.id-1];
+
+                    rsx!(
+                        div{
+                            //Column for each player
+                            class: "",
+                            div {
+                                // Name - first cell
+                                class: "rounded-full h-8 {background} py-1 mb-2 shadow",
+                                p {
+                                    class: "text-center my-auto text-white font-semibold",
+                                    "{player.name}"
+                                }
+                            }
+                            div {
+                                //Scores - dynamic
+                                player.score.values().map(|score| {
+                                    let score_text = score.to_string();
+                                    rsx!(
+                                        p {
+                                            class: "rounded text-md text-center border-b-4 mb-2 h-8 {border}",
+                                            "{score_text}"
+                                        }
+                                    )
+                                })
+                            }
+                            div {
+                                //Input box
+                                game_continues.then( ||
+                                    rsx!(
+                                    crate::score_table::score_input{
+                                        id: player.id
+                                    })
+                                )
+                            }
+                            div {
+                                //Total box
+                                class: "rounded text-sm border-b-[7px] {border} h-8",
+                                p {
+                                    class: "text-center text-lg font-semibold",
+                                    "{sum}"
+                                }
+                            }
+                        }
+                    )
+                })
+            }
         }
     ))
 }
@@ -229,7 +247,7 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
             onsubmit: onsubmit,
             prevent_default: "onsubmit",
             input {
-                class: "{caret} {border} text-sm appearance-none font-light bg-transparent h-8 w-full mb-2 text-center rounded focus:border-b-4 border-b-2",
+                class: "{caret} {border} text-sm appearance-none font-light bg-transparent h-8 w-full mb-2 text-center rounded focus:border-b-[8px] border-b-4",
                 style: "-moz-appearance:textfield",
                 placeholder: "Insert score",
                 value: "{buffer}",

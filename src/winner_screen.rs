@@ -5,8 +5,12 @@ use gloo_storage::{LocalStorage, Storage};
 use crate::data::{GameStatus, Model, Screen, BORDER_COLORS, TITLE_COLORS};
 use crate::STATE;
 
+static HAS_SORTED_ONCE: Atom<bool> = |_| false;
+
 pub fn winner_screen(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
+    let is_sorted = use_atom_state(&cx, HAS_SORTED_ONCE);
+
     let mut player_count = 0;
 
     let return_to_table = |_| {
@@ -24,16 +28,20 @@ pub fn winner_screen(cx: Scope) -> Element {
         });
     };
 
-    state.with_mut(|mut_state| {
-        mut_state.players.sort_by(|a, b| {
-            let temp_sum_a = a.score.values().sum::<i32>();
-            let temp_sum_b = b.score.values().sum::<i32>();
+    if !is_sorted {
+        state.with_mut(|mut_state| {
+            mut_state.players.sort_by(|a, b| {
+                let temp_sum_a = a.score.values().sum::<i32>();
+                let temp_sum_b = b.score.values().sum::<i32>();
 
-            temp_sum_a.cmp(&temp_sum_b)
+                temp_sum_a.cmp(&temp_sum_b)
+            });
+
+            mut_state.players.reverse();
         });
 
-        mut_state.players.reverse();
-    });
+        is_sorted.set(true);
+    };
 
     LocalStorage::clear();
 

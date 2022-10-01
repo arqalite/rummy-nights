@@ -1,7 +1,5 @@
 //! Rummy Nights, a rummy score counter written with Rust/Dioxus and Tailwind CSS.
-//!
-//! This module is the app entry-point, mostly setting up the model/state and rendering the initial screens.
-//! It should be as basic as possible, with the majority of logic being written in separate modules.
+//! This is the entry-point, should be kept pretty minimal, just managing the global state and various screens of the app.
 
 // Make Clippy annoying so the code looks and works somewhat fine.
 // It doesn't understand Dioxus' quirks though, so the warning for underscore bindings stays disabled.

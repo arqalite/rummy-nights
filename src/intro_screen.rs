@@ -33,11 +33,11 @@ pub fn intro_screen(cx: Scope) -> Element {
             div {
                 class: "z-0 absolute h-screen w-screen",
                 div {
-                    class: "w-[250px] h-[250px] top-[-125px] left-[-125px] absolute rounded-full z-0",
+                    class: "w-[300px] h-[300px] top-[-150px] left-[-150px] absolute rounded-full z-0",
                     background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
                 },
                 div {
-                    class: "w-[250px] h-[250px] bottom-[-125px] right-[-125px] absolute rounded-full z-0",
+                    class: "w-[300px] h-[300px] bottom-[-150px] right-[-150px] absolute rounded-full z-0",
                     background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
                 },
             }
@@ -59,14 +59,13 @@ pub fn intro_screen(cx: Scope) -> Element {
                 button {
                     class: "flex flex-row items-center justify-center gap-4 w-8/12 h-16 md:w-64 bottom-2 left-2 absolute rounded-full",
                     background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
-                    img {
-                        class: "w-10 h-10",
-                        src: "img/share.svg",
-                    },
+                    // img {
+                    //     class: "w-10 h-10",
+                    //     src: "img/share.svg",
+                    // },
                     p {
                         class: "text-white font-semibold text-lg text-center",
-                        // TODO: Share functionality.
-                        "Share the app!"
+                        "v0.1.0"
                     }
                 }
             }

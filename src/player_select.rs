@@ -29,27 +29,26 @@ pub fn player_select(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "flex flex-col relative mx-auto h-screen w-screen overflow-hidden",    
+            class: "flex flex-col relative mx-auto h-screen w-screen overflow-hidden px-8",
             div {
-                class: "h-16 grid grid-cols-3 mx-8 my-4",
+                class: "z-0 absolute h-screen w-screen",
+                div {
+                    class: "w-[300px] h-[300px] bottom-[-150px] left-[-150px] absolute rounded-full z-0",
+                    background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                }
+            }    
+            div {
+                class: "h-16 grid grid-cols-3 z-10",
                 button {
-                    class: "mx-auto h-16 relative left-[-30%]",
+                    class: "mx-auto h-16 relative left-[-50%]",
                     onclick: return_to_menu,
                     img {
                         class: "h-8 w-8",
                         src: "img/back.svg",
                     }
                 }
-                // button {
-                //     class: "mx-auto h-16 relative justify-self-center",
-                //     //onclick:
-                //     img {
-                //         class: "h-8 w-8",
-                //         src: "img/home.svg",
-                //     }
-                // }
                 button {
-                    class: "mx-auto h-16 relative col-start-3 right-[-30%]",
+                    class: "mx-auto h-16 relative col-start-3 right-[-50%]",
                     //onclick:
                     img {
                         class: "h-8 w-8",
@@ -59,7 +58,15 @@ pub fn player_select(cx: Scope) -> Element {
             },
             //Player select
             div {
-                class: "pt-2 px-8",
+                class: "z-10",
+                div {
+                    class: "w-full rounded-full flex self-center mx-auto mb-8",
+                    //background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    p {
+                        class: "mx-auto self-center font-semibold text-lg text-black border-b-2 border-emerald-300",
+                        "Add up to 4 players"
+                    }
+                },
                 //Player list
                 state.players.iter().map(|player| {
                     let background = TITLE_COLORS[player.id-1];
@@ -108,7 +115,7 @@ pub fn player_select(cx: Scope) -> Element {
             },
             //Start button
             div {
-                class: "w-48 h-18 mt-16 border-b-[6px] border-emerald-300 ml-auto mr-8",
+                class: "z-10 w-48 h-18 mt-16 border-b-[6px] border-emerald-300 ml-auto mr-8",
                 button {
                     class: "w-full text-center my-2",
                     onclick: onclick,
@@ -127,7 +134,7 @@ pub fn player_select(cx: Scope) -> Element {
 }
 
 fn player_input(cx: Scope) -> Element {
-    let buffer = use_state(&cx, String::new);
+    let buffer = use_state(&cx, || String::new());
     let state = use_atom_state(&cx, STATE);
 
     let onsubmit = move |_| {
@@ -143,7 +150,7 @@ fn player_input(cx: Scope) -> Element {
         }
     };
 
-    let oninput = move |evt: UiEvent<FormData>| {
+    let oninput = |evt: UiEvent<FormData>| {
         buffer.set(evt.value.clone());
     };
 

@@ -42,7 +42,7 @@ pub struct Player {
 pub enum GameStatus {
     NotStarted,
     Ongoing,
-    Finished(String), //This String holds the winner's name
+    Finished, //This String holds the winner's name
 }
 
 // Another enum but for screen management.

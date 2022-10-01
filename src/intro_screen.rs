@@ -65,8 +65,7 @@ pub fn intro_screen(cx: Scope) -> Element {
                     // },
                     p {
                         class: "text-white font-semibold text-lg text-center",
-                        // TODO: Share functionality.
-                        "dev branch - reverted to 0.2 :)"
+                        "v0.1.0 - RC 1"
                     }
                 }
             }

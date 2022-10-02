@@ -57,12 +57,8 @@ pub fn intro_screen(cx: Scope) -> Element {
                 }
                 menu(),
                 button {
-                    class: "flex flex-row items-center justify-center gap-4 w-8/12 h-16 md:w-64 bottom-2 left-2 absolute rounded-full",
+                    class: "flex flex-row items-center justify-center gap-4 w-20 bottom-2 left-2 absolute rounded-full",
                     background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
-                    // img {
-                    //     class: "w-10 h-10",
-                    //     src: "img/share.svg",
-                    // },
                     p {
                         class: "text-white font-semibold text-lg text-center",
                         "v0.1.0"

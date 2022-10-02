@@ -18,13 +18,29 @@ mod score_table;
 mod winner_screen;
 
 use data::{Model, Screen, STATE};
+use data::read_local_storage;
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 
-// Here we should just show the individual screens depending on the state.
+// Two things are done here, setting up the state and screens,
+// and checking for LocalStorage to see if an ongoing game exists (and loading it into memory).
 // Other work should be done in other modules.
 fn app(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
+
+    match read_local_storage() {
+        Ok(new_state) => {
+            state.with_mut(|mut_state| {
+                mut_state.players = new_state.players;
+                mut_state.game_status = new_state.game_status;
+            });
+        }
+        // It's no big deal if an existing game cannot be read,
+        // we'll just throw an error message in the console and continue.
+        // We could inform the user that it couldn't be read,
+        // but there's nothing they could do anyway.
+        Err(error) => gloo_console::log!(error),
+    };
 
     match state.screen {
         Screen::Intro => cx.render(rsx!(intro_screen::intro_screen())),

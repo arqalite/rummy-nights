@@ -5,28 +5,11 @@
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 
-use crate::data::read_local_storage;
 use crate::data::GameStatus;
 use crate::data::Screen;
 use crate::STATE;
 
 pub fn intro_screen(cx: Scope) -> Element {
-    let state = use_atom_state(&cx, STATE);
-
-    match read_local_storage() {
-        Ok(new_state) => {
-            state.with_mut(|mut_state| {
-                mut_state.players = new_state.players;
-                mut_state.game_status = new_state.game_status;
-            });
-        }
-        // It's no big deal if an existing game cannot be read,
-        // we'll just throw an error message in the console and continue.
-        // We could inform the user that it couldn't be read,
-        // but there's nothing they could do anyway.
-        Err(error) => gloo_console::log!(error),
-    };
-
     cx.render(rsx!(
         div {
             class: "flex flex-col relative mx-auto h-screen w-screen overflow-hidden",    

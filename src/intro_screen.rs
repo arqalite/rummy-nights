@@ -11,41 +11,41 @@ use crate::STATE;
 
 pub fn intro_screen(cx: Scope) -> Element {
     cx.render(rsx!(
-        div {
-            class: "flex flex-col relative mx-auto h-screen w-screen overflow-hidden",    
-            div {
+        div { //Screen container
+            class: "flex relative h-screen overflow-hidden",
+
+            div { // Decorative spheres
                 class: "z-0 absolute h-screen w-screen",
                 div {
                     class: "w-[300px] h-[300px] top-[-150px] left-[-150px] absolute rounded-full z-0",
                     background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                },
+                }
                 div {
                     class: "w-[300px] h-[300px] bottom-[-150px] right-[-150px] absolute rounded-full z-0",
                     background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                },
+                }
             }
-            div {
-                class: "flex flex-col grow z-10 place-content-evenly mt-32",
-                button {
-                    class: "absolute top-4 right-4",
-                    // TODO: Settings menu.
-                    img {
-                        class: "w-10 h-10",
-                        src: "img/user.svg"
-                    }
-                },
+
+            button { // Settings button - fixed to top-left corner
+                class: "absolute top-4 right-4",
+                // TODO: Settings menu.
                 img {
-                    class: "mx-auto max-w-sm md:max-w-md",
+                    class: "w-10 h-10",
+                    src: "img/user.svg"
+                }
+            }
+
+            div { // Logo and menu area
+                class : "z-10 flex flex-col grow place-content-evenly mt-16",
+                img {
+                    class: "mx-auto max-w-sm",
                     src: "img/intro.gif",
                 }
-                menu(),
-                button {
-                    class: "flex flex-row items-center justify-center gap-4 w-20 bottom-2 left-2 absolute rounded-full",
+                menu()
+                p {
+                    class: "text-white font-semibold text-lg text-center w-20 absolute bottom-4 left-4 rounded-full",
                     background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
-                    p {
-                        class: "text-white font-semibold text-lg text-center",
-                        "v0.1.0"
-                    }
+                    "v0.1.0"
                 }
             }
         }

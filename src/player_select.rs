@@ -4,9 +4,8 @@ use dioxus::core::UiEvent;
 use dioxus::events::FormData;
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
-use std::collections::BTreeMap;
 
-use crate::data::{GameStatus, Player, Screen, TITLE_COLORS};
+use crate::data::{GameStatus, Screen, TITLE_COLORS, add_player};
 use crate::STATE;
 
 pub fn player_select(cx: Scope) -> Element {
@@ -23,7 +22,7 @@ pub fn player_select(cx: Scope) -> Element {
 
     let return_to_menu = |_| {
         state.with_mut(|state| {
-            state.screen = Screen::Intro;
+            state.screen = Screen::Menu;
         });
     };
 
@@ -134,7 +133,7 @@ pub fn player_select(cx: Scope) -> Element {
 }
 
 fn player_input(cx: Scope) -> Element {
-    let buffer = use_state(&cx, || String::new());
+    let buffer = use_state(&cx, String::new);
     let state = use_atom_state(&cx, STATE);
 
     let onsubmit = move |_| {
@@ -186,27 +185,4 @@ fn player_input(cx: Scope) -> Element {
     }
 }
 
-fn add_player(cx: Scope, name: String) {
-    let state = use_atom_state(&cx, STATE);
 
-    let mut lowest_available_id = 0;
-
-    for i in 1..5 {
-        let slot = state.players.iter().find(|item| item.id == i);
-
-        if slot == None {
-            lowest_available_id = i;
-            break;
-        };
-    }
-
-    state.with_mut(|state| {
-        if state.players.len() < 4 && lowest_available_id != 0 {
-            state.players.push(Player {
-                id: lowest_available_id,
-                name,
-                score: BTreeMap::new(),
-            });
-        };
-    });
-}

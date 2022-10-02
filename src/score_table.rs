@@ -6,7 +6,6 @@ use gloo_console::log;
 use gloo_storage::{LocalStorage, Storage};
 
 use crate::data::{GameStatus, Screen, BORDER_COLORS, CARET_COLORS, COLUMN_NUMBERS, TITLE_COLORS};
-use crate::Model;
 use crate::STATE;
 
 static FINAL_SCORE: i32 = 1000;
@@ -101,12 +100,9 @@ pub fn score_table(cx: Scope) -> Element {
         }
     };
 
-    let delete_and_exit_game = |_| {
-        LocalStorage::clear();
-        state.set(Model {
-            players: Vec::new(),
-            game_status: GameStatus::NotStarted,
-            screen: Screen::Intro,
+    let return_to_menu = |_| {
+        state.with_mut(|state| {
+            state.screen = Screen::Menu;
         });
     };
 
@@ -140,7 +136,7 @@ pub fn score_table(cx: Scope) -> Element {
                 )),
                 button {
                     class: "mx-auto h-16 col-start-3 relative right-[-50%]",
-                    onclick: delete_and_exit_game,
+                    onclick: return_to_menu,
                     img {
                         class: "h-8 w-8",
                         src: "img/exit.svg",

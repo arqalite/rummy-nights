@@ -12,7 +12,7 @@
 //      The rest deal with each app screen individually.
 
 mod data;
-mod intro_screen;
+mod menu;
 mod player_select;
 mod score_table;
 mod winner_screen;
@@ -43,7 +43,7 @@ fn app(cx: Scope) -> Element {
     };
 
     match state.screen {
-        Screen::Intro => cx.render(rsx!(intro_screen::intro_screen())),
+        Screen::Menu => cx.render(rsx!(menu::intro_screen())),
         Screen::PlayerSelect => cx.render(rsx!(player_select::player_select())),
         Screen::Game => cx.render(rsx!(score_table::score_table())),
         Screen::Winner => cx.render(rsx!(winner_screen::winner_screen())),

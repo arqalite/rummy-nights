@@ -4,7 +4,8 @@
 use gloo_storage::{LocalStorage, Storage};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
-use dioxus::fermi::Atom;
+use dioxus::fermi::{Atom, use_atom_state};
+use dioxus::prelude::*;
 
 // MVC-style model, keeping all the app data in one place, so we have a single source of truth.
 // Fermi allows us to have access available everywhere in the app while avoiding complex state management,
@@ -12,7 +13,7 @@ use dioxus::fermi::Atom;
 pub static STATE: Atom<Model> = |_| Model {
     players: Vec::new(),
     game_status: GameStatus::NotStarted,
-    screen: Screen::Intro,
+    screen: Screen::Menu,
 };
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -35,6 +36,31 @@ pub struct Player {
     pub score: BTreeMap<usize, i32>,
 }
 
+pub fn add_player(cx: Scope, name: String) {
+    let state = use_atom_state(&cx, STATE);
+
+    let mut lowest_available_id = 0;
+
+    for i in 1..5 {
+        let slot = state.players.iter().find(|item| item.id == i);
+
+        if slot == None {
+            lowest_available_id = i;
+            break;
+        };
+    }
+
+    state.with_mut(|state| {
+        if state.players.len() < 4 && lowest_available_id != 0 {
+            state.players.push(Player {
+                id: lowest_available_id,
+                name,
+                score: BTreeMap::new(),
+            });
+        };
+    });
+}
+
 // Using an enum for the game status might not be the best idea,
 // but it looks neater and removes the need for multiple booleans
 // scattered across the code and passed down from component to component.
@@ -49,7 +75,7 @@ pub enum GameStatus {
 // Add a new entry here if you need to add a screen, then edit the match arms in main.rs.
 #[derive(PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum Screen {
-    Intro,
+    Menu,
     PlayerSelect,
     Game,
     Winner,

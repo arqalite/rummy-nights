@@ -24,7 +24,7 @@ pub fn winner_screen(cx: Scope) -> Element {
         state.set(Model {
             players: Vec::new(),
             game_status: GameStatus::NotStarted,
-            screen: Screen::Intro,
+            screen: Screen::Menu,
         });
     };
 

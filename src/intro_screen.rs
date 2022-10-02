@@ -71,8 +71,8 @@ fn menu(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "flex flex-col gap-y-8 max-w-md mx-auto relative mb-16",
-            button {
+            class: "flex flex-col gap-y-8 mx-auto relative mb-16",
+            button { //New game button
                 class: "grid grid-cols-6 items-center w-full mx-auto",
                 onclick: new_game,
                 p {
@@ -84,7 +84,8 @@ fn menu(cx: Scope) -> Element {
                     src: "img/new.svg", 
                 }
             },
-            is_game_ongoing.then(|| rsx!(
+            is_game_ongoing.then(|| rsx!( 
+                //Resume game button - shown only if an existing game is found
                 button {
                     class: "grid grid-cols-6 items-center w-full mx-auto",
                     onclick: resume_game,

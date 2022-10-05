@@ -27,19 +27,25 @@ use dioxus::prelude::*;
 // Other work should be done in other modules.
 fn app(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
+    let has_checked_storage = use_state(&cx, || false);
 
-    match read_local_storage() {
-        Ok(new_state) => {
-            state.with_mut(|mut_state| {
-                mut_state.players = new_state.players;
-                mut_state.game_status = new_state.game_status;
-            });
-        }
-        // It's no big deal if an existing game cannot be read,
-        // we'll just throw an error message in the console and continue.
-        // We could inform the user that it couldn't be read,
-        // but there's nothing they could do anyway.
-        Err(error) => gloo_console::log!(error),
+    if !has_checked_storage {
+        match read_local_storage() {
+            Ok(new_state) => {
+                state.with_mut(|mut_state| {
+                    mut_state.players = new_state.players;
+                    mut_state.game_status = new_state.game_status;
+                });
+                has_checked_storage.set(true)
+            }
+            // It's no big deal if an existing game cannot be read,
+            // we'll just throw an error message in the console and continue.
+            // We could inform the user that it couldn't be read,
+            // but there's nothing they could do anyway.
+            Err(_) => {
+                has_checked_storage.set(true);
+            }
+        };
     };
 
     match state.screen {

@@ -65,6 +65,7 @@ fn get_game_status(cx: Scope) -> GameStatus {
 
 pub fn score_table(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
+    let column_basis = use_state(&cx, || "basis-1/2");
 
     match LocalStorage::set("state", state.get()) {
         Ok(_) => (),
@@ -75,10 +76,8 @@ pub fn score_table(cx: Scope) -> Element {
 
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
 
-    let columns = if state.players.len() >= 2 {
-        COLUMN_NUMBERS[state.players.len() - 2]
-    } else {
-        "grid-cols-4"
+    if state.players.len() >= 2 {
+        column_basis.set(COLUMN_NUMBERS[state.players.len() - 2]);
     };
 
     let show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
@@ -153,7 +152,7 @@ pub fn score_table(cx: Scope) -> Element {
             },
             div{
                 //Main table
-                class: "z-10 grid {columns} mx-auto gap-x-4 pt-2",
+                class: "z-10 flex flex-row justify-evenly gap-x-4 pt-2",
 
                 state.players.iter().map(|player| {
                     let sum = player.score.values().sum::<i32>().to_string();
@@ -163,7 +162,7 @@ pub fn score_table(cx: Scope) -> Element {
                     rsx!(
                         div{
                             //Column for each player
-                            class: "",
+                            class: "{column_basis}",
                             div {
                                 // Name - first cell
                                 class: "rounded-full h-8 {background} py-1 mb-2 shadow",

@@ -90,45 +90,48 @@ pub fn winner_screen(cx: Scope) -> Element {
                         "THE WINNER IS"
                     }
                 },
-                state.players.iter().map(|player| {
-                    let background = TITLE_COLORS[player.id-1];
-                    let border = BORDER_COLORS[player.id-1];
-                    let score = player.score.values().sum::<i32>();
-                    let mut style;
-                    let style2;
+                div {
+                    class: "flex flex-col grow justify-evenly",
+                    state.players.iter().map(|player| {
+                        let background = TITLE_COLORS[player.id-1];
+                        let border = BORDER_COLORS[player.id-1];
+                        let score = player.score.values().sum::<i32>();
+                        let mut style;
+                        let style2;
 
-                    if player_count == 0 {
-                        style = "h-20 w-20 rounded-full text-white font-bold text-lg ".to_string();
-                        style.push_str(background);
-                        style2 = "relative top-[50%] -translate-y-1/2".to_string();
-                    } else {
-                        style = "border-b-[7px] rounded-md my-auto w-20 ".to_string();
-                        style.push_str(border);
-                        style2 = String::new();
-                    };
+                        if player_count == 0 {
+                            style = "h-20 w-20 rounded-full text-white font-bold text-lg ".to_string();
+                            style.push_str(background);
+                            style2 = "relative top-[50%] -translate-y-1/2".to_string();
+                        } else {
+                            style = "border-b-[7px] rounded-md my-auto w-20 ".to_string();
+                            style.push_str(border);
+                            style2 = String::new();
+                        };
 
-                    player_count += 1;
+                        player_count += 1;
 
-                    rsx! (
-                    div {
-                        class: "z-10 grid grid-cols-2 my-2 h-20",
+                        rsx! (
                         div {
-                            class: "{style} justify-self-center",
-                            p {
-                                class: "text-center mb-2 {style2}",
-                                "{score}"
+                            class: "z-10 grid grid-cols-2 my-2 h-20",
+                            div {
+                                class: "{style} justify-self-center",
+                                p {
+                                    class: "text-center mb-2 {style2}",
+                                    "{score}"
+                                }
+                            }
+                            div {
+                                class: "h-12 basis-1/4 {background} self-center rounded-full mr-16",
+                                p {
+                                    class: "text-center relative top-[50%] -translate-y-1/2 text-white font-semibold",
+                                    "{player.name}"
+                                }
                             }
                         }
-                        div {
-                            class: "h-12 basis-1/4 {background} self-center rounded-full mr-16",
-                            p {
-                                class: "text-center relative top-[50%] -translate-y-1/2 text-white font-semibold",
-                                "{player.name}"
-                            }
-                        }
-                    }
-                    )
-                })
+                        )
+                    })
+                }
             }
         }
     ))

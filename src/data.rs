@@ -118,4 +118,4 @@ pub static CARET_COLORS: [&str; 4] = [
     "caret-violet-400",
 ];
 
-pub static COLUMN_NUMBERS: [&str; 3] = ["grid-cols-2", "grid-cols-3", "grid-cols-4"];
+pub static COLUMN_NUMBERS: [&str; 3] = ["basis-1/2", "basis-1/3", "basis-1/4"];

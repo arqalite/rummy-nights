@@ -153,7 +153,7 @@ pub fn score_table(cx: Scope) -> Element {
             },
             div{
                 //Main table
-                class: "z-10 flex flex-row justify-evenly gap-x-4 pt-2",
+                class: "z-10 flex flex-row justify-evenly gap-x-4 pt-2 overflow-auto",
 
                 state.players.iter().map(|player| {
                     let sum = player.score.values().sum::<i32>().to_string();

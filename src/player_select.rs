@@ -5,7 +5,7 @@ use dioxus::events::FormData;
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
 
-use crate::data::{GameStatus, Screen, TITLE_COLORS, add_player};
+use crate::data::{GameStatus, Screen, TITLE_COLORS, add_player, remove_player};
 use crate::STATE;
 
 pub fn player_select(cx: Scope) -> Element {
@@ -69,12 +69,8 @@ pub fn player_select(cx: Scope) -> Element {
                 //Player list
                 state.players.iter().map(|player| {
                     let background = TITLE_COLORS[player.id-1];
-                    let delete_button = |_| {
-                        state.with_mut(|mut_state| {
-                            mut_state.players.retain(|item|{
-                                item.id != player.id
-                            });
-                        });
+                    let delete_button = move |_| {
+                        remove_player(cx, player.id)
                     };
 
                     rsx!(

@@ -36,6 +36,25 @@ pub struct Player {
     pub score: BTreeMap<usize, i32>,
 }
 
+pub fn remove_player(cx: Scope, id: usize) {
+    let state = use_atom_state(&cx, STATE);
+    let mut new_player_vec = state.players.clone();
+    let mut counter = 1;
+
+    new_player_vec.retain(|item|{
+        item.id != id
+    });
+
+    for player in new_player_vec.iter_mut() {
+        player.id = counter;
+        counter += 1;
+    };
+
+    state.with_mut(|mut_state| {
+        mut_state.players = new_player_vec;
+    });
+}
+
 pub fn add_player(cx: Scope, name: String) {
     let state = use_atom_state(&cx, STATE);
 

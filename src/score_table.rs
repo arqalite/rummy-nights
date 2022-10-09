@@ -1,7 +1,8 @@
 use dioxus::core::UiEvent;
-use dioxus::events::FormData;
+use dioxus::events::{FormData};
 use dioxus::fermi::{use_atom_state, Atom};
 use dioxus::prelude::*;
+use dioxus::web::use_eval;
 use gloo_console::log;
 use gloo_storage::{LocalStorage, Storage};
 
@@ -217,6 +218,7 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     let id = cx.props.id;
     let state = use_atom_state(&cx, STATE);
     let buffer = use_state(&cx, String::new);
+    let execute = use_eval(&cx);
 
     let onsubmit = move |_| {
         if let Ok(number) = buffer.parse::<i32>() {
@@ -229,6 +231,14 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
             });
         }
         buffer.set(String::new());
+
+        if id < state.players.len() {
+            let new_id = id + 1;
+
+            execute("document.getElementById('".to_string() + &new_id.to_string() + "').focus();")
+        } else if id == state.players.len() {
+            execute("document.getElementById('1').focus();".to_string())
+        }
     };
 
     let oninput = move |evt: UiEvent<FormData>| {
@@ -243,6 +253,7 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
             prevent_default: "onsubmit",
             input {
                 class: "{caret} {border} text-sm appearance-none font-light bg-transparent h-8 w-full mb-2 text-center rounded focus:border-b-[8px] border-b-4",
+                id: "{id}",
                 style: "-moz-appearance:textfield",
                 placeholder: "Insert score",
                 value: "{buffer}",

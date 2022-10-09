@@ -185,7 +185,7 @@ pub fn score_table(cx: Scope) -> Element {
                                     let score_text = score.to_string();
                                     rsx!(
                                         p {
-                                            class: "rounded text-md text-center border-b-4 mb-2 h-8 {border}",
+                                            class: "rounded text-lg text-center border-b-4 mb-2 h-10 {border}",
                                             "{score_text}"
                                         }
                                     )
@@ -202,9 +202,9 @@ pub fn score_table(cx: Scope) -> Element {
                             }
                             div {
                                 //Total box
-                                class: "rounded text-sm border-b-[7px] {border} h-8",
+                                class: "rounded text-sm border-b-[7px] {border} h-10",
                                 p {
-                                    class: "text-center text-lg font-semibold",
+                                    class: "text-center text-2xl font-semibold",
                                     "{sum}"
                                 }
                             }

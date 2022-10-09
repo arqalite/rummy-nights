@@ -17,7 +17,7 @@ mod player_select;
 mod score_table;
 mod winner_screen;
 
-use data::{Model, Screen, STATE};
+use data::{Model, Screen, STATE, read_session_storage, GameStatus};
 use data::read_local_storage;
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
@@ -35,7 +35,19 @@ fn app(cx: Scope) -> Element {
                 state.with_mut(|mut_state| {
                     mut_state.players = new_state.players;
                     mut_state.game_status = new_state.game_status;
+
+                    match read_session_storage() {
+                        Ok(_) => {
+                            if mut_state.game_status == GameStatus::Ongoing { 
+                                mut_state.screen = Screen::Game;
+                            };
+                        },
+                        Err(_) => ()
+                    }
                 });
+
+                
+
                 has_checked_storage.set(true)
             }
             // It's no big deal if an existing game cannot be read,

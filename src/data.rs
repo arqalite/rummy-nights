@@ -1,7 +1,7 @@
 //! data.rs - data structures and custom types
 //! Here we should only have structs, enums and vectors of Tailwind CSS classes.
 
-use gloo_storage::{LocalStorage, Storage};
+use gloo_storage::{LocalStorage, Storage, SessionStorage};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use dioxus::fermi::{Atom, use_atom_state};
@@ -110,6 +110,16 @@ pub fn read_local_storage() -> Result<Model, &'static str> {
             Err(_) => Err("Could not parse local storage."),
         },
         Err(_) => Err("Could not read local storage."),
+    }
+}
+
+pub fn read_session_storage() -> Result<bool, &'static str> {
+    match SessionStorage::get::<serde_json::Value>("session") {
+        Ok(json_state) => match serde_json::from_value::<bool>(json_state) {
+            Ok(session) => Ok(session),
+            Err(_) => Err("Could not parse session storage."),
+        },
+        Err(_) => Err("Could not read session storage."),
     }
 }
 

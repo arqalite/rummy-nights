@@ -1,6 +1,6 @@
 use dioxus::fermi::use_atom_state;
 use dioxus::prelude::*;
-use gloo_storage::{LocalStorage, Storage};
+use gloo_storage::{LocalStorage, Storage, SessionStorage};
 
 use crate::data::{GameStatus, Model, Screen, BORDER_COLORS, TITLE_COLORS};
 use crate::STATE;
@@ -21,6 +21,7 @@ pub fn winner_screen(cx: Scope) -> Element {
 
     let delete_and_exit_game = |_| {
         LocalStorage::clear();
+        SessionStorage::clear();
         state.set(Model {
             players: Vec::new(),
             game_status: GameStatus::NotStarted,
@@ -44,6 +45,7 @@ pub fn winner_screen(cx: Scope) -> Element {
     };
 
     LocalStorage::clear();
+    SessionStorage::clear();
 
     cx.render(rsx!(
         div {

@@ -6,7 +6,7 @@ use dioxus::web::use_eval;
 use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
-use crate::data::{GameStatus, Screen, BORDER_COLORS, CARET_COLORS, COLUMN_NUMBERS, TITLE_COLORS};
+use crate::data::{GameStatus, Screen, BORDER_COLORS, CARET_COLORS, TITLE_COLORS};
 use crate::STATE;
 
 static FINAL_SCORE: i32 = 1000;
@@ -66,7 +66,6 @@ fn get_game_status(cx: Scope) -> GameStatus {
 
 pub fn score_table(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
-    let column_basis = use_state(&cx, || "basis-1/2");
 
     match LocalStorage::set("state", state.get()) {
         Ok(_) => (),
@@ -83,10 +82,6 @@ pub fn score_table(cx: Scope) -> Element {
     }
 
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
-
-    if state.players.len() >= 2 {
-        column_basis.set(COLUMN_NUMBERS[state.players.len() - 2]);
-    };
 
     let show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
 
@@ -121,7 +116,7 @@ pub fn score_table(cx: Scope) -> Element {
 
     cx.render(rsx! (
         div {
-            class: "flex flex-col relative mx-auto h-screen w-screen overflow-hidden px-8",
+            class: "flex flex-col grow h-screen w-screen relative overflow-hidden px-[5%]",
             div {
                 class: "z-0 absolute h-screen w-screen",
                 div {
@@ -133,7 +128,7 @@ pub fn score_table(cx: Scope) -> Element {
                 class: "z-10 h-16 grid grid-cols-3",
                 game_continues.then(|| rsx!(
                     button {
-                        class: "mx-auto h-16 col-start-1 relative left-[-50%]",
+                        class: "col-start-1 justify-self-start",
                         onclick: return_to_select,
                         img {
                             class: "h-8 w-8",
@@ -142,7 +137,7 @@ pub fn score_table(cx: Scope) -> Element {
                     }
                 )),
                 button {
-                    class: "mx-auto h-16 col-start-3 relative right-[-50%]",
+                    class: "col-start-3 justify-self-end",
                     onclick: return_to_menu,
                     img {
                         class: "h-8 w-8",
@@ -151,16 +146,15 @@ pub fn score_table(cx: Scope) -> Element {
                 }
             },
             div {
-                class: "w-full rounded-full flex self-center mx-auto mb-8",
-                //background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                p {
-                    class: "mx-auto self-center font-semibold text-lg text-black border-b-2 border-emerald-300",
-                    "Good luck and have fun!"
+                class: "mb-4 w-max mx-auto",
+                span {
+                    class: "font-semibold text-lg border-b-2 border-emerald-300",
+                    "Good luck and have fun!",
                 }
-            },
+            }
             div{
                 //Main table
-                class: "z-10 flex flex-row justify-evenly gap-x-4 pt-2 overflow-auto",
+                class: "z-10 flex justify-evenly gap-x-4 pt-2 overflow-auto",
 
                 state.players.iter().map(|player| {
                     let sum = player.score.values().sum::<i32>().to_string();
@@ -170,10 +164,9 @@ pub fn score_table(cx: Scope) -> Element {
                     rsx!(
                         div{
                             //Column for each player
-                            class: "{column_basis}",
                             div {
                                 // Name - first cell
-                                class: "rounded-full h-8 {background} py-1 mb-2 shadow",
+                                class: "rounded-full h-8 {background} py-1 mb-2",
                                 p {
                                     class: "text-center my-auto text-white font-semibold",
                                     "{player.name}"
@@ -259,10 +252,9 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
             onsubmit: onsubmit,
             prevent_default: "onsubmit",
             input {
-                class: "{caret} {border} text-sm appearance-none font-light bg-transparent h-8 w-full mb-2 text-center rounded focus:border-b-[8px] border-b-4",
+                class: "{caret} {border} text-lg appearance-none font-light bg-transparent h-10 w-full mb-2 text-center rounded focus:border-b-[8px] border-b-4",
                 id: "{id}",
                 style: "-moz-appearance:textfield",
-                placeholder: "Insert score",
                 value: "{buffer}",
                 onsubmit: onsubmit,
                 prevent_default: "onsubmit",

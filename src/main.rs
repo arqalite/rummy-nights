@@ -45,9 +45,6 @@ fn app(cx: Scope) -> Element {
                         Err(_) => ()
                     }
                 });
-
-                
-
                 has_checked_storage.set(true)
             }
             // It's no big deal if an existing game cannot be read,

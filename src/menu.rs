@@ -36,16 +36,16 @@ pub fn intro_screen(cx: Scope) -> Element {
             }
 
             div { // Logo and menu area
-                class : "z-10 flex flex-col grow place-content-evenly mt-16",
+                class : "z-10 flex flex-col grow self-center my-16",
                 img {
-                    class: "mx-auto max-w-sm",
+                    class: "mx-auto max-w-[90%] sm:max-w-sm md:max-w-md mb-8",
                     src: "img/intro.gif",
                 }
                 menu()
                 p {
-                    class: "text-white font-semibold text-lg text-center w-20 absolute bottom-4 left-4 rounded-full",
+                    class: "text-white font-semibold text-lg text-center max-w-1/2 px-2 absolute bottom-4 left-4 rounded-full",
                     background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
-                    "v0.1.0"
+                    "build 2022-10-11"
                 }
             }
         }
@@ -71,7 +71,7 @@ fn menu(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "flex flex-col gap-y-8 mx-auto relative mb-16",
+            class: "flex flex-col gap-y-8 mx-auto relative",
             button { //New game button
                 class: "grid grid-cols-6 items-center w-full mx-auto",
                 onclick: new_game,
@@ -80,7 +80,7 @@ fn menu(cx: Scope) -> Element {
                     "Start Game"
                 }
                 img {
-                    class: "h-24 w-24 col-start-5 col-span-2",
+                    class: "h-20 w-20 col-start-5 col-span-2",
                     src: "img/new.svg", 
                 }
             },
@@ -94,7 +94,7 @@ fn menu(cx: Scope) -> Element {
                         "Resume Game"
                     }
                     img {
-                        class: "h-24 w-24 col-start-5 col-span-2",
+                        class: "h-20 w-20 col-start-5 col-span-2",
                         src: "img/resume.svg", 
                     }
                 }

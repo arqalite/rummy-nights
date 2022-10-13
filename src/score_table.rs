@@ -166,7 +166,7 @@ pub fn score_table(cx: Scope) -> Element {
                             //Column for each player
                             div {
                                 // Name - first cell
-                                class: "rounded-full h-8 {background} py-1 mb-2",
+                                class: "rounded-full h-8 {background} py-1",
                                 p {
                                     class: "text-center my-auto text-white font-semibold",
                                     "{player.name}"
@@ -178,7 +178,7 @@ pub fn score_table(cx: Scope) -> Element {
                                     let score_text = score.to_string();
                                     rsx!(
                                         p {
-                                            class: "rounded text-lg text-center border-b-4 mb-2 h-10 {border}",
+                                            class: "rounded text-lg text-center border-b-4 h-9 mt-2 {border}",
                                             "{score_text}"
                                         }
                                     )
@@ -195,9 +195,9 @@ pub fn score_table(cx: Scope) -> Element {
                             }
                             div {
                                 //Total box
-                                class: "rounded text-sm border-b-[7px] {border} h-10",
+                                class: "rounded border-b-[7px] {border} h-9 mt-2",
                                 p {
-                                    class: "text-center text-2xl font-semibold",
+                                    class: "text-center text-lg font-semibold",
                                     "{sum}"
                                 }
                             }
@@ -252,7 +252,7 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
             onsubmit: onsubmit,
             prevent_default: "onsubmit",
             input {
-                class: "{caret} {border} text-lg appearance-none font-light bg-transparent h-10 w-full mb-2 text-center rounded focus:border-b-[8px] border-b-4",
+                class: "{caret} {border} text-lg appearance-none font-light bg-transparent h-9 mt-2 w-full text-center rounded focus:border-b-[8px] border-b-4",
                 id: "{id}",
                 style: "-moz-appearance:textfield",
                 value: "{buffer}",

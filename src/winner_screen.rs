@@ -44,28 +44,29 @@ pub fn winner_screen(cx: Scope) -> Element {
         is_sorted.set(true);
     };
 
-    LocalStorage::clear();
-    SessionStorage::clear();
+    //LocalStorage::clear();
+    //SessionStorage::clear();
 
     cx.render(rsx!(
         div {
-            class: "z-0 absolute h-screen w-screen overflow-hidden",
+            class: "flex flex-col grow h-screen w-screen relative overflow-hidden px-[5%]",
             div {
-                class: "w-[300px] h-[300px] top-[-150px] left-[-150px] absolute rounded-full",
-                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-            },
-            div {
-                class: "w-[300px] h-[300px] bottom-[-150px] right-[-150px] absolute rounded-full",
-                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-            },
-        },
-        div {
-            class: "z-10 flex flex-col relative mx-auto h-screen w-screen px-8",
-            div {
+                class: "z-0 absolute h-screen w-screen",
                 div {
-                    class: "z-10 h-16 grid grid-cols-3",
+                    class: "w-[300px] h-[300px] top-[-150px] left-[-150px] absolute rounded-full",
+                    background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                },
+                div {
+                    class: "w-[300px] h-[300px] bottom-[-150px] right-[-150px] absolute rounded-full",
+                    background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                },
+            },
+            div {
+                class: "z-10 flex flex-col grow",
+                div {
+                    class: "h-16 grid grid-cols-3",
                     button {
-                        class: "mx-auto h-16 col-start-1 relative -left-[50%]",
+                        class: "col-start-1 justify-self-start",
                         onclick: return_to_table,
                         img {
                             class: "h-8 w-8",
@@ -73,7 +74,7 @@ pub fn winner_screen(cx: Scope) -> Element {
                         }
                     }
                     button {
-                        class: "mx-auto h-16 col-start-3 relative -right-[50%]",
+                        class: "col-start-3 justify-self-end",
                         onclick: delete_and_exit_game,
                         img {
                             class: "h-8 w-8",
@@ -82,18 +83,17 @@ pub fn winner_screen(cx: Scope) -> Element {
                     }
                 },
                 div {
-                    class: "mx-auto",
                     img {
                         src: "img/trophy.svg",
-                        class: "h-32 w-32 mx-auto"
+                        class: "h-20 w-20 mx-auto"
                     }
                     p {
-                        class: "text-center font-bold text-5xl mt-2 mb-8",
+                        class: "text-center font-bold text-4xl my-4",
                         "THE WINNER IS"
                     }
                 },
                 div {
-                    class: "flex flex-col grow justify-evenly",
+                    class: "flex flex-col basis-1/2 grow-0 shrink justify-evenly content-evenly",
                     state.players.iter().map(|player| {
                         let background = TITLE_COLORS[player.id-1];
                         let border = BORDER_COLORS[player.id-1];
@@ -115,16 +115,16 @@ pub fn winner_screen(cx: Scope) -> Element {
 
                         rsx! (
                         div {
-                            class: "z-10 grid grid-cols-2 my-2 h-20",
+                            class: "flex flex-row justify-evenly items-center",
                             div {
-                                class: "{style} justify-self-center",
+                                class: "{style}",
                                 p {
                                     class: "text-center mb-2 {style2}",
                                     "{score}"
                                 }
                             }
                             div {
-                                class: "h-12 basis-1/4 {background} self-center rounded-full mr-16",
+                                class: "h-12 basis-1/3 {background} rounded-full",
                                 p {
                                     class: "text-center relative top-[50%] -translate-y-1/2 text-white font-semibold",
                                     "{player.name}"

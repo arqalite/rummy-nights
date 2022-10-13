@@ -36,16 +36,11 @@ fn app(cx: Scope) -> Element {
                     mut_state.players = new_state.players;
                     mut_state.game_status = new_state.game_status;
 
-                    match read_session_storage() {
-                        Ok(_) => {
-                            if mut_state.game_status == GameStatus::Ongoing { 
-                                mut_state.screen = Screen::Game;
-                            };
-                        },
-                        Err(_) => ()
-                    }
+                    if read_session_storage().is_ok() && mut_state.game_status == GameStatus::Ongoing {
+                            mut_state.screen = Screen::Game;
+                    };
                 });
-                has_checked_storage.set(true)
+                has_checked_storage.set(true);
             }
             // It's no big deal if an existing game cannot be read,
             // we'll just throw an error message in the console and continue.

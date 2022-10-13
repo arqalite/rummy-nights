@@ -71,7 +71,7 @@ pub fn player_select(cx: Scope) -> Element {
                     state.players.iter().map(|player| {
                         let background = TITLE_COLORS[player.id-1];
                         let delete_button = move |_| {
-                            remove_player(cx, player.id)
+                            remove_player(cx, player.id);
                         };
 
                         rsx!(

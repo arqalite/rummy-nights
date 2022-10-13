@@ -45,7 +45,7 @@ pub fn remove_player(cx: Scope, id: usize) {
         item.id != id
     });
 
-    for player in new_player_vec.iter_mut() {
+    for player in &mut new_player_vec {
         player.id = counter;
         counter += 1;
     };

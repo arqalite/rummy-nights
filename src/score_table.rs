@@ -4,6 +4,7 @@ use dioxus::fermi::{use_atom_state, Atom};
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
+use std::cmp::Ordering;
 
 use crate::data::{GameStatus, Screen, BORDER_COLORS, CARET_COLORS, TITLE_COLORS};
 use crate::STATE;
@@ -66,15 +67,8 @@ fn get_game_status(cx: Scope) -> GameStatus {
 pub fn score_table(cx: Scope) -> Element {
     let state = use_atom_state(&cx, STATE);
 
-    match LocalStorage::set("state", state.get()) {
-        Ok(_) => (),
-        Err(_) => ()
-    };
-
-    match SessionStorage::set("session", true) {
-        Ok(_) => (),
-        Err(_) => ()
-    }
+    LocalStorage::set("state", state.get()).unwrap();
+    SessionStorage::set("session", true).unwrap();
 
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
 
@@ -227,12 +221,15 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
         }
         buffer.set(String::new());
 
-        if id < state.players.len() {
-            let new_id = id + 1;
-
-            execute("document.getElementById('".to_string() + &new_id.to_string() + "').focus();")
-        } else if id == state.players.len() {
-            execute("document.getElementById('1').focus();".to_string())
+        match id.cmp(&state.players.len()) {
+            Ordering::Greater => (),
+            Ordering::Less => {
+                let new_id = id + 1;
+                execute("document.getElementById('".to_string() + &new_id.to_string() + "').focus();");
+            },
+            Ordering::Equal => {
+                execute("document.getElementById('1').focus();".to_string());
+            }
         }
     };
 

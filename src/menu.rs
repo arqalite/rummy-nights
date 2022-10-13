@@ -38,14 +38,14 @@ pub fn intro_screen(cx: Scope) -> Element {
             div { // Logo and menu area
                 class : "z-10 flex flex-col grow self-center my-16",
                 img {
-                    class: "mx-auto max-w-[90%] sm:max-w-sm md:max-w-md mb-8",
+                    class: "mx-auto w-full max-w-lg mb-8",
                     src: "img/intro.gif",
                 }
                 menu()
                 p {
                     class: "text-white font-semibold text-lg text-center max-w-1/2 px-2 absolute bottom-4 left-4 rounded-full",
                     background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
-                    "build 2022-10-11"
+                    "build 2022-10-13"
                 }
             }
         }

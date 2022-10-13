@@ -44,8 +44,8 @@ pub fn winner_screen(cx: Scope) -> Element {
         is_sorted.set(true);
     };
 
-    //LocalStorage::clear();
-    //SessionStorage::clear();
+    LocalStorage::clear();
+    SessionStorage::clear();
 
     cx.render(rsx!(
         div {
@@ -62,7 +62,7 @@ pub fn winner_screen(cx: Scope) -> Element {
                 },
             },
             div {
-                class: "z-10 flex flex-col grow",
+                class: "z-10 flex flex-col grow mx-auto w-full sm:max-w-lg",
                 div {
                     class: "h-16 grid grid-cols-3",
                     button {

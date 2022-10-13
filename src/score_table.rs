@@ -125,7 +125,7 @@ pub fn score_table(cx: Scope) -> Element {
                 }
             }
             div {
-                class: "z-10 h-16 grid grid-cols-3",
+                class: "z-10 h-16 grid grid-cols-3 mx-auto w-full sm:max-w-lg",
                 game_continues.then(|| rsx!(
                     button {
                         class: "col-start-1 justify-self-start",
@@ -154,7 +154,7 @@ pub fn score_table(cx: Scope) -> Element {
             }
             div{
                 //Main table
-                class: "z-10 flex justify-evenly gap-x-4 pt-2 overflow-auto",
+                class: "z-10 flex justify-evenly gap-x-4 pt-2 overflow-auto mx-auto w-full sm:max-w-lg",
 
                 state.players.iter().map(|player| {
                     let sum = player.score.values().sum::<i32>().to_string();

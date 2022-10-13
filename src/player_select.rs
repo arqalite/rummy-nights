@@ -37,7 +37,7 @@ pub fn player_select(cx: Scope) -> Element {
                 }
             }    
             div {
-                class: "h-16 grid grid-cols-3 z-10",
+                class: "h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg",
                 button {
                     class: "col-start-1 justify-self-start",
                     onclick: return_to_menu,
@@ -57,7 +57,7 @@ pub fn player_select(cx: Scope) -> Element {
             },
             //Player select
             div {
-                class: "z-10 flex flex-col grow relative",
+                class: "z-10 flex flex-col grow relative mx-auto w-full sm:max-w-lg",
                 div {
                     class: "mb-6 w-max mx-auto",
                     span {

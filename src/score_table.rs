@@ -3,7 +3,6 @@ use dioxus::events::{FormData};
 use dioxus::fermi::{use_atom_state, Atom};
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
-use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
 use crate::data::{GameStatus, Screen, BORDER_COLORS, CARET_COLORS, TITLE_COLORS};
@@ -69,16 +68,12 @@ pub fn score_table(cx: Scope) -> Element {
 
     match LocalStorage::set("state", state.get()) {
         Ok(_) => (),
-        Err(_) => {
-            log!("Failed to save data.");
-        }
+        Err(_) => ()
     };
 
     match SessionStorage::set("session", true) {
         Ok(_) => (),
-        Err(_) => {
-            log!("Failed to save session.");
-        }
+        Err(_) => ()
     }
 
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);

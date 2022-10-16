@@ -36,43 +36,33 @@ pub struct Player {
     pub score: BTreeMap<usize, i32>,
 }
 
+// Remove players and assign consecutive IDs without gaps.
 pub fn remove_player(cx: Scope, id: usize) {
     let state = use_atom_state(&cx, STATE);
-    let mut new_player_vec = state.players.clone();
     let mut counter = 1;
 
-    new_player_vec.retain(|item|{
-        item.id != id
-    });
+    state.with_mut(|state| {
+        state.players.retain(|player| {
+            player.id != id
+        });
 
-    for player in &mut new_player_vec {
-        player.id = counter;
-        counter += 1;
-    };
-
-    state.with_mut(|mut_state| {
-        mut_state.players = new_player_vec;
+        for player in &mut state.players {
+            player.id = counter;
+            counter += 1;
+        };
     });
 }
 
+// Add a new player.
+// As the delete function resets IDs to make sure they're consecutive,
+// we can just assume the smallest available ID is len() + 1.
 pub fn add_player(cx: Scope, name: String) {
     let state = use_atom_state(&cx, STATE);
 
-    let mut lowest_available_id = 0;
-
-    for i in 1..5 {
-        let slot = state.players.iter().find(|item| item.id == i);
-
-        if slot == None {
-            lowest_available_id = i;
-            break;
-        };
-    }
-
     state.with_mut(|state| {
-        if state.players.len() < 4 && lowest_available_id != 0 {
+        if state.players.len() < 4 {
             state.players.push(Player {
-                id: lowest_available_id,
+                id: state.players.len() + 1,
                 name,
                 score: BTreeMap::new(),
             });
@@ -113,6 +103,9 @@ pub fn read_local_storage() -> Result<Model, &'static str> {
     }
 }
 
+// SessionStorage is currently used to keep track of ongoing game sessions.
+// If they refresh or tab out in the current session, 
+// we make sure in main.rs that they return to the screen they were in already.
 pub fn read_session_storage() -> Result<bool, &'static str> {
     match SessionStorage::get::<serde_json::Value>("session") {
         Ok(json_state) => match serde_json::from_value::<bool>(json_state) {

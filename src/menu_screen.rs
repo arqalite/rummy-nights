@@ -2,14 +2,10 @@
 //! It should only look nice and serve as a starting point
 //! for creating a new game or resuming an existing one.
 
+use crate::data::{GameStatus, Model, Screen, STATE};
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
-
-use crate::data::GameStatus;
-use crate::data::Screen;
-use crate::STATE;
-use crate::Model;
 
 pub fn main_menu(cx: Scope) -> Element {
     cx.render(rsx!(
@@ -42,7 +38,7 @@ pub fn main_menu(cx: Scope) -> Element {
             p { // Version bubble icon thing
                 class: "text-white font-semibold text-lg text-center max-w-1/2 px-2 absolute bottom-4 left-4 rounded-full",
                 background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
-                "build 2022-10-17 22:50"
+                "build 2022-10-18 00:42"
             }
         }
     ))
@@ -51,26 +47,30 @@ pub fn main_menu(cx: Scope) -> Element {
 fn start_game_button(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
+    // Currently we erase any ongoing games once this is clicked.
+    // This is destructive and we should prompt the user for confirmation if an ongoing game exists.
+    let start_new_game = |_| {
+        LocalStorage::clear();
+        SessionStorage::clear();
+
+        *state.write() = Model {
+            players: Vec::new(),
+            game_status: GameStatus::NotStarted,
+            screen: Screen::PlayerSelect,
+        };
+    };
+
     cx.render(rsx!(
         button {
             class: "grid grid-cols-6 items-center w-full mx-auto",
-            onclick: |_| { // Start a new game
-                LocalStorage::clear();
-                SessionStorage::clear();
-
-                *state.write() = Model {
-                    players: Vec::new(),
-                    game_status: GameStatus::NotStarted,
-                    screen: Screen::PlayerSelect,
-                };
-            },
+            onclick: start_new_game,
             p {
                 class: "font-semibold text-center text-2xl col-span-2 col-start-2 justify-self-end",
                 "Start Game"
             }
             img {
                 class: "h-20 w-20 col-start-5 col-span-2",
-                src: "img/new.svg", 
+                src: "img/new.svg",
             }
         }
     ))
@@ -79,7 +79,8 @@ fn start_game_button(cx: Scope) -> Element {
 fn resume_game_button(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
-    if state.read().game_status == GameStatus::Ongoing { //shown only if an existing game is found
+    if state.read().game_status == GameStatus::Ongoing {
+        //shown only if an existing game is found
         cx.render(rsx!(
             button {
                 class: "grid grid-cols-6 items-center w-full mx-auto",

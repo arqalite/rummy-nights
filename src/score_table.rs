@@ -1,6 +1,6 @@
 use dioxus::core::UiEvent;
 use dioxus::events::FormData;
-use dioxus::fermi::{use_atom_ref, use_atom_state, Atom};
+use dioxus::fermi::{use_atom_state, use_atom_ref};
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
@@ -13,44 +13,29 @@ static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
 static SHOW_END_ONCE: Atom<bool> = |_| true;
 
+// Check if the conditions are met for ending the game.
+// (i.e. final score is reached, all players have all the scores inputted, and there is no draw)
 fn get_game_status(cx: Scope) -> GameStatus {
     let state = use_atom_ref(&cx, STATE);
-    let mut has_reached_max = false;
+
+    // Pull the final scores and number of games played by each player.
+    let (total_scores, games_played): (Vec<i32>, Vec<usize>) = state
+        .read()
+        .players
+        .iter()
+        .map(|player| (player.score.values().sum::<i32>(), player.score.len()))
+        .unzip();
+
+    let max = *(total_scores.iter().max().unwrap());
+
+    let has_reached_max = max >= FINAL_SCORE;
+    let are_columns_equal =
+        games_played.iter().min().unwrap() == games_played.iter().max().unwrap();
     let mut no_of_winners = 0;
 
-    for player in &state.write().players {
-        if player.score.values().sum::<i32>() >= FINAL_SCORE {
-            has_reached_max = true;
-        }
-    }
-
-    let mut are_columns_equal = true;
-
-    if has_reached_max {
-        for i in 0..state.read().players.len() - 1 {
-            if state.read().players[i].score.len() != state.read().players[i + 1].score.len() {
-                are_columns_equal = false;
-                break;
-            }
-        }
-    }
-
-    if are_columns_equal {
-        let mut total_scores = Vec::new();
-    
-        for player in &state.read().players {
-            total_scores.push(player.score.values().sum::<i32>());
-        }
-
-        let max = match total_scores.iter().max() {
-            Some(value) => value.clone(),
-            None => 0,
-        };
-
-        for player in &state.read().players {
-            if player.score.values().sum::<i32>() >= max {
-                no_of_winners += 1;
-            }
+    for player in &state.read().players {
+        if player.score.values().sum::<i32>() >= max {
+            no_of_winners += 1;
         }
     }
 
@@ -79,6 +64,7 @@ pub fn score_table(cx: Scope) -> Element {
             game_continues.set(false);
             if **show_end_once {
                 state.write().screen = Screen::Winner;
+                state.write().game_status = GameStatus::Finished;
                 show_end_once.set(false);
             }
         }
@@ -144,6 +130,7 @@ pub fn score_table(cx: Scope) -> Element {
 
                     rsx!(
                         div{
+                            class: "w-full",
                             //Column for each player
                             div {
                                 // Name - first cell

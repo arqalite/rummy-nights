@@ -17,8 +17,7 @@ mod player_select;
 mod score_table;
 mod winner_screen;
 
-use data::read_local_storage;
-use data::{read_session_storage, GameStatus, Model, Screen, STATE};
+use data::{read_local_storage, read_session_storage, GameStatus, Model, Screen, STATE};
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 
@@ -54,7 +53,7 @@ fn app(cx: Scope) -> Element {
 
     match state.read().screen {
         Screen::Menu => cx.render(rsx!(menu_screen::main_menu())),
-        Screen::PlayerSelect => cx.render(rsx!(player_select::player_select())),
+        Screen::PlayerSelect => cx.render(rsx!(player_select::select_screen())),
         Screen::Game => cx.render(rsx!(score_table::score_table())),
         Screen::Winner => cx.render(rsx!(winner_screen::winner_screen())),
     }

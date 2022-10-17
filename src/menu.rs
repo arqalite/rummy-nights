@@ -2,7 +2,7 @@
 //! It should only look nice and serve as a starting point
 //! for creating a new game or resuming an existing one.
 
-use dioxus::fermi::use_atom_state;
+use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 
 use crate::data::GameStatus;
@@ -45,7 +45,7 @@ pub fn intro_screen(cx: Scope) -> Element {
                 p {
                     class: "text-white font-semibold text-lg text-center max-w-1/2 px-2 absolute bottom-4 left-4 rounded-full",
                     background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
-                    "build 2022-10-16"
+                    "build 2022-10-17"
                 }
             }
         }
@@ -53,20 +53,16 @@ pub fn intro_screen(cx: Scope) -> Element {
 }
 
 fn menu(cx: Scope) -> Element {
-    let state = use_atom_state(&cx, STATE);
-    let is_game_ongoing = state.game_status == GameStatus::Ongoing;
+    let state = use_atom_ref(&cx, STATE);
+    let is_game_ongoing = state.write().game_status == GameStatus::Ongoing;
 
     let new_game = |_| {
-        state.with_mut(|mut_state| {
-            mut_state.players = Vec::new();
-            mut_state.screen = Screen::PlayerSelect;
-        });
+        state.write().players = Vec::new();
+        state.write().screen = Screen::PlayerSelect;
     };
 
     let resume_game = |_| {
-        state.with_mut(|mut_state| {
-            mut_state.screen = Screen::Game;
-        });
+        state.write().screen = Screen::Game;
     };
 
     cx.render(rsx!(
@@ -84,7 +80,7 @@ fn menu(cx: Scope) -> Element {
                     src: "img/new.svg", 
                 }
             },
-            is_game_ongoing.then(|| rsx!( 
+            is_game_ongoing.then(|| rsx!(
                 //Resume game button - shown only if an existing game is found
                 button {
                     class: "grid grid-cols-6 items-center w-full mx-auto",

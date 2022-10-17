@@ -1,6 +1,6 @@
 use dioxus::core::UiEvent;
-use dioxus::events::{FormData};
-use dioxus::fermi::{use_atom_state, Atom};
+use dioxus::events::FormData;
+use dioxus::fermi::{use_atom_ref, use_atom_state, Atom};
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
@@ -14,11 +14,11 @@ static GAME_CONTINUES: Atom<bool> = |_| true;
 static SHOW_END_ONCE: Atom<bool> = |_| true;
 
 fn get_game_status(cx: Scope) -> GameStatus {
-    let state = use_atom_state(&cx, STATE);
+    let state = use_atom_ref(&cx, STATE);
     let mut has_reached_max = false;
     let mut no_of_winners = 0;
 
-    for player in &state.players {
+    for player in &state.write().players {
         if player.score.values().sum::<i32>() >= FINAL_SCORE {
             has_reached_max = true;
         }
@@ -27,31 +27,24 @@ fn get_game_status(cx: Scope) -> GameStatus {
     let mut are_columns_equal = true;
 
     if has_reached_max {
-        for i in 0..state.players.len() - 1 {
-            if state.players[i].score.len() != state.players[i + 1].score.len() {
+        for i in 0..state.read().players.len() - 1 {
+            if state.read().players[i].score.len() != state.read().players[i + 1].score.len() {
                 are_columns_equal = false;
                 break;
             }
         }
     }
 
-    let mut winner_name = String::new();
-    let mut max = 0;
-
     if are_columns_equal {
-        for player in &state.players {
-            if player.score.values().sum::<i32>() > max {
-                max = player.score.values().sum::<i32>();
-            }
+        let mut total_scores = Vec::new();
+    
+        for player in &state.read().players {
+            total_scores.push(player.score.values().sum::<i32>());
         }
-        for player in &state.players {
-            if player.score.values().sum::<i32>() >= max {
-                if no_of_winners > 0 {
-                    winner_name.push_str(" and ");
-                }
 
-                winner_name.push_str(&player.name);
-
+        let max = total_scores.iter().max().unwrap();
+        for player in &state.read().players {
+            if player.score.values().sum::<i32>() >= *max {
                 no_of_winners += 1;
             }
         }
@@ -65,9 +58,10 @@ fn get_game_status(cx: Scope) -> GameStatus {
 }
 
 pub fn score_table(cx: Scope) -> Element {
-    let state = use_atom_state(&cx, STATE);
+    let state = use_atom_ref(&cx, STATE);
+    let stored_state = state.read().clone();
 
-    LocalStorage::set("state", state.get()).unwrap();
+    LocalStorage::set("state", stored_state).unwrap();
     SessionStorage::set("session", true).unwrap();
 
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
@@ -80,9 +74,7 @@ pub fn score_table(cx: Scope) -> Element {
         GameStatus::Finished => {
             game_continues.set(false);
             if **show_end_once {
-                state.with_mut(|state| {
-                    state.screen = Screen::Winner;
-                });
+                state.write().screen = Screen::Winner;
                 show_end_once.set(false);
             }
         }
@@ -92,15 +84,11 @@ pub fn score_table(cx: Scope) -> Element {
     };
 
     let return_to_menu = |_| {
-        state.with_mut(|state| {
-            state.screen = Screen::Menu;
-        });
+        state.write().screen = Screen::Menu;
     };
 
     let return_to_select = |_| {
-        state.with_mut(|state| {
-            state.screen = Screen::PlayerSelect;
-        });
+        state.write().screen = Screen::PlayerSelect;
     };
 
     cx.render(rsx! (
@@ -145,7 +133,7 @@ pub fn score_table(cx: Scope) -> Element {
                 //Main table
                 class: "z-10 flex justify-evenly gap-x-4 pt-2 overflow-auto mx-auto w-full sm:max-w-lg",
 
-                state.players.iter().map(|player| {
+                state.read().players.iter().map(|player| {
                     let sum = player.score.values().sum::<i32>().to_string();
                     let background = TITLE_COLORS[player.id-1];
                     let border = BORDER_COLORS[player.id-1];
@@ -205,28 +193,28 @@ pub struct ScoreInputProps {
 
 pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     let id = cx.props.id;
-    let state = use_atom_state(&cx, STATE);
+    let state = use_atom_ref(&cx, STATE);
     let buffer = use_state(&cx, String::new);
     let execute = use_eval(&cx);
 
     let onsubmit = move |_| {
         if let Ok(number) = buffer.parse::<i32>() {
-            state.with_mut(|mut_state| {
-                for player in &mut mut_state.players {
-                    if id == player.id {
-                        player.score.insert(player.score.len(), number);
-                    }
+            for player in &mut state.write().players {
+                if id == player.id {
+                    player.score.insert(player.score.len(), number);
                 }
-            });
+            }
         }
         buffer.set(String::new());
 
-        match id.cmp(&state.players.len()) {
+        match id.cmp(&state.read().players.len()) {
             Ordering::Greater => (),
             Ordering::Less => {
                 let new_id = id + 1;
-                execute("document.getElementById('".to_string() + &new_id.to_string() + "').focus();");
-            },
+                execute(
+                    "document.getElementById('".to_string() + &new_id.to_string() + "').focus();",
+                );
+            }
             Ordering::Equal => {
                 execute("document.getElementById('1').focus();".to_string());
             }

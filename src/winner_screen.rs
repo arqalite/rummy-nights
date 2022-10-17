@@ -1,6 +1,6 @@
-use dioxus::fermi::use_atom_state;
+use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
-use gloo_storage::{LocalStorage, Storage, SessionStorage};
+use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
 use crate::data::{GameStatus, Model, Screen, BORDER_COLORS, TITLE_COLORS};
 use crate::STATE;
@@ -8,38 +8,34 @@ use crate::STATE;
 static HAS_SORTED_ONCE: Atom<bool> = |_| false;
 
 pub fn winner_screen(cx: Scope) -> Element {
-    let state = use_atom_state(&cx, STATE);
+    let state = use_atom_ref(&cx, STATE);
     let is_sorted = use_atom_state(&cx, HAS_SORTED_ONCE);
 
     let mut player_count = 0;
 
     let return_to_table = |_| {
-        state.with_mut(|state| {
-            state.screen = Screen::Game;
-        });
+        state.write().screen = Screen::Game;
     };
 
     let delete_and_exit_game = |_| {
         LocalStorage::clear();
         SessionStorage::clear();
-        state.set(Model {
+        *state.write() = Model {
             players: Vec::new(),
             game_status: GameStatus::NotStarted,
             screen: Screen::Menu,
-        });
+        };
     };
 
     if !is_sorted {
-        state.with_mut(|mut_state| {
-            mut_state.players.sort_by(|a, b| {
-                let temp_sum_a = a.score.values().sum::<i32>();
-                let temp_sum_b = b.score.values().sum::<i32>();
+        state.write().players.sort_by(|a, b| {
+            let temp_sum_a = a.score.values().sum::<i32>();
+            let temp_sum_b = b.score.values().sum::<i32>();
 
-                temp_sum_a.cmp(&temp_sum_b)
-            });
-
-            mut_state.players.reverse();
+            temp_sum_a.cmp(&temp_sum_b)
         });
+
+        state.write().players.reverse();
 
         is_sorted.set(true);
     };
@@ -94,7 +90,7 @@ pub fn winner_screen(cx: Scope) -> Element {
                 },
                 div {
                     class: "flex flex-col basis-1/2 grow-0 shrink justify-evenly content-evenly",
-                    state.players.iter().map(|player| {
+                    state.read().players.iter().map(|player| {
                         let background = TITLE_COLORS[player.id-1];
                         let border = BORDER_COLORS[player.id-1];
                         let score = player.score.values().sum::<i32>();

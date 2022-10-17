@@ -17,29 +17,29 @@ mod player_select;
 mod score_table;
 mod winner_screen;
 
-use data::{Model, Screen, STATE, read_session_storage, GameStatus};
 use data::read_local_storage;
-use dioxus::fermi::use_atom_state;
+use data::{read_session_storage, GameStatus, Model, Screen, STATE};
+use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 
 // Two things are done here, setting up the state and screens,
 // and checking for LocalStorage to see if an ongoing game exists (and loading it into memory).
 // Other work should be done in other modules.
 fn app(cx: Scope) -> Element {
-    let state = use_atom_state(&cx, STATE);
+    let state = use_atom_ref(&cx, STATE);
     let has_checked_storage = use_state(&cx, || false);
 
     if !has_checked_storage {
         match read_local_storage() {
             Ok(new_state) => {
-                state.with_mut(|mut_state| {
-                    mut_state.players = new_state.players;
-                    mut_state.game_status = new_state.game_status;
+                state.write().players = new_state.players;
+                state.write().game_status = new_state.game_status;
 
-                    if read_session_storage().is_ok() && mut_state.game_status == GameStatus::Ongoing {
-                            mut_state.screen = Screen::Game;
-                    };
-                });
+                if read_session_storage().is_ok() && state.read().game_status == GameStatus::Ongoing
+                {
+                    state.write().screen = Screen::Game;
+                };
+
                 has_checked_storage.set(true);
             }
             // It's no big deal if an existing game cannot be read,
@@ -52,7 +52,7 @@ fn app(cx: Scope) -> Element {
         };
     };
 
-    match state.screen {
+    match state.read().screen {
         Screen::Menu => cx.render(rsx!(menu::intro_screen())),
         Screen::PlayerSelect => cx.render(rsx!(player_select::player_select())),
         Screen::Game => cx.render(rsx!(score_table::score_table())),

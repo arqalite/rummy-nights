@@ -2,28 +2,24 @@
 
 use dioxus::core::UiEvent;
 use dioxus::events::FormData;
-use dioxus::fermi::use_atom_state;
+use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 
-use crate::data::{GameStatus, Screen, TITLE_COLORS, add_player, remove_player};
+use crate::data::{add_player, remove_player, GameStatus, Screen, TITLE_COLORS};
 use crate::STATE;
 
 pub fn player_select(cx: Scope) -> Element {
-    let state = use_atom_state(&cx, STATE);
+    let state = use_atom_ref(&cx, STATE);
 
     let onclick = |_| {
-        if state.players.len() >= 2 {
-            state.with_mut(|state| {
-                state.game_status = GameStatus::Ongoing;
-                state.screen = Screen::Game;
-            });
+        if state.read().players.len() >= 2 {
+            state.write().game_status = GameStatus::Ongoing;
+            state.write().screen = Screen::Game;
         };
     };
 
     let return_to_menu = |_| {
-        state.with_mut(|state| {
-            state.screen = Screen::Menu;
-        });
+        state.write().screen = Screen::Menu;
     };
 
     cx.render(rsx!(
@@ -35,7 +31,7 @@ pub fn player_select(cx: Scope) -> Element {
                     class: "w-[300px] h-[300px] bottom-[-150px] left-[-150px] absolute rounded-full z-0",
                     background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
                 }
-            }    
+            }
             div {
                 class: "h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg",
                 button {
@@ -68,11 +64,9 @@ pub fn player_select(cx: Scope) -> Element {
                 //Player list
                 div {
                     class: "flex flex-col gap-6",
-                    state.players.iter().map(|player| {
+                    state.read().players.iter().map(|player| {
                         let background = TITLE_COLORS[player.id-1];
-                        let delete_button = move |_| {
-                            remove_player(cx, player.id);
-                        };
+                        let player_id = player.id;
 
                         rsx!(
                             div {
@@ -85,7 +79,7 @@ pub fn player_select(cx: Scope) -> Element {
                                     }
                                 }
                                 button {
-                                    onclick: delete_button,
+                                    onclick: move |_| remove_player(cx, player_id),
                                     img {
                                         class: "h-7",
                                         src: "img/remove.svg",
@@ -124,7 +118,7 @@ pub fn player_select(cx: Scope) -> Element {
 
 fn player_input(cx: Scope) -> Element {
     let buffer = use_state(&cx, String::new);
-    let state = use_atom_state(&cx, STATE);
+    let state = use_atom_ref(&cx, STATE);
 
     let onsubmit = move |_| {
         if buffer.len() > 0 {
@@ -143,7 +137,7 @@ fn player_input(cx: Scope) -> Element {
         buffer.set(evt.value.clone());
     };
 
-    if state.players.len() <= 3 {
+    if state.read().players.len() <= 3 {
         cx.render(rsx!(
             div {
                 class: "flex flex-row justify-evenly h-16 rounded-full bg-slate-200 pr-2",
@@ -180,5 +174,3 @@ fn player_input(cx: Scope) -> Element {
         None
     }
 }
-
-

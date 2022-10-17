@@ -42,9 +42,13 @@ fn get_game_status(cx: Scope) -> GameStatus {
             total_scores.push(player.score.values().sum::<i32>());
         }
 
-        let max = total_scores.iter().max().unwrap();
+        let max = match total_scores.iter().max() {
+            Some(value) => value.clone(),
+            None => 0,
+        };
+
         for player in &state.read().players {
-            if player.score.values().sum::<i32>() >= *max {
+            if player.score.values().sum::<i32>() >= max {
                 no_of_winners += 1;
             }
         }

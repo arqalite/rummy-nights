@@ -1,5 +1,5 @@
 //! data.rs - data structures and custom types
-//! Here we should only have structs, enums and vectors of Tailwind CSS classes.
+//! Here we should only have structs, enums, functions that deal with data, and Tailwind CSS classes.
 
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};

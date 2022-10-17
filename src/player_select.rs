@@ -1,9 +1,9 @@
 //! The player selection screen.
 
+use dioxus::prelude::*;
 use dioxus::core::UiEvent;
 use dioxus::events::FormData;
 use dioxus::fermi::use_atom_ref;
-use dioxus::prelude::*;
 
 use crate::data::{add_player, remove_player, GameStatus, Screen, TITLE_COLORS};
 use crate::STATE;
@@ -11,21 +11,10 @@ use crate::STATE;
 pub fn player_select(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
-    let onclick = |_| {
-        if state.read().players.len() >= 2 {
-            state.write().game_status = GameStatus::Ongoing;
-            state.write().screen = Screen::Game;
-        };
-    };
-
-    let return_to_menu = |_| {
-        state.write().screen = Screen::Menu;
-    };
-
     cx.render(rsx!(
-        div {
+        div { //Screen container
             class: "flex flex-col grow h-screen w-screen relative overflow-hidden px-[5%]",
-            div {
+            div { //Decorative circles
                 class: "z-0 absolute h-screen w-screen",
                 div {
                     class: "w-[300px] h-[300px] bottom-[-150px] left-[-150px] absolute rounded-full z-0",
@@ -36,7 +25,7 @@ pub fn player_select(cx: Scope) -> Element {
                 class: "h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg",
                 button {
                     class: "col-start-1 justify-self-start",
-                    onclick: return_to_menu,
+                    onclick: |_| {state.write().screen = Screen::Menu}, //return to main menu
                     img {
                         class: "h-8 w-8",
                         src: "img/back.svg",
@@ -101,7 +90,12 @@ pub fn player_select(cx: Scope) -> Element {
                 //Start button
                 button {
                     class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-0 bottom-32",
-                    onclick: onclick,
+                    onclick: |_| {
+                        if state.read().players.len() >= 2 {
+                            state.write().game_status = GameStatus::Ongoing;
+                            state.write().screen = Screen::Game;
+                        };
+                    },
                     span {
                         class: "flex self-center text-xl font-bold w-max",
                         "Start game"

@@ -15,6 +15,7 @@ const appShellFiles = [
     '/img/menu_button.svg',
     '/img/new.svg',
     '/img/remove.svg',
+    '/img/replay.svg',
     '/img/resume.svg',
     '/img/save.svg',
     '/img/share.svg',

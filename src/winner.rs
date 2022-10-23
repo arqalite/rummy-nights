@@ -1,8 +1,10 @@
+use std::collections::BTreeMap;
+
 use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
-use crate::data::{Model, Screen, BORDER_COLORS, TITLE_COLORS, Player};
+use crate::data::{Model, Screen, BORDER_COLORS, TITLE_COLORS, Player, GameStatus};
 use crate::STATE;
 
 static HAS_SORTED_ONCE: Atom<bool> = |_| false;
@@ -103,6 +105,14 @@ fn nav_bar(cx: Scope) -> Element {
         *state.write() = Model::new();
     };
 
+    let restart_game = |_| {
+        state.write().game_status = GameStatus::Ongoing;
+        for player in state.write().players.iter_mut() {
+            player.score = BTreeMap::new()
+        }
+        state.write().screen = Screen::Game;
+    };
+
     cx.render(rsx!(
         div {
             class: "h-16 grid grid-cols-3",
@@ -117,11 +127,19 @@ fn nav_bar(cx: Scope) -> Element {
                 }
             }
             button {
-                class: "col-start-3 justify-self-end",
+                class: "col-start-2 justify-self-center",
                 onclick: delete_and_exit_game,
                 img {
                     class: "h-8 w-8",
-                    src: "img/exit.svg",
+                    src: "img/home.svg",
+                }
+            }
+            button {
+                class: "col-start-3 justify-self-end",
+                onclick: restart_game,
+                img {
+                    class: "h-8 w-8",
+                    src: "img/replay.svg",
                 }
             }
         }

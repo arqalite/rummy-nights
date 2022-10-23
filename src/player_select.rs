@@ -8,7 +8,7 @@ use dioxus::prelude::*;
 use crate::data::{add_player, remove_player, GameStatus, Screen, TITLE_COLORS};
 use crate::STATE;
 
-pub fn select_screen(cx: Scope) -> Element {
+pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(
         div { //Screen container
             class: "flex flex-col grow h-screen w-screen relative overflow-hidden px-[5%]",

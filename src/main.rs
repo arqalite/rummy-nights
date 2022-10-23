@@ -6,16 +6,20 @@
 // The "use_self" one I have no idea what it means, and it popped up randomly with no explanation.
 // Disabling "derive_partial_eq_without_eq" since it interferes with Dioxus's inline props feature.
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
-#![allow(clippy::used_underscore_binding, clippy::use_self, clippy::derive_partial_eq_without_eq)]
+#![allow(
+    clippy::used_underscore_binding,
+    clippy::use_self,
+    clippy::derive_partial_eq_without_eq
+)]
 
 // The code is split into multiple modules:
 //      data.rs holds the custom data structures/types, and arrays of CSS classes.
 //      The rest deal with each app screen individually.
 
 mod data;
-mod menu_screen;
+mod menu;
 mod player_select;
-mod score_table;
+mod game;
 mod winner_screen;
 
 use data::{read_local_storage, read_session_storage, GameStatus, Model, Screen, STATE};
@@ -53,9 +57,9 @@ fn app(cx: Scope) -> Element {
     };
 
     match state.read().screen {
-        Screen::Menu => cx.render(rsx!(menu_screen::main_menu())),
-        Screen::PlayerSelect => cx.render(rsx!(player_select::select_screen())),
-        Screen::Game => cx.render(rsx!(score_table::score_table())),
+        Screen::Menu => cx.render(rsx!(menu::main_menu())),
+        Screen::PlayerSelect => cx.render(rsx!(player_select::screen())),
+        Screen::Game => cx.render(rsx!(game::screen())),
         Screen::Winner => cx.render(rsx!(winner_screen::winner_screen())),
     }
 }

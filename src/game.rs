@@ -214,6 +214,12 @@ fn nav_bar(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
 
+    let button_position = if **game_continues {
+        "col-start-3 justify-self-end"
+    } else {
+        "col-start-1 justify-self-start"
+    };
+
     cx.render(rsx!(
         div {
             class: "z-10 h-16 grid grid-cols-3 mx-auto w-full sm:max-w-lg",
@@ -230,7 +236,7 @@ fn nav_bar(cx: Scope) -> Element {
                 }
             )),
             button {
-                class: "col-start-2 justify-self-center",
+                class: "{button_position}",
                 onclick: |_| {
                     state.write().screen = Screen::Menu;
                 },

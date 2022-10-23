@@ -4,7 +4,7 @@ use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
-use crate::data::{GameStatus, Model, Player, Screen, BORDER_COLORS, TITLE_COLORS};
+use crate::data::{Model, Screen, BORDER_COLORS, TITLE_COLORS, Player, GameStatus};
 use crate::STATE;
 
 static HAS_SORTED_ONCE: Atom<bool> = |_| false;
@@ -108,6 +108,7 @@ fn nav_bar(cx: Scope) -> Element {
 
     let restart_game = |_| {
         state.write().game_status = GameStatus::Ongoing;
+
         for player in &mut state.write().players {
             player.score = BTreeMap::new();
         }

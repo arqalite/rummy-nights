@@ -1,6 +1,6 @@
 use dioxus::core::UiEvent;
 use dioxus::events::FormData;
-use dioxus::fermi::{use_atom_state, use_atom_ref};
+use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
@@ -17,6 +17,7 @@ static SHOW_END_ONCE: Atom<bool> = |_| true;
 // (i.e. final score is reached, all players have all the scores inputted, and there is no draw)
 fn get_game_status(cx: Scope) -> GameStatus {
     let state = use_atom_ref(&cx, STATE);
+    let mut game_status = GameStatus::Ongoing;
 
     // Pull the final scores and number of games played by each player.
     let (total_scores, games_played): (Vec<i32>, Vec<usize>) = state
@@ -28,34 +29,33 @@ fn get_game_status(cx: Scope) -> GameStatus {
 
     let max = *(total_scores.iter().max().unwrap());
 
-    let has_reached_max = max >= FINAL_SCORE;
-    let are_columns_equal =
-        games_played.iter().min().unwrap() == games_played.iter().max().unwrap();
-    let mut no_of_winners = 0;
+    if max >= FINAL_SCORE {
+        //Count how many players have the biggest score to check for a draw.
+        let no_of_winners = &state
+            .read()
+            .players
+            .iter()
+            .filter(|player| player.score.values().sum::<i32>() >= max)
+            .count();
 
-    for player in &state.read().players {
-        if player.score.values().sum::<i32>() >= max {
-            no_of_winners += 1;
+        if (games_played.iter().min().unwrap() == games_played.iter().max().unwrap())
+            && *no_of_winners == 1
+        {
+            game_status = GameStatus::Finished;
         }
     }
 
-    if has_reached_max && are_columns_equal && no_of_winners == 1 {
-        GameStatus::Finished
-    } else {
-        GameStatus::Ongoing
-    }
+    game_status
 }
 
 pub fn score_table(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    let stored_state = state.read().clone();
-
-    LocalStorage::set("state", stored_state).unwrap();
-    SessionStorage::set("session", true).unwrap();
-
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
-
     let show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
+
+    //Save game to storage.
+    LocalStorage::set("state", state.read().clone()).unwrap();
+    SessionStorage::set("session", true).unwrap();
 
     let game_status = get_game_status(cx);
 
@@ -177,13 +177,8 @@ pub fn score_table(cx: Scope) -> Element {
     ))
 }
 
-#[derive(Props, PartialEq, Eq)]
-pub struct ScoreInputProps {
-    id: usize,
-}
-
-pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
-    let id = cx.props.id;
+#[inline_props]
+pub fn score_input(cx: Scope, id: usize) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let buffer = use_state(&cx, String::new);
     let execute = use_eval(&cx);
@@ -191,7 +186,7 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
     let onsubmit = move |_| {
         if let Ok(number) = buffer.parse::<i32>() {
             for player in &mut state.write().players {
-                if id == player.id {
+                if *id == player.id {
                     player.score.insert(player.score.len(), number);
                 }
             }
@@ -201,9 +196,8 @@ pub fn score_input(cx: Scope<ScoreInputProps>) -> Element {
         match id.cmp(&state.read().players.len()) {
             Ordering::Greater => (),
             Ordering::Less => {
-                let new_id = id + 1;
                 execute(
-                    "document.getElementById('".to_string() + &new_id.to_string() + "').focus();",
+                    "document.getElementById('".to_string() + &(id + 1).to_string() + "').focus();",
                 );
             }
             Ordering::Equal => {

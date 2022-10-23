@@ -38,7 +38,7 @@ pub fn main_menu(cx: Scope) -> Element {
             p { // Version bubble icon thing
                 class: "text-white font-semibold text-lg text-center max-w-1/2 px-2 absolute bottom-4 left-4 rounded-full",
                 background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
-                "build 2022-10-18 00:42"
+                "build 2022-10-23 13:08"
             }
         }
     ))

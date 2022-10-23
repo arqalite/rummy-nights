@@ -2,147 +2,106 @@
 
 use dioxus::core::UiEvent;
 use dioxus::events::FormData;
-use dioxus::fermi::use_atom_state;
+use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
-use std::collections::BTreeMap;
 
-use crate::data::{GameStatus, Player, Screen, TITLE_COLORS};
+use crate::data::{add_player, remove_player, GameStatus, Screen, TITLE_COLORS};
 use crate::STATE;
 
-pub fn player_select(cx: Scope) -> Element {
-    let state = use_atom_state(&cx, STATE);
-
-    let onclick = |_| {
-        if state.players.len() >= 2 {
-            state.with_mut(|state| {
-                state.game_status = GameStatus::Ongoing;
-                state.screen = Screen::Game;
-            });
-        };
-    };
-
-    let return_to_menu = |_| {
-        state.with_mut(|state| {
-            state.screen = Screen::Intro;
-        });
-    };
-
+pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(
-        div {
-            class: "flex flex-col relative mx-auto h-screen w-screen overflow-hidden px-8",
+        div { //Screen container
+            class: "flex flex-col grow h-screen w-screen relative overflow-hidden px-[5%]",
+            decorative_spheres()
+            top_bar()
+
             div {
-                class: "z-0 absolute h-screen w-screen",
+                class: "z-10 flex flex-col grow relative mx-auto w-full sm:max-w-lg",
                 div {
-                    class: "w-[300px] h-[300px] bottom-[-150px] left-[-150px] absolute rounded-full z-0",
-                    background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                }
-            }    
-            div {
-                class: "h-16 grid grid-cols-3 z-10",
-                button {
-                    class: "mx-auto h-16 relative left-[-50%]",
-                    onclick: return_to_menu,
-                    img {
-                        class: "h-8 w-8",
-                        src: "img/back.svg",
-                    }
-                }
-                button {
-                    class: "mx-auto h-16 relative col-start-3 right-[-50%]",
-                    //onclick:
-                    img {
-                        class: "h-8 w-8",
-                        src: "img/save.svg",
-                    }
-                }
-            },
-            //Player select
-            div {
-                class: "z-10",
-                div {
-                    class: "w-full rounded-full flex self-center mx-auto mb-8",
-                    //background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    p {
-                        class: "mx-auto self-center font-semibold text-lg text-black border-b-2 border-emerald-300",
+                    class: "mb-6 w-max mx-auto",
+                    span {
+                        class: "font-semibold text-lg border-b-2 border-emerald-300",
                         "Add up to 4 players"
                     }
-                },
-                //Player list
-                state.players.iter().map(|player| {
-                    let background = TITLE_COLORS[player.id-1];
-                    let delete_button = |_| {
-                        state.with_mut(|mut_state| {
-                            mut_state.players.retain(|item|{
-                                item.id != player.id
-                            });
-                        });
-                    };
-
-                    rsx!(
-                        div {
-                            class: "grid grid-cols-3 gap-6 items-center h-20 rounded-full bg-slate-200 mb-6 space-x-2",
-                            div {
-                                class: "flex justify-center items-center ml-4 w-full h-12 col-span-2 rounded-full {background}",
-                                p {
-                                    class: "text-white font-semibold",
-                                    "{player.name}"
-                                }
-                            }
-                            div {
-                                class: "col-span-1 my-auto space-x-4",
-                                button {
-                                    class: "mx-auto h-16",
-                                    onclick: delete_button,
-                                    img {
-                                        class: "h-8 w-8",
-                                        src: "img/remove.svg",
-                                    }
-                                }
-                                button {
-                                    class: "mx-auto h-16",
-                                    //onclick:
-                                    img {
-                                        class: "h-8 w-8",
-                                        src: "img/menu.svg",
-                                    }
-                                }
-                            }
-                        }
-                    )
-                }),
-                //Name input
-                player_input(),
-            },
-            //Start button
-            div {
-                class: "z-10 w-48 h-18 mt-16 border-b-[6px] border-emerald-300 ml-auto mr-8",
-                button {
-                    class: "w-full text-center my-2",
-                    onclick: onclick,
-                    p {
-                        class: "inline-block pr-2 text-xl font-bold align-middle",
-                        "Start game"
-                    }
-                    img {
-                        class: "h-12 w-12 inline-block align-middle",
-                        src: "img/arrow.svg"
-                    }
                 }
+                player_list()
+                start_game_button()
             }
         }
     ))
 }
 
-fn player_input(cx: Scope) -> Element {
-    let buffer = use_state(&cx, || String::new());
-    let state = use_atom_state(&cx, STATE);
+fn start_game_button(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
 
-    let onsubmit = move |_| {
-        if buffer.len() > 0 {
-            add_player(cx, buffer.to_string());
-            buffer.set(String::new());
+    cx.render(rsx!(
+        button {
+            class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-0 bottom-32",
+            onclick: |_| {
+                if state.read().players.len() >= 2 {
+                    state.write().game_status = GameStatus::Ongoing;
+                    state.write().screen = Screen::Game;
+                };
+            },
+            span {
+                class: "flex self-center text-xl font-bold w-max",
+                "Start game"
+            }
+            img {
+                class: "h-12 w-12",
+                src: "img/arrow.svg"
+            }
         }
-    };
+    ))
+}
+
+fn player_list(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+
+    cx.render(rsx!(
+        div {
+            class: "flex flex-col gap-6",
+            state.read().players.iter().map(|player| {
+                let background = TITLE_COLORS[player.id-1];
+                let player_id = player.id;
+
+                rsx!(
+                    div {
+                        class: "flex justify-evenly h-16 rounded-full bg-slate-200 pr-2",
+                        div {
+                            class: "flex justify-center	content-center h-8 w-3/5 self-center rounded-full {background}",
+                            p {
+                                class: "flex self-center text-white font-semibold",
+                                "{player.name}"
+                            }
+                        }
+                        button {
+                            onclick: move |_| remove_player(cx, player_id),
+                            img {
+                                class: "h-7",
+                                src: "img/remove.svg",
+                            }
+                        }
+                        button {
+                            //onclick:
+                            img {
+                                class: "h-7",
+                                src: "img/menu.svg",
+                            }
+                        }
+                    }
+                )
+            }),
+
+            player_input(),
+        }
+    ))
+}
+
+fn player_input(cx: Scope) -> Element {
+    let buffer = use_state(&cx, String::new);
+    let state = use_atom_ref(&cx, STATE);
+
     let onclick = move |_| {
         if buffer.len() > 0 {
             add_player(cx, buffer.to_string());
@@ -150,34 +109,24 @@ fn player_input(cx: Scope) -> Element {
         }
     };
 
-    let oninput = |evt: UiEvent<FormData>| {
-        buffer.set(evt.value.clone());
-    };
-
-    if state.players.len() <= 3 {
+    if state.read().players.len() <= 3 {
         cx.render(rsx!(
             div {
-                class: "grid grid-cols-3 items-center h-20 rounded-full bg-slate-200",
-                form {
-                    class: "col-span-2 w-full",
-                    onsubmit: onsubmit,
-                    prevent_default: "onsubmit",
-                    input {
-                        class: "ml-4 rounded-full w-full mx-auto h-12 ring-1 ring-grey text-center",
-                        placeholder: "Insert player name",
-                        value: "{buffer}",
-                        oninput: oninput,
-                        onsubmit: onsubmit,
-                        prevent_default: "onsubmit",
-                    }
-                },
+                class: "flex flex-row justify-evenly h-16 rounded-full bg-slate-200 pr-2",
+                player_input_textbox()
                 button {
-                    class: "col-span-1 mx-auto text-center",
                     onclick: onclick,
                     img {
-                        class: "h-8 w-8",
+                        class: "h-7",
                         src: "img/add-player.svg",
-                    },
+                    }
+                }
+                button {
+                    //onclick:
+                    img {
+                        class: "h-7",
+                        src: "img/menu.svg",
+                    }
                 }
             }
         ))
@@ -186,27 +135,69 @@ fn player_input(cx: Scope) -> Element {
     }
 }
 
-fn add_player(cx: Scope, name: String) {
-    let state = use_atom_state(&cx, STATE);
+fn player_input_textbox(cx: Scope) -> Element {
+    let buffer = use_state(&cx, String::new);
 
-    let mut lowest_available_id = 0;
+    let onsubmit = move |_| {
+        if buffer.len() > 0 {
+            add_player(cx, buffer.to_string());
+            buffer.set(String::new());
+        }
+    };
 
-    for i in 1..5 {
-        let slot = state.players.iter().find(|item| item.id == i);
+    cx.render(rsx!(
+        form {
+            class: "w-3/5 self-center",
+            onsubmit: onsubmit,
+            prevent_default: "onsubmit",
+            input {
+                class: "rounded-full w-full h-8 ring-1 ring-grey text-center",
+                placeholder: "Insert player name",
+                value: "{buffer}",
+                oninput: |evt: UiEvent<FormData>| {
+                    buffer.set(evt.value.clone());
+                },
+                onsubmit: onsubmit,
+                prevent_default: "onsubmit",
+            }
+        },
+    ))
+}
 
-        if slot == None {
-            lowest_available_id = i;
-            break;
-        };
-    }
+fn top_bar(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
 
-    state.with_mut(|state| {
-        if state.players.len() < 4 && lowest_available_id != 0 {
-            state.players.push(Player {
-                id: lowest_available_id,
-                name,
-                score: BTreeMap::new(),
-            });
-        };
-    });
+    cx.render(rsx!(
+        div {
+            class: "h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg",
+            button {
+                class: "col-start-1 justify-self-start",
+                onclick: |_| {state.write().screen = Screen::Menu}, //return to main menu
+                img {
+                    class: "h-8 w-8",
+                    src: "img/back.svg",
+                }
+            }
+            button {
+                class: "col-start-3 justify-self-end",
+                //onclick:
+                img {
+                    class: "h-8 w-8",
+                    src: "img/save.svg",
+                }
+            }
+        }
+    ))
+}
+
+fn decorative_spheres(cx: Scope) -> Element {
+    cx.render(rsx!(
+        div { //Decorative circles
+            class: "z-0 absolute h-screen w-screen",
+            div {
+                class: "w-[300px] h-[300px] bottom-[-150px] left-[-150px] absolute rounded-full z-0",
+                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+            }
+        }
+    ))
 }

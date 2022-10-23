@@ -1,7 +1,6 @@
 use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
-use gloo_console::log;
 
 use crate::data::{Model, Screen, BORDER_COLORS, TITLE_COLORS, Player};
 use crate::STATE;
@@ -16,24 +15,18 @@ pub fn screen(cx: Scope) -> Element {
 
     if !is_sorted {
         *cloned_players.write() = state.read().players.clone();
-
+        
         cloned_players.write().sort_by(|a, b| {
             let temp_sum_a = a.score.values().sum::<i32>();
             let temp_sum_b = b.score.values().sum::<i32>();
 
             temp_sum_a.cmp(&temp_sum_b)
         });
-
+        
         cloned_players.write().reverse();
 
         is_sorted.set(true);
     };
-
-    log!(format!("{:#?}", cloned_players.read()));
-
-
-    LocalStorage::clear();
-    SessionStorage::clear();
 
     let mut player_count = 0;
 

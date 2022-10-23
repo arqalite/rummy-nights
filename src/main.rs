@@ -22,7 +22,7 @@ mod menu;
 mod player_select;
 mod winner;
 
-use data::{read_local_storage, read_session_storage, GameStatus, Model, Screen, STATE};
+use data::{read_local_storage, read_session_storage, Model, Screen, STATE};
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 
@@ -39,7 +39,7 @@ fn app(cx: Scope) -> Element {
                 state.write().players = new_state.players;
                 state.write().game_status = new_state.game_status;
 
-                if read_session_storage().is_ok() && state.read().game_status == GameStatus::Ongoing
+                if read_session_storage().is_ok()
                 {
                     state.write().screen = Screen::Game;
                 };

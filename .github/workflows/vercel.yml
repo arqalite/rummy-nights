@@ -2,7 +2,7 @@ name: Build static pages and upload to Vercel
 
 on:
   push:
-    branches: [main, dev]
+    branches: [stable, dev]
     
 jobs:
   vercel:
@@ -50,7 +50,7 @@ jobs:
         run: trunk build --release
 
       - name: Deploy to Vercel (prod)
-        if: "github.event_name == 'push' && endsWith(github.ref, 'refs/heads/main')" # Deploy to prod if it is a push to `main`
+        if: "github.event_name == 'push' && endsWith(github.ref, 'refs/heads/stable')" # Deploy to prod if it is a push to `main`
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
@@ -60,7 +60,7 @@ jobs:
           working-directory: ./dist
 
       - name: Deploy to Vercel (preview)
-        if: "github.event_name != 'push' || !endsWith(github.ref, 'refs/heads/main')" # Deploy to preview otherwise
+        if: "github.event_name != 'push' || !endsWith(github.ref, 'refs/heads/stable')" # Deploy to preview otherwise
         uses: amondnet/vercel-action@v20
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required

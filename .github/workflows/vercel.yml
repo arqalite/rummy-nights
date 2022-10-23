@@ -2,9 +2,7 @@ name: Build static pages and upload to Vercel
 
 on:
   push:
-    branches: 
-      -main 
-      -dev
+    branches: [main, dev]
     
 jobs:
   vercel:

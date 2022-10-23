@@ -2,10 +2,10 @@ name: Build static pages and upload to Vercel
 
 on:
   push:
-    branches: ['**']
-  pull_request_target:
-    types: [opened, synchronize, reopened]
-
+    branches: 
+      -main 
+      -dev
+    
 jobs:
   vercel:
     runs-on: ubuntu-latest

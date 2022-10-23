@@ -40,12 +40,13 @@ pub fn screen(cx: Scope) -> Element {
                 class: "z-10 flex flex-col grow mx-auto w-full sm:max-w-lg",
                 nav_bar(),
                 div {
+                    class: "mt-8",
                     img {
                         src: "img/trophy.svg",
                         class: "h-20 w-20 mx-auto"
                     }
                     p {
-                        class: "text-center font-bold text-4xl my-4",
+                        class: "text-center font-bold text-4xl mt-2",
                         "THE WINNER IS"
                     }
                 },

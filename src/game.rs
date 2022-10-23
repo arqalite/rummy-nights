@@ -5,6 +5,7 @@ use dioxus::prelude::*;
 use dioxus::web::use_eval;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use std::cmp::Ordering;
+use std::ops::Not;
 
 use crate::data::{GameStatus, Player, Screen, BORDER_COLORS, CARET_COLORS, TITLE_COLORS};
 use crate::STATE;
@@ -229,15 +230,27 @@ fn nav_bar(cx: Scope) -> Element {
                 }
             )),
             button {
-                class: "col-start-3 justify-self-end",
+                class: "col-start-2 justify-self-center",
                 onclick: |_| {
                     state.write().screen = Screen::Menu;
                 },
                 img {
                     class: "h-8 w-8",
-                    src: "img/exit.svg",
+                    src: "img/home.svg",
                 }
             }
+            game_continues.not().then(|| rsx!(
+                button {
+                    class: "col-start-3 justify-self-end",
+                    onclick: |_| {
+                        state.write().screen = Screen::Winner;
+                    },
+                    img {
+                        class: "h-8 w-8 scale-x-[-1]",
+                        src: "img/back.svg",
+                    }
+                }
+            ))
         }
     ))
 }

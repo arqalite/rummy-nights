@@ -102,6 +102,17 @@ fn player_input(cx: Scope) -> Element {
     let buffer = use_state(&cx, String::new);
     let state = use_atom_ref(&cx, STATE);
 
+    let onsubmit = move |_| {
+        if buffer.len() > 0 {
+            add_player(cx, buffer.to_string());
+            buffer.set(String::new());
+        }
+    };
+    
+    let oninput = |evt: UiEvent<FormData>| {
+        buffer.set(evt.value.clone());
+    };
+
     let onclick = move |_| {
         if buffer.len() > 0 {
             add_player(cx, buffer.to_string());
@@ -113,7 +124,19 @@ fn player_input(cx: Scope) -> Element {
         cx.render(rsx!(
             div {
                 class: "flex flex-row justify-evenly h-16 rounded-full bg-slate-200 pr-2",
-                player_input_textbox()
+                form {
+                    class: "w-3/5 self-center",
+                    onsubmit: onsubmit,
+                    prevent_default: "onsubmit",
+                    input {
+                        class: "rounded-full w-full h-8 ring-1 ring-grey text-center",
+                        placeholder: "Insert player name",
+                        value: "{buffer}",
+                        oninput: oninput,
+                        onsubmit: onsubmit,
+                        prevent_default: "onsubmit",
+                    }
+                },
                 button {
                     onclick: onclick,
                     img {
@@ -133,35 +156,6 @@ fn player_input(cx: Scope) -> Element {
     } else {
         None
     }
-}
-
-fn player_input_textbox(cx: Scope) -> Element {
-    let buffer = use_state(&cx, String::new);
-
-    let onsubmit = move |_| {
-        if buffer.len() > 0 {
-            add_player(cx, buffer.to_string());
-            buffer.set(String::new());
-        }
-    };
-
-    cx.render(rsx!(
-        form {
-            class: "w-3/5 self-center",
-            onsubmit: onsubmit,
-            prevent_default: "onsubmit",
-            input {
-                class: "rounded-full w-full h-8 ring-1 ring-grey text-center",
-                placeholder: "Insert player name",
-                value: "{buffer}",
-                oninput: |evt: UiEvent<FormData>| {
-                    buffer.set(evt.value.clone());
-                },
-                onsubmit: onsubmit,
-                prevent_default: "onsubmit",
-            }
-        },
-    ))
 }
 
 fn top_bar(cx: Scope) -> Element {

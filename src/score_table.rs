@@ -27,10 +27,10 @@ fn get_game_status(cx: Scope) -> GameStatus {
         .map(|player| (player.score.values().sum::<i32>(), player.score.len()))
         .unzip();
 
-    let max = *(total_scores.iter().max().unwrap());
+    let max = *(total_scores.iter().max().unwrap()); //the highest score achieved
 
     if max >= FINAL_SCORE {
-        //Count how many players have the biggest score to check for a draw.
+        //Count how many players have the highest score to check for a draw.
         let no_of_winners = &state
             .read()
             .players
@@ -206,9 +206,6 @@ pub fn score_input(cx: Scope, id: usize) -> Element {
         }
     };
 
-    let oninput = move |evt: UiEvent<FormData>| {
-        buffer.set(evt.value.clone());
-    };
     let caret = CARET_COLORS[id - 1];
     let border = BORDER_COLORS[id - 1];
 
@@ -223,7 +220,9 @@ pub fn score_input(cx: Scope, id: usize) -> Element {
                 value: "{buffer}",
                 onsubmit: onsubmit,
                 prevent_default: "onsubmit",
-                oninput: oninput,
+                oninput: move |evt: UiEvent<FormData>| {
+                    buffer.set(evt.value.clone());
+                },
                 outline: "none",
                 r#type: "number",
             }

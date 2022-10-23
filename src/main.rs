@@ -4,8 +4,9 @@
 // Make Clippy annoying so the code looks and works somewhat fine.
 // It doesn't understand Dioxus' quirks though, so the warning for underscore bindings stays disabled.
 // The "use_self" one I have no idea what it means, and it popped up randomly with no explanation.
+// Disabling "derive_partial_eq_without_eq" since it interferes with Dioxus's inline props feature.
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
-#![allow(clippy::used_underscore_binding, clippy::use_self)]
+#![allow(clippy::used_underscore_binding, clippy::use_self, clippy::derive_partial_eq_without_eq)]
 
 // The code is split into multiple modules:
 //      data.rs holds the custom data structures/types, and arrays of CSS classes.

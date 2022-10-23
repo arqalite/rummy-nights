@@ -16,6 +16,7 @@ jobs:
         with:
           uri: 'https://github.com/tailwindlabs/tailwindcss/releases/download/latest/tailwindcss-linux-x64'
           name: 'tailwindcss'
+          version: 'latest'
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1

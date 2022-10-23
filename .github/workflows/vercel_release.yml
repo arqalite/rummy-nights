@@ -1,4 +1,4 @@
-name: Deploy to Vercel - Production
+name: Deploy to Vercel - Release
 
 on:
   push:
@@ -15,9 +15,9 @@ jobs:
       - name: Download Tailwind
         uses: supplypike/setup-bin@v1
         with:
-          uri: 'https://github.com/tailwindlabs/tailwindcss/releases/download/latest/tailwindcss-linux-x64'
+          uri: 'https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64'
           name: 'tailwindcss'
-          version: '3.1.8'
+          version: 'latest'
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1

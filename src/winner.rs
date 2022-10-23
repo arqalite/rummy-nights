@@ -17,14 +17,14 @@ pub fn screen(cx: Scope) -> Element {
 
     if !is_sorted {
         *cloned_players.write() = state.read().players.clone();
-        
+
         cloned_players.write().sort_by(|a, b| {
             let temp_sum_a = a.score.values().sum::<i32>();
             let temp_sum_b = b.score.values().sum::<i32>();
 
             temp_sum_a.cmp(&temp_sum_b)
         });
-        
+
         cloned_players.write().reverse();
 
         is_sorted.set(true);
@@ -40,12 +40,13 @@ pub fn screen(cx: Scope) -> Element {
                 class: "z-10 flex flex-col grow mx-auto w-full sm:max-w-lg",
                 nav_bar(),
                 div {
+                    class: "mt-8",
                     img {
                         src: "img/trophy.svg",
                         class: "h-20 w-20 mx-auto"
                     }
                     p {
-                        class: "text-center font-bold text-4xl my-4",
+                        class: "text-center font-bold text-4xl mt-2",
                         "THE WINNER IS"
                     }
                 },
@@ -107,8 +108,9 @@ fn nav_bar(cx: Scope) -> Element {
 
     let restart_game = |_| {
         state.write().game_status = GameStatus::Ongoing;
-        for player in state.write().players.iter_mut() {
-            player.score = BTreeMap::new()
+
+        for player in &mut state.write().players {
+            player.score = BTreeMap::new();
         }
         state.write().screen = Screen::Game;
     };

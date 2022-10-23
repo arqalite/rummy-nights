@@ -39,8 +39,7 @@ fn app(cx: Scope) -> Element {
                 state.write().players = new_state.players;
                 state.write().game_status = new_state.game_status;
 
-                if read_session_storage().is_ok()
-                {
+                if read_session_storage().is_ok() {
                     state.write().screen = Screen::Game;
                 };
 

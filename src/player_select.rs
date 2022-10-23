@@ -108,7 +108,7 @@ fn player_input(cx: Scope) -> Element {
             buffer.set(String::new());
         }
     };
-    
+
     let oninput = |evt: UiEvent<FormData>| {
         buffer.set(evt.value.clone());
     };

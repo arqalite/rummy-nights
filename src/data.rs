@@ -23,7 +23,7 @@ pub struct Model {
 }
 
 impl Model {
-    pub fn new() -> Model {
+    pub const fn new() -> Model {
         Model {
             players: Vec::new(),
             game_status: GameStatus::NotStarted,
@@ -122,10 +122,8 @@ pub fn read_session_storage() -> Result<bool, &'static str> {
 
 pub fn print_version_number(cx: Scope) -> Element {
     let version = env!("BUILD_VERSION");
-    
-    cx.render(rsx!(
-        "{version}"
-    ))
+
+    cx.render(rsx!("{version}"))
 }
 
 //

@@ -11,4 +11,4 @@ In order to build the app, you need:
 - [Trunk](https://trunkrs.dev/) (you can get it with `cargo install trunk`)
 - [Tailwind CSS](https://tailwindcss.com/) - make sure to have the [standalone CLI executable](https://tailwindcss.com/blog/standalone-cli) in your PATH (Trunk needs it to generate the CSS on-the-fly)
 
-Once set-up, run `trunk serve --open` and it should be good to go.
+Once set-up, run `trunk serve --open` and it should be good to go!

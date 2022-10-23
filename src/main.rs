@@ -17,10 +17,10 @@
 //      The rest deal with each app screen individually.
 
 mod data;
+mod game;
 mod menu;
 mod player_select;
-mod game;
-mod winner_screen;
+mod winner;
 
 use data::{read_local_storage, read_session_storage, GameStatus, Model, Screen, STATE};
 use dioxus::fermi::use_atom_ref;
@@ -57,10 +57,10 @@ fn app(cx: Scope) -> Element {
     };
 
     match state.read().screen {
-        Screen::Menu => cx.render(rsx!(menu::main_menu())),
+        Screen::Menu => cx.render(rsx!(menu::screen())),
         Screen::PlayerSelect => cx.render(rsx!(player_select::screen())),
         Screen::Game => cx.render(rsx!(game::screen())),
-        Screen::Winner => cx.render(rsx!(winner_screen::winner_screen())),
+        Screen::Winner => cx.render(rsx!(winner::screen())),
     }
 }
 

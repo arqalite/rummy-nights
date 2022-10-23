@@ -1,83 +1,49 @@
 use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
+use gloo_console::log;
 
-use crate::data::{GameStatus, Model, Screen, BORDER_COLORS, TITLE_COLORS};
+use crate::data::{Model, Screen, BORDER_COLORS, TITLE_COLORS, Player};
 use crate::STATE;
 
 static HAS_SORTED_ONCE: Atom<bool> = |_| false;
+static CLONED_PLAYERS: AtomRef<Vec<Player>> = |_| Vec::new();
 
-pub fn winner_screen(cx: Scope) -> Element {
+pub fn screen(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let cloned_players = use_atom_ref(&cx, CLONED_PLAYERS);
     let is_sorted = use_atom_state(&cx, HAS_SORTED_ONCE);
 
-    let mut player_count = 0;
-
-    let return_to_table = |_| {
-        state.write().screen = Screen::Game;
-    };
-
-    let delete_and_exit_game = |_| {
-        LocalStorage::clear();
-        SessionStorage::clear();
-        *state.write() = Model {
-            players: Vec::new(),
-            game_status: GameStatus::NotStarted,
-            screen: Screen::Menu,
-        };
-    };
-
     if !is_sorted {
-        state.write().players.sort_by(|a, b| {
+        *cloned_players.write() = state.read().players.clone();
+
+        cloned_players.write().sort_by(|a, b| {
             let temp_sum_a = a.score.values().sum::<i32>();
             let temp_sum_b = b.score.values().sum::<i32>();
 
             temp_sum_a.cmp(&temp_sum_b)
         });
 
-        state.write().players.reverse();
+        cloned_players.write().reverse();
 
         is_sorted.set(true);
     };
 
+    log!(format!("{:#?}", cloned_players.read()));
+
+
     LocalStorage::clear();
     SessionStorage::clear();
+
+    let mut player_count = 0;
 
     cx.render(rsx!(
         div {
             class: "flex flex-col grow h-screen w-screen relative overflow-hidden px-[5%]",
-            div {
-                class: "z-0 absolute h-screen w-screen",
-                div {
-                    class: "w-[300px] h-[300px] top-[-150px] left-[-150px] absolute rounded-full",
-                    background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                },
-                div {
-                    class: "w-[300px] h-[300px] bottom-[-150px] right-[-150px] absolute rounded-full",
-                    background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                },
-            },
+            decorative_spheres(),
             div {
                 class: "z-10 flex flex-col grow mx-auto w-full sm:max-w-lg",
-                div {
-                    class: "h-16 grid grid-cols-3",
-                    button {
-                        class: "col-start-1 justify-self-start",
-                        onclick: return_to_table,
-                        img {
-                            class: "h-8 w-8",
-                            src: "img/back.svg",
-                        }
-                    }
-                    button {
-                        class: "col-start-3 justify-self-end",
-                        onclick: delete_and_exit_game,
-                        img {
-                            class: "h-8 w-8",
-                            src: "img/exit.svg",
-                        }
-                    }
-                },
+                nav_bar(),
                 div {
                     img {
                         src: "img/trophy.svg",
@@ -90,7 +56,7 @@ pub fn winner_screen(cx: Scope) -> Element {
                 },
                 div {
                     class: "flex flex-col basis-1/2 grow-0 shrink justify-evenly content-evenly",
-                    state.read().players.iter().map(|player| {
+                    cloned_players.read().iter().map(|player| {
                         let background = TITLE_COLORS[player.id-1];
                         let border = BORDER_COLORS[player.id-1];
                         let score = player.score.values().sum::<i32>();
@@ -132,5 +98,55 @@ pub fn winner_screen(cx: Scope) -> Element {
                 }
             }
         }
+    ))
+}
+
+fn nav_bar(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+
+    let delete_and_exit_game = |_| {
+        LocalStorage::clear();
+        SessionStorage::clear();
+        *state.write() = Model::new();
+    };
+
+    cx.render(rsx!(
+        div {
+            class: "h-16 grid grid-cols-3",
+            button {
+                class: "col-start-1 justify-self-start",
+                onclick: |_| {
+                    state.write().screen = Screen::Game;
+                },
+                img {
+                    class: "h-8 w-8",
+                    src: "img/back.svg",
+                }
+            }
+            button {
+                class: "col-start-3 justify-self-end",
+                onclick: delete_and_exit_game,
+                img {
+                    class: "h-8 w-8",
+                    src: "img/exit.svg",
+                }
+            }
+        }
+    ))
+}
+
+fn decorative_spheres(cx: Scope) -> Element {
+    cx.render(rsx!(
+        div {
+            class: "z-0 absolute h-screen w-screen",
+            div {
+                class: "w-[300px] h-[300px] top-[-150px] left-[-150px] absolute rounded-full",
+                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+            },
+            div {
+                class: "w-[300px] h-[300px] bottom-[-150px] right-[-150px] absolute rounded-full",
+                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+            },
+        },
     ))
 }

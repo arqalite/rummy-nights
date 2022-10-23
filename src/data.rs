@@ -5,6 +5,7 @@ use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+use gloo_console::log;
 
 // MVC-style model, keeping all the app data in one place, so we have a single source of truth.
 // Fermi allows us to have access available everywhere in the app while avoiding complex state management,
@@ -22,8 +23,18 @@ pub struct Model {
     pub screen: Screen,
 }
 
+impl Model {
+    pub fn new() -> Model {
+        Model {
+            players: Vec::new(),
+            game_status: GameStatus::NotStarted,
+            screen: Screen::Menu,
+        }
+    }
+}
+
 // Player data - one of these is constructed for each player in the game
-#[derive(Eq, Ord, PartialEq, PartialOrd, Clone, Serialize, Deserialize)]
+#[derive(Eq, Ord, PartialEq, PartialOrd, Clone, Serialize, Deserialize, Debug)]
 pub struct Player {
     pub id: usize, //for tracking in the Vec, as order might change (e.g. deletion, sorting)
     pub name: String,
@@ -108,6 +119,15 @@ pub fn read_session_storage() -> Result<bool, &'static str> {
         },
         Err(_) => Err("Could not read session storage."),
     }
+}
+
+pub fn print_version_number(cx: Scope) -> Element {
+    let timestamp = env!("BUILD_TIMESTAMP");
+    log!(timestamp);
+    
+    cx.render(rsx!(
+        "{timestamp}"
+    ))
 }
 
 //

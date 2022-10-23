@@ -7,7 +7,7 @@ use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
-pub fn main_menu(cx: Scope) -> Element {
+pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(
         div { //Screen container
             class: "flex relative h-screen overflow-hidden",
@@ -38,7 +38,7 @@ pub fn main_menu(cx: Scope) -> Element {
             p { // Version bubble icon thing
                 class: "text-white font-semibold text-lg text-center max-w-1/2 px-2 absolute bottom-4 left-4 rounded-full",
                 background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
-                "build 2022-10-23 13:21"
+                crate::data::print_version_number()
             }
         }
     ))

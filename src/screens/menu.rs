@@ -2,7 +2,9 @@
 //! It should only look nice and serve as a starting point
 //! for creating a new game or resuming an existing one.
 
-use crate::data::{GameStatus, Model, Screen, STATE};
+use crate::prelude::*;
+use crate::print_version_number;
+
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
@@ -38,7 +40,7 @@ pub fn screen(cx: Scope) -> Element {
             p { // Version bubble icon thing
                 class: "text-white font-semibold text-lg text-center max-w-1/2 px-2 absolute bottom-4 left-4 rounded-full",
                 background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
-                crate::data::print_version_number()
+                print_version_number()
             }
         }
     ))

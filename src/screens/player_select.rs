@@ -5,8 +5,8 @@ use dioxus::events::FormData;
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 
-use crate::data::{add_player, remove_player, GameStatus, Screen, TITLE_COLORS};
-use crate::STATE;
+use crate::prelude::*;
+use crate::{add_player, remove_player, TITLE_COLORS};
 
 pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(

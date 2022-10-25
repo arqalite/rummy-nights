@@ -2,9 +2,27 @@
 //! Here we should only have structs, enums, functions that deal with data, and Tailwind CSS classes.
 
 use dioxus::prelude::*;
+use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+
+pub mod screens;
+
+// Preludes generate a lot of mixed opinions,
+// but in my opinion having a decent code editor solves most of the issues it generates.
+// Having frequently-used types and functions ready without importing them makes the code so much cleaner and readable.
+pub mod prelude {
+    pub use crate::screens::*; //All the screens reference other screens so this is a must.
+    pub use crate::Screen;
+
+    pub use crate::STATE; //This is a must as well, the state is used everywhere.
+
+    //Exposing the main data types.
+    pub use crate::GameStatus;
+    pub use crate::Model;
+    pub use crate::Player;
+}
 
 // MVC-style model, keeping all the app data in one place, so we have a single source of truth.
 // Fermi allows us to have access available everywhere in the app while avoiding complex state management,
@@ -23,8 +41,8 @@ pub struct Model {
 }
 
 impl Model {
-    pub const fn new() -> Model {
-        Model {
+    pub const fn new() -> Self {
+        Self {
             players: Vec::new(),
             game_status: GameStatus::NotStarted,
             screen: Screen::Menu,
@@ -97,32 +115,40 @@ pub enum Screen {
 // We use LocalStorage to keep track of unfinished games.
 // This is helpful in case of accidental refreshes, or just browsers bugging out for no reason.
 // No need for error handling.
-pub fn read_local_storage() -> Result<Model, &'static str> {
-    match LocalStorage::get::<serde_json::Value>("state") {
-        Ok(json_state) => match serde_json::from_value::<crate::Model>(json_state) {
-            Ok(new_state) => Ok(new_state),
-            Err(_) => Err("Could not parse local storage."),
-        },
-        Err(_) => Err("Could not read local storage."),
-    }
-}
 
-// SessionStorage is currently used to keep track of ongoing game sessions.
-// If they refresh or tab out in the current session,
-// we make sure in main.rs that they return to the screen they were in already.
-pub fn read_session_storage() -> Result<bool, &'static str> {
-    match SessionStorage::get::<serde_json::Value>("session") {
-        Ok(json_state) => match serde_json::from_value::<bool>(json_state) {
-            Ok(session) => Ok(session),
-            Err(_) => Err("Could not parse session storage."),
-        },
-        Err(_) => Err("Could not read session storage."),
-    }
+pub fn load_existing_game(cx: Scope) {
+    let state = use_atom_ref(&cx, STATE);
+    let has_checked_storage = use_state(&cx, || false);
+
+    if !has_checked_storage {
+        match LocalStorage::get::<serde_json::Value>("state") {
+            Ok(json_state) => match serde_json::from_value::<crate::Model>(json_state) {
+                Ok(new_state) => {
+                    state.write().players = new_state.players;
+                    state.write().game_status = new_state.game_status;
+
+                    // SessionStorage is currently used to keep track of ongoing game sessions.
+                    // If they refresh or tab out in the current session,
+                    // we make sure in main.rs that they return to the screen they were in already.
+                    match SessionStorage::get::<serde_json::Value>("session") {
+                        Ok(json_state) => match serde_json::from_value::<bool>(json_state) {
+                            Ok(_) => state.write().screen = Screen::Game,
+                            Err(_) => log!("Could not parse session storage."),
+                        },
+                        Err(_) => log!("Could not read session storage."),
+                    }
+
+                    has_checked_storage.set(true);
+                }
+                Err(_) => log!("Could not parse local storage."),
+            },
+            Err(_) => log!("Could not read local storage."),
+        }
+    };
 }
 
 pub fn print_version_number(cx: Scope) -> Element {
     let version = env!("BUILD_VERSION");
-
     cx.render(rsx!("{version}"))
 }
 

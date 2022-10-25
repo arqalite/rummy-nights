@@ -4,8 +4,8 @@ use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
-use crate::data::{Model, Screen, BORDER_COLORS, TITLE_COLORS, Player, GameStatus};
-use crate::STATE;
+use crate::prelude::*;
+use crate::{BORDER_COLORS, TITLE_COLORS};
 
 static HAS_SORTED_ONCE: Atom<bool> = |_| false;
 static CLONED_PLAYERS: AtomRef<Vec<Player>> = |_| Vec::new();

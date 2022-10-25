@@ -7,8 +7,8 @@ use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use std::cmp::Ordering;
 use std::ops::Not;
 
-use crate::data::{GameStatus, Player, Screen, BORDER_COLORS, CARET_COLORS, TITLE_COLORS};
-use crate::STATE;
+use crate::prelude::*;
+use crate::{BORDER_COLORS, CARET_COLORS, TITLE_COLORS};
 
 static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
@@ -135,10 +135,8 @@ fn player_column(cx: Scope, player: Player) -> Element {
                     )
                 })
             }
-            div {
-                crate::game::score_input {
-                    id: player.id
-                }
+            crate::screens::game::score_input {
+                id: player.id
             }
             div {
                 //Total box

@@ -1,5 +1,5 @@
+mod finale;
 mod game;
-mod game_end;
 mod menu;
 mod player_select;
 
@@ -18,5 +18,5 @@ pub fn render_game_screen(cx: Scope) -> Element {
 }
 
 pub fn render_game_end_screen(cx: Scope) -> Element {
-    cx.render(rsx!(game_end::screen()))
+    cx.render(rsx!(finale::screen()))
 }

@@ -1,5 +1,5 @@
 //! Rummy Nights, a rummy score counter written with Rust/Dioxus and Tailwind CSS.
-//! This is the app entry-point, should be kept pretty minimal, just managing the global state and various screens of the app.
+//! This is the app entry-point - should be kept as minimal as possible.
 
 // Make Clippy annoying so the code looks and works somewhat fine.
 #![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
@@ -11,24 +11,18 @@
 
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
-
-use rummy_nights::load_existing_game;
 use rummy_nights::prelude::*;
+use rummy_nights::{load_existing_game, render_screen};
 
-// Two things are done here, setting up the state and screens,
-// and checking for LocalStorage to see if an ongoing game exists (and loading it into memory).
-// Other work should be done in other modules.
+// Two things are done here:
+// Setting up the state and screens,
+// and checking for (and loading) saved games from storage.
 fn app(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let screen = state.read().screen.clone();
 
     load_existing_game(cx);
-
-    match state.read().screen {
-        Screen::Menu => render_menu_screen(cx),
-        Screen::PlayerSelect => render_player_select_screen(cx),
-        Screen::Game => render_game_screen(cx),
-        Screen::Winner => render_game_end_screen(cx),
-    }
+    render_screen(cx, screen)
 }
 
 fn main() {

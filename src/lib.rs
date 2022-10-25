@@ -24,6 +24,8 @@ pub mod prelude {
     pub use crate::Player;
 }
 
+use prelude::*;
+
 // MVC-style model, keeping all the app data in one place, so we have a single source of truth.
 // Fermi allows us to have access available everywhere in the app while avoiding complex state management,
 // or passing down values from component to component, which gets complicated, messy and tiresome easily.
@@ -145,6 +147,15 @@ pub fn load_existing_game(cx: Scope) {
             Err(_) => log!("Could not read local storage."),
         }
     };
+}
+
+pub fn render_screen(cx: Scope, screen: Screen) -> Element {
+    match screen {
+        Screen::Menu => render_menu_screen(cx),
+        Screen::PlayerSelect => render_player_select_screen(cx),
+        Screen::Game => render_game_screen(cx),
+        Screen::Winner => render_game_end_screen(cx),
+    }
 }
 
 pub fn print_version_number(cx: Scope) -> Element {

@@ -13,6 +13,7 @@ use crate::prelude::*;
 static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
 static SHOW_END_ONCE: Atom<bool> = |_| true;
+static TILE_BONUS_TOGGLE: Atom<bool> = |_| false;
 
 // Check if the conditions are met for ending the game.
 // (i.e. final score is reached, all players have all the scores inputted, and there is no draw)
@@ -81,17 +82,23 @@ pub fn screen(cx: Scope) -> Element {
 
 fn score_table(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
+
+    let (banner_text, border_color) = if **tile_bonus_toggle {
+        (String::from("Who gets the bonus?"), String::from("border-cyan-300"))
+    } else {
+        (String::from("Good luck and have fun!"), String::from("border-emerald-300"))
+    };
 
     cx.render(rsx! (
         div {
             class: "flex flex-col grow h-screen w-screen relative overflow-hidden px-[5%]",
-            decorative_spheres(),
             nav_bar(),
             div {
                 class: "mb-4 w-max mx-auto",
                 span {
-                    class: "font-semibold text-lg border-b-2 border-emerald-300",
-                    "Good luck and have fun!",
+                    class: "font-semibold text-lg border-b-2 {border_color}",
+                    "{banner_text}",
                 }
             }
             div{
@@ -101,6 +108,30 @@ fn score_table(cx: Scope) -> Element {
                 state.read().players.iter().map(|player|
                     player_column(cx, player.clone())
                 )
+            }
+            game_menu(),
+            decorative_spheres(),
+        }
+    ))
+}
+
+fn game_menu(cx: Scope) -> Element {
+    let toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
+
+    cx.render(rsx!(
+        div {
+            class: "z-20 absolute bottom-4 left-4 w-2/5",
+            button {
+                class: "flex flex-row gap-4 h-10",
+                onclick: |_| toggle.set(toggle.not()),
+                img {
+                    class: "h-10 w-10",
+                    src: "img/bonus.svg"
+                }
+                span {
+                    class: "font-semibold text-lg self-center",
+                    "Tile bonus"
+                }
             }
         }
     ))

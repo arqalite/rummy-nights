@@ -142,13 +142,21 @@ fn player_column(cx: Scope, player: Player) -> Element {
     let background = tailwind_classes::TITLE_COLORS[player.id - 1];
     let border = tailwind_classes::BORDER_COLORS[player.id - 1];
 
+    let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
+
+    let player_name_button_style = if **tile_bonus_toggle {
+        String::from("pointer-events-auto")
+    } else {
+        String::from("pointer-events-none")
+    };
+
     cx.render(rsx!(
         div{
             class: "w-full",
             //Column for each player
-            div {
+            button {
                 // Name - first cell
-                class: "rounded-full h-8 {background} py-1",
+                class: "rounded-full h-8 {background} py-1 {player_name_button_style} w-full",
                 p {
                     class: "text-center my-auto text-white font-semibold",
                     "{player.name}"

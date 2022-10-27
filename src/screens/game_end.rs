@@ -19,8 +19,8 @@ pub fn screen(cx: Scope) -> Element {
         *cloned_players.write() = state.read().players.clone();
 
         cloned_players.write().sort_by(|a, b| {
-            let temp_sum_a = a.score.values().sum::<i32>();
-            let temp_sum_b = b.score.values().sum::<i32>();
+            let temp_sum_a = a.score.values().sum::<usize>();
+            let temp_sum_b = b.score.values().sum::<usize>();
 
             temp_sum_a.cmp(&temp_sum_b)
         });
@@ -55,7 +55,7 @@ pub fn screen(cx: Scope) -> Element {
                     cloned_players.read().iter().map(|player| {
                         let background = tailwind_classes::TITLE_COLORS[player.id-1];
                         let border = tailwind_classes::BORDER_COLORS[player.id-1];
-                        let score = player.score.values().sum::<i32>();
+                        let score = player.score.values().sum::<usize>() + player.bonus.values().sum::<usize>();
                         let mut style;
                         let style2;
 
@@ -111,6 +111,7 @@ fn nav_bar(cx: Scope) -> Element {
 
         for player in &mut state.write().players {
             player.score = BTreeMap::new();
+            player.bonus = BTreeMap::new();
         }
         state.write().screen = Screen::Game;
     };

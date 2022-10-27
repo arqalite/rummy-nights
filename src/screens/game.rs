@@ -118,14 +118,20 @@ fn score_table(cx: Scope) -> Element {
 fn game_menu(cx: Scope) -> Element {
     let toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
+    let button_style = if **toggle {
+        String::from("shadow-inner bg-slate-100")
+    } else {
+        String::from("")
+    };
+
     cx.render(rsx!(
         div {
             class: "z-20 absolute bottom-4 left-4 w-2/5",
             button {
-                class: "flex flex-row gap-4 h-10",
+                class: "flex flex-row gap-4 h-16 w-max {button_style} p-2 rounded-full",
                 onclick: |_| toggle.set(toggle.not()),
                 img {
-                    class: "h-10 w-10",
+                    class: "h-10 w-10 self-center",
                     src: "img/bonus.svg"
                 }
                 span {

@@ -156,6 +156,7 @@ fn player_column(cx: Scope, player: Player) -> Element {
             button {
                 // Name - first cell
                 class: "rounded-full h-8 {player_background} py-1 {player_name_button_style} w-full",
+                onclick: |_| tile_bonus_toggle.set(tile_bonus_toggle.not()),
                 p {
                     class: "text-center my-auto {player_text_color} font-semibold",
                     "{player.name}"

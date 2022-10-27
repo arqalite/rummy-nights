@@ -12,6 +12,6 @@ port = 8080
 open = false
 
 [[hooks]]
-stage = "pre_build"
+stage = "build"
 command = "tailwindcss"
 command_arguments = ["-c", "assets/js/tailwind.config.js", "-i", "assets/css/input.css", "-o", "assets/css/style.css", "--minify"]

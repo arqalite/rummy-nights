@@ -1,4 +1,4 @@
 /target
 /dist
 /Cargo.lock
-/src/css/style.css
+/assets/css/style.css

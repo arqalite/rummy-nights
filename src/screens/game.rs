@@ -7,8 +7,8 @@ use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use std::cmp::Ordering;
 use std::ops::Not;
 
-use crate::data::{GameStatus, Player, Screen, BORDER_COLORS, CARET_COLORS, TITLE_COLORS};
-use crate::STATE;
+use crate::data::tailwind_classes;
+use crate::prelude::*;
 
 static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
@@ -108,8 +108,8 @@ fn score_table(cx: Scope) -> Element {
 
 fn player_column(cx: Scope, player: Player) -> Element {
     let sum = player.score.values().sum::<i32>().to_string();
-    let background = TITLE_COLORS[player.id - 1];
-    let border = BORDER_COLORS[player.id - 1];
+    let background = tailwind_classes::TITLE_COLORS[player.id - 1];
+    let border = tailwind_classes::BORDER_COLORS[player.id - 1];
 
     cx.render(rsx!(
         div{
@@ -135,10 +135,8 @@ fn player_column(cx: Scope, player: Player) -> Element {
                     )
                 })
             }
-            div {
-                crate::game::score_input {
-                    id: player.id
-                }
+            crate::screens::game::score_input {
+                id: player.id
             }
             div {
                 //Total box
@@ -182,8 +180,8 @@ fn score_input(cx: Scope, id: usize) -> Element {
         }
     };
 
-    let caret = CARET_COLORS[id - 1];
-    let border = BORDER_COLORS[id - 1];
+    let caret = tailwind_classes::CARET_COLORS[id - 1];
+    let border = tailwind_classes::BORDER_COLORS[id - 1];
 
     if **game_continues {
         cx.render(rsx!(

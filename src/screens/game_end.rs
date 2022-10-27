@@ -4,8 +4,8 @@ use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
+use crate::data::tailwind_classes;
 use crate::prelude::*;
-use crate::{BORDER_COLORS, TITLE_COLORS};
 
 static HAS_SORTED_ONCE: Atom<bool> = |_| false;
 static CLONED_PLAYERS: AtomRef<Vec<Player>> = |_| Vec::new();
@@ -53,8 +53,8 @@ pub fn screen(cx: Scope) -> Element {
                 div {
                     class: "flex flex-col basis-1/2 grow-0 shrink justify-evenly content-evenly",
                     cloned_players.read().iter().map(|player| {
-                        let background = TITLE_COLORS[player.id-1];
-                        let border = BORDER_COLORS[player.id-1];
+                        let background = tailwind_classes::TITLE_COLORS[player.id-1];
+                        let border = tailwind_classes::BORDER_COLORS[player.id-1];
                         let score = player.score.values().sum::<i32>();
                         let mut style;
                         let style2;

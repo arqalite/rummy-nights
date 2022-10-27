@@ -5,8 +5,8 @@ use dioxus::events::FormData;
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 
+use crate::data::tailwind_classes;
 use crate::prelude::*;
-use crate::{add_player, remove_player, TITLE_COLORS};
 
 pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(
@@ -62,8 +62,9 @@ fn player_list(cx: Scope) -> Element {
         div {
             class: "flex flex-col gap-6",
             state.read().players.iter().map(|player| {
-                let background = TITLE_COLORS[player.id-1];
+                let background = tailwind_classes::TITLE_COLORS[player.id-1];
                 let player_id = player.id;
+
 
                 rsx!(
                     div {
@@ -76,7 +77,7 @@ fn player_list(cx: Scope) -> Element {
                             }
                         }
                         button {
-                            onclick: move |_| remove_player(cx, player_id),
+                            onclick: move |_| state.write().remove_player(player_id),
                             img {
                                 class: "h-7",
                                 src: "img/remove.svg",
@@ -104,7 +105,7 @@ fn player_input(cx: Scope) -> Element {
 
     let onsubmit = move |_| {
         if buffer.len() > 0 {
-            add_player(cx, buffer.to_string());
+            state.write().add_player(buffer.to_string());
             buffer.set(String::new());
         }
     };
@@ -115,7 +116,7 @@ fn player_input(cx: Scope) -> Element {
 
     let onclick = move |_| {
         if buffer.len() > 0 {
-            add_player(cx, buffer.to_string());
+            state.write().add_player(buffer.to_string());
             buffer.set(String::new());
         }
     };

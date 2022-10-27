@@ -7,8 +7,8 @@ use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use std::cmp::Ordering;
 use std::ops::Not;
 
+use crate::data::tailwind_classes;
 use crate::prelude::*;
-use crate::{BORDER_COLORS, CARET_COLORS, TITLE_COLORS};
 
 static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
@@ -108,8 +108,8 @@ fn score_table(cx: Scope) -> Element {
 
 fn player_column(cx: Scope, player: Player) -> Element {
     let sum = player.score.values().sum::<i32>().to_string();
-    let background = TITLE_COLORS[player.id - 1];
-    let border = BORDER_COLORS[player.id - 1];
+    let background = tailwind_classes::TITLE_COLORS[player.id - 1];
+    let border = tailwind_classes::BORDER_COLORS[player.id - 1];
 
     cx.render(rsx!(
         div{
@@ -180,8 +180,8 @@ fn score_input(cx: Scope, id: usize) -> Element {
         }
     };
 
-    let caret = CARET_COLORS[id - 1];
-    let border = BORDER_COLORS[id - 1];
+    let caret = tailwind_classes::CARET_COLORS[id - 1];
+    let border = tailwind_classes::BORDER_COLORS[id - 1];
 
     if **game_continues {
         cx.render(rsx!(

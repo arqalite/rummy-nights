@@ -55,11 +55,8 @@ fn start_game_button(cx: Scope) -> Element {
         LocalStorage::clear();
         SessionStorage::clear();
 
-        *state.write() = Model {
-            players: Vec::new(),
-            game_status: GameStatus::NotStarted,
-            screen: Screen::PlayerSelect,
-        };
+        *state.write() = Model::new();
+        state.write().screen = Screen::PlayerSelect;
     };
 
     cx.render(rsx!(

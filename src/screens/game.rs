@@ -10,7 +10,7 @@ use std::ops::Not;
 use crate::data::tailwind_classes;
 use crate::prelude::*;
 
-static FINAL_SCORE: i32 = 1000;
+static FINAL_SCORE: usize = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
 static SHOW_END_ONCE: Atom<bool> = |_| true;
 static TILE_BONUS_TOGGLE: Atom<bool> = |_| false;
@@ -22,11 +22,11 @@ fn get_game_status(cx: Scope) -> GameStatus {
     let mut game_status = GameStatus::Ongoing;
 
     // Pull the final scores and number of games played by each player.
-    let (total_scores, games_played): (Vec<i32>, Vec<usize>) = state
+    let (total_scores, games_played): (Vec<usize>, Vec<usize>) = state
         .read()
         .players
         .iter()
-        .map(|player| (player.score.values().sum::<i32>(), player.score.len()))
+        .map(|player| (player.score.values().sum::<usize>(), player.score.len()))
         .unzip();
 
     let max = *(total_scores.iter().max().unwrap()); //the highest score achieved
@@ -37,7 +37,7 @@ fn get_game_status(cx: Scope) -> GameStatus {
             .read()
             .players
             .iter()
-            .filter(|player| player.score.values().sum::<i32>() >= max)
+            .filter(|player| player.score.values().sum::<usize>() >= max)
             .count();
 
         if (games_played.iter().min().unwrap() == games_played.iter().max().unwrap())
@@ -85,9 +85,15 @@ fn score_table(cx: Scope) -> Element {
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
     let (banner_text, border_color) = if **tile_bonus_toggle {
-        (String::from("Who gets the bonus?"), String::from("border-cyan-300"))
+        (
+            String::from("Who gets the bonus?"),
+            String::from("border-cyan-400"),
+        )
     } else {
-        (String::from("Good luck and have fun!"), String::from("border-emerald-300"))
+        (
+            String::from("Good luck and have fun!"),
+            String::from("border-green-400"),
+        )
     };
 
     cx.render(rsx! (
@@ -116,20 +122,47 @@ fn score_table(cx: Scope) -> Element {
 }
 
 fn game_menu(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
     let toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
     let button_style = if **toggle {
-        String::from("shadow-inner bg-slate-100")
+        String::from("shadow-inner bg-slate-200")
     } else {
         String::from("")
+    };
+
+    let tile_bonus = move |_| {
+        let games_played: Vec<usize> = state
+            .read()
+            .players
+            .iter()
+            .map(|player| player.score.len())
+            .collect();
+
+        if games_played.iter().max().unwrap() == games_played.iter().min().unwrap() {
+            let mut is_bonus_given = false;
+
+            for player in &state.read().players {
+                if player
+                    .bonus
+                    .contains_key(games_played.iter().max().unwrap())
+                {
+                    is_bonus_given = true;
+                }
+            }
+
+            if !is_bonus_given {
+                toggle.set(toggle.not())
+            };
+        }
     };
 
     cx.render(rsx!(
         div {
             class: "z-20 absolute bottom-4 left-4 w-2/5",
             button {
-                class: "flex flex-row gap-4 h-16 w-max {button_style} p-2 rounded-full",
-                onclick: |_| toggle.set(toggle.not()),
+                class: "flex flex-row gap-4 h-14 w-max {button_style} p-2 rounded-full",
+                onclick: tile_bonus,
                 img {
                     class: "h-10 w-10 self-center",
                     src: "img/bonus.svg"
@@ -144,15 +177,27 @@ fn game_menu(cx: Scope) -> Element {
 }
 
 fn player_column(cx: Scope, player: Player) -> Element {
-    let sum = player.score.values().sum::<i32>().to_string();
+    let mut game_count: usize = 0;
+    let state = use_atom_ref(&cx, STATE);
     let border = tailwind_classes::BORDER_COLORS[player.id - 1];
+
+    let sum =
+        (player.score.values().sum::<usize>() + player.bonus.values().sum::<usize>()).to_string();
 
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
     let (player_name_button_style, player_background, player_text_color) = if **tile_bonus_toggle {
-        (String::from("pointer-events-auto"), String::from("bg-white border border-black"), String::from("text-black"))
+        (
+            String::from("pointer-events-auto"),
+            String::from("bg-white border border-black"),
+            String::from("text-black"),
+        )
     } else {
-        (String::from("pointer-events-none"), String::from(tailwind_classes::TITLE_COLORS[player.id - 1]), String::from("text-white"))
+        (
+            String::from("pointer-events-none"),
+            String::from(tailwind_classes::TITLE_COLORS[player.id - 1]),
+            String::from("text-white"),
+        )
     };
 
     cx.render(rsx!(
@@ -162,7 +207,10 @@ fn player_column(cx: Scope, player: Player) -> Element {
             button {
                 // Name - first cell
                 class: "rounded-full h-8 {player_background} py-1 {player_name_button_style} w-full",
-                onclick: |_| tile_bonus_toggle.set(tile_bonus_toggle.not()),
+                onclick: move |_| {
+                    state.write().grant_bonus(player.id);
+                    tile_bonus_toggle.set(tile_bonus_toggle.not())
+                },
                 p {
                     class: "text-center my-auto {player_text_color} font-semibold",
                     "{player.name}"
@@ -172,10 +220,27 @@ fn player_column(cx: Scope, player: Player) -> Element {
                 //Scores - dynamic
                 player.score.values().map(|score| {
                     let score_text = score.to_string();
+
+                    let bonus_visibility = if player.bonus.contains_key(&game_count) {
+                        String::from("")
+                    } else {
+                        String::from("hidden")
+                    };
+
+                    game_count += 1;
+
                     rsx!(
-                        p {
-                            class: "rounded text-lg text-center border-b-4 h-9 mt-2 {border}",
-                            "{score_text}"
+                        div {
+                            class: "relative rounded border-b-4 h-9 mt-2 {border}",
+                            p {
+                                class: "text-lg text-center",
+                                "{score_text}"
+                            }
+                            img {
+                                class: "absolute h-4 w-4 top-1/2 right-0 -translate-y-1/2 {bonus_visibility}",
+                                src: "img/bonus.svg",
+
+                            }
                         }
                     )
                 })
@@ -203,7 +268,7 @@ fn score_input(cx: Scope, id: usize) -> Element {
     let execute = use_eval(&cx);
 
     let onsubmit = move |_| {
-        if let Ok(number) = buffer.parse::<i32>() {
+        if let Ok(number) = buffer.parse::<usize>() {
             for player in &mut state.write().players {
                 if *id == player.id {
                     player.score.insert(player.score.len(), number);

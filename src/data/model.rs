@@ -40,6 +40,7 @@ impl Model {
                 id,
                 name,
                 score: BTreeMap::new(),
+                bonus: BTreeMap::new(),
             });
         };
     }
@@ -53,6 +54,18 @@ impl Model {
             player.id = counter;
             counter += 1;
         }
+    }
+
+    pub fn grant_bonus(&mut self, id: usize) {
+        let games_played: Vec<usize> = self
+            .players
+            .iter()
+            .map(|player| player.score.len())
+            .collect();
+
+        self.players[id - 1]
+            .bonus
+            .insert(*games_played.iter().max().unwrap(), 50);
     }
 
     pub fn load_existing_game(&mut self) {
@@ -93,7 +106,8 @@ pub struct Player {
     // so BTreeMaps are the simplest structure that does the job,
     // and it's a well supported part of the standard library.
     // Might not be the fastest option, but the data is small and simple so I believe it's fine.
-    pub score: BTreeMap<usize, i32>,
+    pub score: BTreeMap<usize, usize>,
+    pub bonus: BTreeMap<usize, usize>,
 }
 
 // Using an enum for the game status might not be the best idea,

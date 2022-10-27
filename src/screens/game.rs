@@ -139,15 +139,14 @@ fn game_menu(cx: Scope) -> Element {
 
 fn player_column(cx: Scope, player: Player) -> Element {
     let sum = player.score.values().sum::<i32>().to_string();
-    let background = tailwind_classes::TITLE_COLORS[player.id - 1];
     let border = tailwind_classes::BORDER_COLORS[player.id - 1];
 
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
-    let player_name_button_style = if **tile_bonus_toggle {
-        String::from("pointer-events-auto")
+    let (player_name_button_style, player_background, player_text_color) = if **tile_bonus_toggle {
+        (String::from("pointer-events-auto"), String::from("bg-white border border-black"), String::from("text-black"))
     } else {
-        String::from("pointer-events-none")
+        (String::from("pointer-events-none"), String::from(tailwind_classes::TITLE_COLORS[player.id - 1]), String::from("text-white"))
     };
 
     cx.render(rsx!(
@@ -156,9 +155,9 @@ fn player_column(cx: Scope, player: Player) -> Element {
             //Column for each player
             button {
                 // Name - first cell
-                class: "rounded-full h-8 {background} py-1 {player_name_button_style} w-full",
+                class: "rounded-full h-8 {player_background} py-1 {player_name_button_style} w-full",
                 p {
-                    class: "text-center my-auto text-white font-semibold",
+                    class: "text-center my-auto {player_text_color} font-semibold",
                     "{player.name}"
                 }
             }

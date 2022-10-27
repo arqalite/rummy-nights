@@ -6,6 +6,7 @@ use dioxus::web::use_eval;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use std::cmp::Ordering;
 use std::ops::Not;
+use gloo_console::log;
 
 use crate::data::tailwind_classes;
 use crate::prelude::*;
@@ -26,10 +27,17 @@ fn get_game_status(cx: Scope) -> GameStatus {
         .read()
         .players
         .iter()
-        .map(|player| (player.score.values().sum::<usize>(), player.score.len()))
+        .map(|player| {
+            let total = player.score.values().sum::<usize>() + player.bonus.values().sum::<usize>();
+
+            
+
+            (total, player.score.len())
+        })
         .unzip();
 
     let max = *(total_scores.iter().max().unwrap()); //the highest score achieved
+    log!(format!("max is {}", max));
 
     if max >= FINAL_SCORE {
         //Count how many players have the highest score to check for a draw.
@@ -37,7 +45,7 @@ fn get_game_status(cx: Scope) -> GameStatus {
             .read()
             .players
             .iter()
-            .filter(|player| player.score.values().sum::<usize>() >= max)
+            .filter(|player| player.score.values().sum::<usize>() + player.bonus.values().sum::<usize>() >= max)
             .count();
 
         if (games_played.iter().min().unwrap() == games_played.iter().max().unwrap())

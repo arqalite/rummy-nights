@@ -70,6 +70,14 @@ impl Model {
             .insert(*games_played.iter().max().unwrap(), 50);
     }
 
+    pub fn start_new_game(&mut self) {
+        LocalStorage::clear();
+        SessionStorage::clear();
+
+        *self = Model::new();
+        self.screen = Screen::PlayerSelect;
+    }
+
     pub fn load_existing_game(&mut self) {
         if !self.checked_storage {
             match LocalStorage::get::<serde_json::Value>("state") {

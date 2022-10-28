@@ -1,11 +1,22 @@
+//! # Rummy Nights
+//! Rummy Nights is a cross-platform rummy score counter app.
+//!
+//! This is the internal documentation, meant for developers and contributors.
+
+//#![warn(missing_docs)]
+
 pub mod data;
 pub mod screens;
-
 pub mod prelude {
-    pub use crate::data::model::Screen;
+    //! The prelude re-exports commonly used data types and functions
+    //! for easy access throughout the codebase.
+    //!
+    //! It is usually imported via `use rummy_nights::prelude::*;`.
+
+    pub use crate::data::GameStatus;
+    pub use crate::data::Model;
+    pub use crate::data::Player;
+    pub use crate::data::Screen;
+    pub use crate::data::STATE;
     pub use crate::screens::*;
-    pub use crate::data::model::Model;
-    pub use crate::data::model::STATE;
-    pub use crate::data::model::GameStatus;
-    pub use crate::data::model::Player;
 }

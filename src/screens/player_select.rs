@@ -60,7 +60,7 @@ fn player_list(cx: Scope) -> Element {
         div {
             class: "flex flex-col gap-6",
             state.read().players.iter().map(|player| {
-                let background = tailwind_classes::TITLE_COLORS[player.id-1];
+                let background = tailwind_classes::BG_COLORS[player.id-1];
                 let player_id = player.id;
 
 

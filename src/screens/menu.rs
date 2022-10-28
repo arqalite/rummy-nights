@@ -1,5 +1,5 @@
-use crate::prelude::*;
 use crate::data::print_version_number;
+use crate::prelude::*;
 
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
@@ -25,7 +25,7 @@ pub fn screen(cx: Scope) -> Element {
                     class: "mx-auto w-full max-w-lg mb-8",
                     src: "img/intro.gif",
                 }
-                div { 
+                div {
                     class: "flex flex-col gap-y-8 mx-auto relative",
                     start_game_button()
                     resume_game_button()

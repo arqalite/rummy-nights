@@ -3,15 +3,15 @@ use dioxus::events::FormData;
 use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
+use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use std::cmp::Ordering;
 use std::ops::Not;
-use gloo_console::log;
 
 use crate::data::tailwind_classes;
 use crate::prelude::*;
 
-static FINAL_SCORE: usize = 1000;
+static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
 static SHOW_END_ONCE: Atom<bool> = |_| true;
 static TILE_BONUS_TOGGLE: Atom<bool> = |_| false;
@@ -20,14 +20,12 @@ fn get_game_status(cx: Scope) -> GameStatus {
     let state = use_atom_ref(&cx, STATE);
     let mut game_status = GameStatus::Ongoing;
 
-    let (total_scores, games_played): (Vec<usize>, Vec<usize>) = state
+    let (total_scores, games_played): (Vec<i32>, Vec<usize>) = state
         .read()
         .players
         .iter()
         .map(|player| {
-            let total = player.score.values().sum::<usize>() + player.bonus.values().sum::<usize>();
-
-            
+            let total = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
 
             (total, player.score.len())
         })
@@ -41,7 +39,9 @@ fn get_game_status(cx: Scope) -> GameStatus {
             .read()
             .players
             .iter()
-            .filter(|player| player.score.values().sum::<usize>() + player.bonus.values().sum::<usize>() >= max)
+            .filter(|player| {
+                player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>() >= max
+            })
             .count();
 
         if (games_played.iter().min().unwrap() == games_played.iter().max().unwrap())
@@ -182,12 +182,12 @@ fn game_menu(cx: Scope) -> Element {
 }
 
 fn player_column(cx: Scope, player: Player) -> Element {
-    let mut game_count: usize = 0;
+    let mut game_count = 0;
     let state = use_atom_ref(&cx, STATE);
     let border = tailwind_classes::BORDER_COLORS[player.id - 1];
 
     let sum =
-        (player.score.values().sum::<usize>() + player.bonus.values().sum::<usize>()).to_string();
+        (player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>()).to_string();
 
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
@@ -200,7 +200,7 @@ fn player_column(cx: Scope, player: Player) -> Element {
     } else {
         (
             String::from("pointer-events-none"),
-            String::from(tailwind_classes::TITLE_COLORS[player.id - 1]),
+            String::from(tailwind_classes::BG_COLORS[player.id - 1]),
             String::from("text-white"),
         )
     };
@@ -250,9 +250,9 @@ fn player_column(cx: Scope, player: Player) -> Element {
                     )
                 })
             }
-            crate::screens::game::score_input {
+            self::score_input {
                 id: player.id
-            }
+            },
             div {
                 //Total box
                 class: "rounded border-b-[7px] {border} h-9 mt-2",
@@ -267,15 +267,16 @@ fn player_column(cx: Scope, player: Player) -> Element {
 
 #[inline_props]
 fn score_input(cx: Scope, id: usize) -> Element {
+    let id = *id;
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
     let state = use_atom_ref(&cx, STATE);
     let buffer = use_state(&cx, String::new);
     let execute = use_eval(&cx);
 
     let onsubmit = move |_| {
-        if let Ok(number) = buffer.parse::<usize>() {
+        if let Ok(number) = buffer.parse::<i32>() {
             for player in &mut state.write().players {
-                if *id == player.id {
+                if id == player.id {
                     player.score.insert(player.score.len(), number);
                 }
             }

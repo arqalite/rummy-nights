@@ -1,9 +1,11 @@
+//! The front-end part of the app, rendering the individual app screens.
+
 mod game;
 mod game_end;
 mod menu;
 mod player_select;
 
-use crate::data::model::Screen;
+use crate::data::Screen;
 use dioxus::prelude::*;
 
 pub fn render_screen<'a>(cx: Scope<'a>, screen: &Screen) -> Element<'a> {

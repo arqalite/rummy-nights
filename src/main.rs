@@ -1,7 +1,5 @@
 //! # Rummy Nights
 //! Rummy Nights is a cross-platform rummy score counter app.
-//!
-//! This is the internal documentation, meant for developers and contributors.
 
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
@@ -9,7 +7,7 @@ use rummy_nights::prelude::*;
 use rummy_nights::screens::render_screen;
 
 /// The app entry-point function.
-/// 
+///
 /// It does three things:
 /// - Set up the state
 /// - Load existing games, if any

@@ -16,13 +16,10 @@ static GAME_CONTINUES: Atom<bool> = |_| true;
 static SHOW_END_ONCE: Atom<bool> = |_| true;
 static TILE_BONUS_TOGGLE: Atom<bool> = |_| false;
 
-// Check if the conditions are met for ending the game.
-// (i.e. final score is reached, all players have all the scores inputted, and there is no draw)
 fn get_game_status(cx: Scope) -> GameStatus {
     let state = use_atom_ref(&cx, STATE);
     let mut game_status = GameStatus::Ongoing;
 
-    // Pull the final scores and number of games played by each player.
     let (total_scores, games_played): (Vec<usize>, Vec<usize>) = state
         .read()
         .players
@@ -36,11 +33,10 @@ fn get_game_status(cx: Scope) -> GameStatus {
         })
         .unzip();
 
-    let max = *(total_scores.iter().max().unwrap()); //the highest score achieved
+    let max = *(total_scores.iter().max().unwrap());
     log!(format!("max is {}", max));
 
     if max >= FINAL_SCORE {
-        //Count how many players have the highest score to check for a draw.
         let no_of_winners = &state
             .read()
             .players

@@ -4,9 +4,6 @@ use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-// MVC-style model, keeping all the app data in one place, so we have a single source of truth.
-// Fermi allows us to have access available everywhere in the app while avoiding complex state management,
-// or passing down values from component to component, which gets complicated, messy and tiresome easily.
 pub static STATE: AtomRef<Model> = |_| Model {
     players: Vec::new(),
     game_status: GameStatus::NotStarted,
@@ -76,9 +73,6 @@ impl Model {
                         self.players = new_state.players;
                         self.game_status = new_state.game_status;
 
-                        // SessionStorage is currently used to keep track of ongoing game sessions.
-                        // If they refresh or tab out in the current session,
-                        // we make sure in main.rs that they return to the screen they were in already.
                         match SessionStorage::get::<serde_json::Value>("session") {
                             Ok(json_state) => match serde_json::from_value::<bool>(json_state) {
                                 Ok(_) => self.screen = Screen::Game,
@@ -96,23 +90,14 @@ impl Model {
     }
 }
 
-// Player data - one of these is constructed for each player in the game
 #[derive(Eq, Ord, PartialEq, PartialOrd, Clone, Serialize, Deserialize, Debug)]
 pub struct Player {
-    pub id: usize, //for tracking in the Vec, as order might change (e.g. deletion, sorting)
+    pub id: usize,
     pub name: String,
-
-    // We need to make sure the scores get stored uniquely, and in the same order they get added,
-    // so BTreeMaps are the simplest structure that does the job,
-    // and it's a well supported part of the standard library.
-    // Might not be the fastest option, but the data is small and simple so I believe it's fine.
     pub score: BTreeMap<usize, usize>,
     pub bonus: BTreeMap<usize, usize>,
 }
 
-// Using an enum for the game status might not be the best idea,
-// but it looks neater and removes the need for multiple booleans
-// scattered across the code and passed down from component to component.
 #[derive(PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum GameStatus {
     NotStarted,
@@ -120,8 +105,6 @@ pub enum GameStatus {
     Finished,
 }
 
-// Another enum but for screen management.
-// Add a new entry here if you need to add a screen, then edit the match arms in main.rs.
 #[derive(PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub enum Screen {
     Menu,

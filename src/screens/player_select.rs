@@ -1,5 +1,3 @@
-//! The player selection screen.
-
 use dioxus::core::UiEvent;
 use dioxus::events::FormData;
 use dioxus::fermi::use_atom_ref;
@@ -10,7 +8,7 @@ use crate::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(
-        div { //Screen container
+        div {
             class: "flex flex-col grow h-screen w-screen relative overflow-hidden px-[5%]",
             decorative_spheres()
             top_bar()
@@ -167,7 +165,7 @@ fn top_bar(cx: Scope) -> Element {
             class: "h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: |_| {state.write().screen = Screen::Menu}, //return to main menu
+                onclick: |_| {state.write().screen = Screen::Menu},
                 img {
                     class: "h-8 w-8",
                     src: "img/back.svg",
@@ -187,7 +185,7 @@ fn top_bar(cx: Scope) -> Element {
 
 fn decorative_spheres(cx: Scope) -> Element {
     cx.render(rsx!(
-        div { //Decorative circles
+        div {
             class: "z-0 absolute h-screen w-screen",
             div {
                 class: "w-[100vw] h-[100vw] bottom-[-50vw] left-[-50vw] absolute rounded-full z-0",

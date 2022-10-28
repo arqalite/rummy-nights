@@ -1,5 +1,3 @@
-//! Tailwind CSS classes, used programmatically through out the app.
-
 pub static TITLE_COLORS: [&str; 4] = [
     "bg-rose-400",
     "bg-cyan-400",

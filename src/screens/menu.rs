@@ -37,7 +37,7 @@ fn start_game_button(cx: Scope) -> Element {
     cx.render(rsx!(
         button {
             class: "grid grid-cols-6 items-center w-full mx-auto",
-            onclick: |_| state.write().start_new_game(),
+            onclick: |_| state.write().create_game(),
             p {
                 class: "font-semibold text-center text-2xl col-span-2 col-start-2 justify-self-end",
                 "Start Game"
@@ -56,14 +56,14 @@ fn resume_game_button(cx: Scope) -> Element {
     cx.render(rsx!(
         button {
             class: "grid grid-cols-6 items-center w-full mx-auto",
-            onclick: |_| { state.write().screen = Screen::Game },
+            onclick: |_| state.write().screen = Screen::Game,
             p {
                 class: "font-semibold text-center text-2xl col-span-3 col-start-1 justify-self-end",
                 "Resume Game"
             }
             img {
                 class: "h-20 w-20 col-start-5 col-span-2",
-                src: "img/resume.svg", 
+                src: "img/resume.svg",
             }
         }
     ))

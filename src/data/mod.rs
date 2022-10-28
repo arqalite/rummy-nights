@@ -2,12 +2,14 @@
 
 pub mod tailwind_classes;
 
-use dioxus::prelude::*;
 use dioxus::fermi::AtomRef;
+use dioxus::prelude::*;
 use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+
+static FINAL_SCORE: i32 = 1000;
 
 pub static STATE: AtomRef<Model> = |_| Model {
     players: Vec::new(),
@@ -70,12 +72,19 @@ impl Model {
             .insert(*games_played.iter().max().unwrap(), 50);
     }
 
-    pub fn start_new_game(&mut self) {
+    pub fn create_game(&mut self) {
         LocalStorage::clear();
         SessionStorage::clear();
 
         *self = Model::new();
         self.screen = Screen::PlayerSelect;
+    }
+
+    pub fn start_game(&mut self) {
+        if self.players.len() >= 2 {
+            self.game_status = GameStatus::Ongoing;
+            self.screen = Screen::Game;
+        };
     }
 
     pub fn load_existing_game(&mut self) {
@@ -100,6 +109,46 @@ impl Model {
             }
         };
         self.checked_storage = true;
+    }
+
+    pub fn save_game(&self) {
+        LocalStorage::set("state", self.clone()).unwrap();
+        SessionStorage::set("session", true).unwrap();
+    }
+
+    pub fn check_game_status(&self) -> GameStatus {
+        let mut game_status = GameStatus::Ongoing;
+
+        let (total_scores, games_played): (Vec<i32>, Vec<usize>) = self
+            .players
+            .iter()
+            .map(|player| {
+                let total = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
+
+                (total, player.score.len())
+            })
+            .unzip();
+
+        let max = *(total_scores.iter().max().unwrap());
+        log!(format!("max is {}", max));
+
+        if max >= FINAL_SCORE {
+            let no_of_winners = self
+                .players
+                .iter()
+                .filter(|player| {
+                    player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>() >= max
+                })
+                .count();
+
+            if (games_played.iter().min().unwrap() == games_played.iter().max().unwrap())
+                && no_of_winners == 1
+            {
+                game_status = GameStatus::Finished;
+            }
+        }
+
+        game_status
     }
 }
 
@@ -128,7 +177,7 @@ pub enum Screen {
 
 /// Renders the version number (for releases) or the timestamp
 /// (for dev builds).
-/// 
+///
 /// It uses the `BUILD_VERSION` environment variable created in build.rs.
 pub fn print_version_number(cx: Scope) -> Element {
     let version = env!("BUILD_VERSION");

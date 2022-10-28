@@ -1,7 +1,5 @@
 //! # Rummy Nights
 //! Rummy Nights is a cross-platform rummy score counter app.
-//!
-//! This is the internal documentation, meant for developers and contributors.
 
 //#![warn(missing_docs)]
 

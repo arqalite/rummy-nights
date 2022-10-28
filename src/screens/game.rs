@@ -3,67 +3,24 @@ use dioxus::events::FormData;
 use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
-use gloo_console::log;
-use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use std::cmp::Ordering;
 use std::ops::Not;
 
 use crate::data::tailwind_classes;
 use crate::prelude::*;
 
-static FINAL_SCORE: i32 = 1000;
 static GAME_CONTINUES: Atom<bool> = |_| true;
 static SHOW_END_ONCE: Atom<bool> = |_| true;
 static TILE_BONUS_TOGGLE: Atom<bool> = |_| false;
-
-fn get_game_status(cx: Scope) -> GameStatus {
-    let state = use_atom_ref(&cx, STATE);
-    let mut game_status = GameStatus::Ongoing;
-
-    let (total_scores, games_played): (Vec<i32>, Vec<usize>) = state
-        .read()
-        .players
-        .iter()
-        .map(|player| {
-            let total = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
-
-            (total, player.score.len())
-        })
-        .unzip();
-
-    let max = *(total_scores.iter().max().unwrap());
-    log!(format!("max is {}", max));
-
-    if max >= FINAL_SCORE {
-        let no_of_winners = &state
-            .read()
-            .players
-            .iter()
-            .filter(|player| {
-                player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>() >= max
-            })
-            .count();
-
-        if (games_played.iter().min().unwrap() == games_played.iter().max().unwrap())
-            && *no_of_winners == 1
-        {
-            game_status = GameStatus::Finished;
-        }
-    }
-
-    game_status
-}
 
 pub fn screen(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
     let show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
 
-    //Save game to storage.
-    LocalStorage::set("state", state.read().clone()).unwrap();
-    SessionStorage::set("session", true).unwrap();
+    state.write().save_game();
 
-    let game_status = get_game_status(cx);
+    let game_status = state.read().check_game_status();
 
     match game_status {
         GameStatus::Finished => {
@@ -130,9 +87,9 @@ fn game_menu(cx: Scope) -> Element {
     let toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
     let shadow = if **toggle {
-        String::from("inset 0 2px 4px 0 rgb(0 0 0 / 0.25)")
+        "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
     } else {
-        String::from("0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)")
+        "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
     };
 
     let tile_bonus = move |_| {
@@ -186,22 +143,21 @@ fn player_column(cx: Scope, player: Player) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let border = tailwind_classes::BORDER_COLORS[player.id - 1];
 
-    let sum =
-        (player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>()).to_string();
+    let sum = (player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>()).to_string();
 
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
     let (player_name_button_style, player_background, player_text_color) = if **tile_bonus_toggle {
         (
-            String::from("pointer-events-auto"),
-            String::from("bg-white border border-black"),
-            String::from("text-black"),
+            "pointer-events-auto",
+            "bg-white border border-black",
+            "text-black",
         )
     } else {
         (
-            String::from("pointer-events-none"),
-            String::from(tailwind_classes::BG_COLORS[player.id - 1]),
-            String::from("text-white"),
+            "pointer-events-none",
+            tailwind_classes::BG_COLORS[player.id - 1],
+            "text-white",
         )
     };
 
@@ -340,9 +296,7 @@ fn nav_bar(cx: Scope) -> Element {
             game_continues.then(|| rsx!(
                 button {
                     class: "col-start-1 justify-self-start",
-                    onclick: |_| {
-                        state.write().screen = Screen::PlayerSelect;
-                    },
+                    onclick: |_| state.write().screen = Screen::PlayerSelect,
                     img {
                         class: "h-8 w-8",
                         src: "img/back.svg",
@@ -351,9 +305,7 @@ fn nav_bar(cx: Scope) -> Element {
             )),
             button {
                 class: "{button_position}",
-                onclick: |_| {
-                    state.write().screen = Screen::Menu;
-                },
+                onclick: |_| state.write().screen = Screen::Menu,
                 img {
                     class: "h-8 w-8",
                     src: "img/home.svg",
@@ -362,9 +314,7 @@ fn nav_bar(cx: Scope) -> Element {
             game_continues.not().then(|| rsx!(
                 button {
                     class: "col-start-3 justify-self-end",
-                    onclick: |_| {
-                        state.write().screen = Screen::Winner;
-                    },
+                    onclick: |_| state.write().screen = Screen::Winner,
                     img {
                         class: "h-8 w-8 scale-x-[-1]",
                         src: "img/back.svg",

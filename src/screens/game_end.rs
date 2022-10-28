@@ -19,8 +19,8 @@ pub fn screen(cx: Scope) -> Element {
         *cloned_players.write() = state.read().players.clone();
 
         cloned_players.write().sort_by(|a, b| {
-            let temp_sum_a = a.score.values().sum::<usize>();
-            let temp_sum_b = b.score.values().sum::<usize>();
+            let temp_sum_a = a.score.values().sum::<i32>();
+            let temp_sum_b = b.score.values().sum::<i32>();
 
             temp_sum_a.cmp(&temp_sum_b)
         });
@@ -53,9 +53,9 @@ pub fn screen(cx: Scope) -> Element {
                 div {
                     class: "flex flex-col basis-1/2 grow-0 shrink justify-evenly content-evenly",
                     cloned_players.read().iter().map(|player| {
-                        let background = tailwind_classes::TITLE_COLORS[player.id-1];
+                        let background = tailwind_classes::BG_COLORS[player.id-1];
                         let border = tailwind_classes::BORDER_COLORS[player.id-1];
-                        let score = player.score.values().sum::<usize>() + player.bonus.values().sum::<usize>();
+                        let score = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
                         let mut style;
                         let style2;
 
@@ -154,11 +154,11 @@ fn decorative_spheres(cx: Scope) -> Element {
         div {
             class: "z-0 absolute h-screen w-screen",
             div {
-                class: "w-[300px] h-[300px] top-[-150px] left-[-150px] absolute rounded-full",
+                class: "w-[80vw] h-[80vw] top-[-40vw] left-[-40vw] absolute rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
             },
             div {
-                class: "w-[300px] h-[300px] bottom-[-150px] right-[-150px] absolute rounded-full",
+                class: "w-[80vw] h-[80vw] bottom-[-40vw] right-[-40vw] absolute rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
             },
         },

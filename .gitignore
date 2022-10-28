@@ -1,4 +1,4 @@
-/target
-/dist
-/Cargo.lock
-/assets/css/style.css
+target
+dist
+Cargo.lock
+assets/css/style.css

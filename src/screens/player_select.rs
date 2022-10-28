@@ -190,7 +190,7 @@ fn decorative_spheres(cx: Scope) -> Element {
         div { //Decorative circles
             class: "z-0 absolute h-screen w-screen",
             div {
-                class: "w-[300px] h-[300px] bottom-[-150px] left-[-150px] absolute rounded-full z-0",
+                class: "w-[100vw] h-[100vw] bottom-[-50vw] left-[-50vw] absolute rounded-full z-0",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
             }
         }

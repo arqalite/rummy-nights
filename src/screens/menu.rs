@@ -38,7 +38,7 @@ pub fn screen(cx: Scope) -> Element {
             }
 
             p { // Version bubble icon thing
-                class: "text-white font-semibold text-lg text-center max-w-1/2 px-2 absolute bottom-4 left-4 rounded-full",
+                class: "text-white font-semibold text-lg text-center w-max max-w-1/2 px-2 absolute bottom-2 left-2 rounded-full",
                 background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
                 print_version_number()
             }
@@ -106,11 +106,11 @@ fn decorative_spheres(cx: Scope) -> Element {
         div { // Decorative spheres
             class: "z-0 absolute h-screen w-screen",
             div {
-                class: "w-[300px] h-[300px] top-[-150px] left-[-150px] absolute rounded-full z-0",
+                class: "w-[80vw] h-[80vw] top-[-40vw] left-[-40vw] absolute rounded-full z-0",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
             }
             div {
-                class: "w-[300px] h-[300px] bottom-[-150px] right-[-150px] absolute rounded-full z-0",
+                class: "w-[80vw] h-[80vw] bottom-[-40vw] right-[-40vw] absolute rounded-full z-0",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
             }
         }

@@ -154,11 +154,11 @@ fn decorative_spheres(cx: Scope) -> Element {
         div {
             class: "z-0 absolute h-screen w-screen",
             div {
-                class: "w-[300px] h-[300px] top-[-150px] left-[-150px] absolute rounded-full",
+                class: "w-[80vw] h-[80vw] top-[-40vw] left-[-40vw] absolute rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
             },
             div {
-                class: "w-[300px] h-[300px] bottom-[-150px] right-[-150px] absolute rounded-full",
+                class: "w-[80vw] h-[80vw] bottom-[-40vw] right-[-40vw] absolute rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
             },
         },

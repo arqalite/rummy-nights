@@ -133,10 +133,10 @@ fn game_menu(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
-    let button_style = if **toggle {
-        String::from("shadow-inner bg-slate-200")
+    let shadow = if **toggle {
+        String::from("inset 0 2px 4px 0 rgb(0 0 0 / 0.25)")
     } else {
-        String::from("")
+        String::from("0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)")
     };
 
     let tile_bonus = move |_| {
@@ -167,10 +167,11 @@ fn game_menu(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "z-20 absolute bottom-4 left-4 w-2/5",
+            class: "z-20 absolute bottom-2 left-2",
             button {
-                class: "flex flex-row gap-4 h-14 w-max {button_style} p-2 rounded-full",
+                class: "flex flex-row gap-2 h-14 w-max p-2 border border-slate-100 rounded-full",
                 onclick: tile_bonus,
+                box_shadow: "{shadow}",
                 img {
                     class: "h-10 w-10 self-center",
                     src: "img/bonus.svg"
@@ -382,7 +383,7 @@ fn decorative_spheres(cx: Scope) -> Element {
         div {
             class: "z-0 absolute h-screen w-screen",
             div {
-                class: "w-[500px] h-[500px] bottom-[-250px] right-[-250px] absolute rounded-full z-0",
+                class: "w-[100vw] h-[100vw] bottom-[-50vw] right-[-50vw] absolute rounded-full z-0",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
             }
         }

@@ -10,7 +10,7 @@ use crate::data::tailwind_classes;
 use crate::prelude::*;
 
 static GAME_CONTINUES: Atom<bool> = |_| true;
-static SHOW_END_ONCE: Atom<bool> = |_| true;
+pub static SHOW_END_ONCE: Atom<bool> = |_| true;
 static TILE_BONUS_TOGGLE: Atom<bool> = |_| false;
 
 pub fn screen(cx: Scope) -> Element {

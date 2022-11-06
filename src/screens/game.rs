@@ -112,7 +112,7 @@ fn game_menu(cx: Scope) -> Element {
                 }
             }
 
-            if !is_bonus_given {
+            if !is_bonus_given && state.read().game_status == GameStatus::Ongoing {
                 toggle.set(toggle.not())
             };
         }

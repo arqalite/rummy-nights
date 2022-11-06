@@ -86,6 +86,12 @@ fn game_menu(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
+    let hidden = if state.read().game_status == GameStatus::Ongoing {
+        ""
+    } else {
+        "hidden"
+    };
+
     let shadow = if **toggle {
         "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
     } else {
@@ -120,7 +126,7 @@ fn game_menu(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "z-20 absolute bottom-2 left-2",
+            class: "z-20 absolute bottom-2 left-2 {hidden}",
             button {
                 class: "flex flex-row gap-2 h-14 w-max p-2 border border-slate-100 rounded-full",
                 onclick: tile_bonus,

@@ -60,6 +60,30 @@ impl Model {
         }
     }
 
+    pub fn move_up(&mut self, id: usize) {
+        for i in 0..self.players.len() {
+            if i != 0 && self.players[i].id == id {
+                let moved_player = self.players.remove(i);
+
+                self.players.insert(i-1, moved_player);
+            }
+        }
+    }
+
+    pub fn move_down(&mut self, id: usize) {
+        for i in 0..self.players.len() - 1 {
+            if self.players[i].id == id {
+                let moved_player = self.players.remove(i);
+    
+                if i < self.players.len() {
+                    self.players.insert(i+1, moved_player);
+                };
+
+                break
+            }
+        }
+    }
+
     pub fn grant_bonus(&mut self, id: usize) {
         let games_played: Vec<usize> = self
             .players

@@ -1,6 +1,7 @@
 use dioxus::events::FormEvent;
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
+use dioxus::web::use_eval;
 
 use crate::data::tailwind_classes;
 use crate::prelude::*;
@@ -70,15 +71,25 @@ fn player_list(cx: Scope) -> Element {
                         button {
                             onclick: move |_| state.write().remove_player(id),
                             img {
-                                class: "h-7",
+                                class: "h-8",
                                 src: "img/remove.svg",
                             }
                         }
-                        button {
-                            //onclick:
-                            img {
-                                class: "h-7",
-                                src: "img/menu.svg",
+                        div {
+                            class: "flex flex-col gap-1 justify-center",
+                            button {
+                                onclick: move |_| state.write().move_up(id),
+                                img {
+                                    class: "h-5",
+                                    src: "img/up.svg"
+                                },
+                            }
+                            button {
+                                onclick: move |_| state.write().move_down(id),
+                                img {
+                                    class: "h-5 rotate-180",
+                                    src: "img/up.svg"
+                                },
                             }
                         }
                     }
@@ -91,58 +102,42 @@ fn player_list(cx: Scope) -> Element {
 }
 
 fn player_input(cx: Scope) -> Element {
-    let buffer = use_state(&cx, String::new);
     let state = use_atom_ref(&cx, STATE);
+    let buffer = use_state(&cx, || String::new());
+    let execute = use_eval(&cx);
 
     let onsubmit = move |_| {
         if buffer.len() > 0 {
             state.write().add_player(buffer.to_string());
-            buffer.set(String::new());
-        }
-    };
-
-    let oninput = |evt: FormEvent| {
-        buffer.set(evt.value.clone());
-    };
-
-    let onclick = move |_| {
-        if buffer.len() > 0 {
-            state.write().add_player(buffer.to_string());
+            execute("document.getElementById('name_input').reset();".to_string());
             buffer.set(String::new());
         }
     };
 
     cx.render(rsx!(
-        div {
-            class: "flex flex-row justify-evenly h-16 rounded-full bg-slate-200 pr-2",
-            form {
-                class: "w-3/5 self-center",
-                onsubmit: onsubmit,
-                prevent_default: "onsubmit",
-                input {
-                    class: "rounded-full w-full h-8 ring-1 ring-grey text-center",
-                    placeholder: "Insert player name",
-                    value: "{buffer}",
-                    oninput: oninput,
-                    onsubmit: onsubmit,
-                    prevent_default: "onsubmit",
-                }
-            },
+        form {
+            id: "name_input",
+            class: "flex flex-row w-full justify-evenly h-16 rounded-full bg-slate-200 pr-2",
+            prevent_default: "onsubmit",
+            onsubmit: onsubmit,
+            input {
+                class: "rounded-full w-3/5 h-8 ring-1 ring-grey text-center self-center",
+                placeholder: "Insert player name",
+                oninput: move |evt: FormEvent| buffer.set(evt.value.clone())
+            }
             button {
-                onclick: onclick,
+                r#type: "submit",
                 img {
-                    class: "h-7",
+                    class: "h-8",
                     src: "img/add-player.svg",
                 }
             }
             button {
-                //onclick:
-                img {
-                    class: "h-7",
-                    src: "img/menu.svg",
+                div {
+                    class: "h-5 w-5 rounded-full bg-emerald-400"
                 }
             }
-        }
+        } 
     ))
 }
 

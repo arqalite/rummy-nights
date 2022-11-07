@@ -10,13 +10,9 @@ use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 static FINAL_SCORE: i32 = 1000;
+static TILE_BONUS_VALUE: i32 = 50;
 
-pub static STATE: AtomRef<Model> = |_| Model {
-    players: Vec::new(),
-    game_status: GameStatus::NotStarted,
-    screen: Screen::Menu,
-    checked_storage: false,
-};
+pub static STATE: AtomRef<Model> = |_| Model::new();
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Model {
@@ -24,7 +20,12 @@ pub struct Model {
     pub game_status: GameStatus,
     pub screen: Screen,
     checked_storage: bool,
+    round: usize,
+    pub new_round_started: bool
 }
+
+#[derive(Clone, Serialize, Deserialize)]
+struct TileBonusModel;
 
 impl Model {
     pub const fn new() -> Self {
@@ -33,6 +34,8 @@ impl Model {
             game_status: GameStatus::NotStarted,
             screen: Screen::Menu,
             checked_storage: false,
+            round: 0,
+            new_round_started: true
         }
     }
 
@@ -84,16 +87,30 @@ impl Model {
         }
     }
 
-    pub fn grant_bonus(&mut self, id: usize) {
+    pub fn check_round(&mut self) {
         let games_played: Vec<usize> = self
             .players
             .iter()
             .map(|player| player.score.len())
             .collect();
 
+        let max_games = games_played.iter().max().unwrap();
+        let min_games = games_played.iter().min().unwrap();
+
+        if max_games == min_games {
+            self.round = *max_games;
+            self.new_round_started = true;
+        }
+
+        log!(format!("round is {}", self.round))
+    }
+
+    pub fn grant_bonus(&mut self, id: usize) {
         self.players[id - 1]
             .bonus
-            .insert(*games_played.iter().max().unwrap(), 50);
+            .insert(self.round, TILE_BONUS_VALUE);
+
+        self.new_round_started = false;
     }
 
     pub fn create_game(&mut self) {
@@ -118,6 +135,8 @@ impl Model {
                     Ok(new_state) => {
                         self.players = new_state.players;
                         self.game_status = new_state.game_status;
+                        self.new_round_started = new_state.new_round_started;
+                        self.round = new_state.round;
 
                         match SessionStorage::get::<serde_json::Value>("session") {
                             Ok(json_state) => match serde_json::from_value::<bool>(json_state) {
@@ -140,9 +159,7 @@ impl Model {
         SessionStorage::set("session", true).unwrap();
     }
 
-    pub fn check_game_status(&self) -> GameStatus {
-        let mut game_status = GameStatus::Ongoing;
-
+    pub fn check_game_status(&mut self) {
         let (total_scores, games_played): (Vec<i32>, Vec<usize>) = self
             .players
             .iter()
@@ -156,7 +173,7 @@ impl Model {
         let max = *(total_scores.iter().max().unwrap());
         log!(format!("max is {}", max));
 
-        if max >= FINAL_SCORE {
+        if max >= FINAL_SCORE && self.new_round_started {
             let no_of_winners = self
                 .players
                 .iter()
@@ -168,11 +185,9 @@ impl Model {
             if (games_played.iter().min().unwrap() == games_played.iter().max().unwrap())
                 && no_of_winners == 1
             {
-                game_status = GameStatus::Finished;
+                self.game_status = GameStatus::Finished;
             }
         }
-
-        game_status
     }
 }
 

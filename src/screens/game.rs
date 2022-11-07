@@ -19,15 +19,13 @@ pub fn screen(cx: Scope) -> Element {
     let show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
 
     state.write().save_game();
-
-    let game_status = state.read().check_game_status();
+    let game_status = state.read().game_status.clone();
 
     match game_status {
         GameStatus::Finished => {
             game_continues.set(false);
             if **show_end_once {
                 state.write().screen = Screen::Winner;
-                state.write().game_status = GameStatus::Finished;
                 show_end_once.set(false);
             }
         }
@@ -84,7 +82,7 @@ fn score_table(cx: Scope) -> Element {
 
 fn game_menu(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    let toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
+    let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
     let hidden = if state.read().game_status == GameStatus::Ongoing {
         ""
@@ -92,35 +90,21 @@ fn game_menu(cx: Scope) -> Element {
         "hidden"
     };
 
-    let shadow = if **toggle {
+    let grayscale = if state.read().new_round_started {
+        ""
+    } else {
+        "grayscale"
+    };
+
+    let shadow = if **tile_bonus_toggle {
         "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
     } else {
         "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
     };
 
     let tile_bonus = move |_| {
-        let games_played: Vec<usize> = state
-            .read()
-            .players
-            .iter()
-            .map(|player| player.score.len())
-            .collect();
-
-        if games_played.iter().max().unwrap() == games_played.iter().min().unwrap() {
-            let mut is_bonus_given = false;
-
-            for player in &state.read().players {
-                if player
-                    .bonus
-                    .contains_key(games_played.iter().max().unwrap())
-                {
-                    is_bonus_given = true;
-                }
-            }
-
-            if !is_bonus_given && state.read().game_status == GameStatus::Ongoing {
-                toggle.set(toggle.not())
-            };
+        if state.read().new_round_started && state.read().game_status == GameStatus::Ongoing {
+            tile_bonus_toggle.set(true)
         }
     };
 
@@ -128,7 +112,7 @@ fn game_menu(cx: Scope) -> Element {
         div {
             class: "z-20 absolute bottom-2 left-2 {hidden}",
             button {
-                class: "flex flex-row gap-2 h-14 w-max p-2 border border-slate-100 rounded-full",
+                class: "flex flex-row gap-2 h-14 w-max p-2 border border-slate-100 rounded-full {grayscale}",
                 onclick: tile_bonus,
                 box_shadow: "{shadow}",
                 img {
@@ -175,9 +159,10 @@ fn player_column(cx: Scope, player: Player) -> Element {
                 // Name - first cell
                 class: "rounded-full h-8 {player_background} py-1 {player_name_button_style} w-full",
                 onclick: move |_| {
-                    if **tile_bonus_toggle {
+                    if state.read().new_round_started {
                         state.write().grant_bonus(player.id);
-                        tile_bonus_toggle.set(tile_bonus_toggle.not())
+                        state.write().new_round_started = false;
+                        tile_bonus_toggle.set(false)
                     }
                 },
                 p {
@@ -246,6 +231,8 @@ fn score_input(cx: Scope, id: usize) -> Element {
             }
         }
         buffer.set(String::new());
+        state.write().check_round();
+        state.write().check_game_status();
 
         match id.cmp(&state.read().players.len()) {
             Ordering::Greater => (),

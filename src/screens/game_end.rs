@@ -1,5 +1,3 @@
-use std::collections::BTreeMap;
-
 use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
@@ -99,6 +97,9 @@ pub fn screen(cx: Scope) -> Element {
 
 fn nav_bar(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let cloned_players = use_atom_ref(&cx, CLONED_PLAYERS);
+    let show_end_once = use_atom_state(&cx, crate::screens::game::SHOW_END_ONCE);
+    let is_sorted = use_atom_state(&cx, HAS_SORTED_ONCE);
 
     let delete_and_exit_game = |_| {
         LocalStorage::clear();
@@ -107,11 +108,14 @@ fn nav_bar(cx: Scope) -> Element {
     };
 
     let restart_game = |_| {
+        cloned_players.write().clear();
+        show_end_once.set(true);
+        is_sorted.set(false);
         state.write().game_status = GameStatus::Ongoing;
 
         for player in &mut state.write().players {
-            player.score = BTreeMap::new();
-            player.bonus = BTreeMap::new();
+            player.score.clear();
+            player.bonus.clear();
         }
         state.write().screen = Screen::Game;
     };

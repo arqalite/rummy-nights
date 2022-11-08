@@ -2,9 +2,8 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
-assignees: ''
-
+labels: 'bug'
+assignees: 'arqalite'
 ---
 
 **Describe the bug**
@@ -24,15 +23,11 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+ - Device: [e.g. Samsung Galaxy S22]
+ - OS: [e.g. Android]
+ - Browser [e.g. Chrome]
+ - Browser version [e.g. 107]
+ - App version [e.g. v.1.1, main branch, development branch]
 
 **Additional context**
 Add any other context about the problem here.

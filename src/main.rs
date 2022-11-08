@@ -1,6 +1,13 @@
 //! # Rummy Nights
 //! Rummy Nights is a cross-platform rummy score counter app.
 
+#![warn(clippy::all, clippy::pedantic, clippy::nursery, clippy::cargo)]
+#![allow(
+    clippy::used_underscore_binding,
+    clippy::use_self,
+    clippy::derive_partial_eq_without_eq
+)]
+
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 use rummy_nights::prelude::*;

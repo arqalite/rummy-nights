@@ -5,7 +5,7 @@ Rummy Nights is a rummy score counter PWA (progressive web app) written with [Ru
 [Dioxus]: https://dioxuslabs.com/
 [Tailwind CSS]: https://tailwindcss.com/
 
-It can be used to keep track of player scores during each round, and the plan is to add features (tile bonuses/"atu", sets of games, tracking the dealer) for all kinds of rummy, from Romanian Tile Rummy to Okey. 
+It can be used to keep track of player scores during each round, and the plan is to add features (exposed tile bonuses/"atu", sets of games, tracking the dealer) for all kinds of rummy, from Romanian Tile Rummy to Okey. 
 
 Someday, we hope it will be the one-stop shop for all your rummy playing needs.
 

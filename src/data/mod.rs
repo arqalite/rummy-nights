@@ -21,7 +21,7 @@ pub struct Model {
     pub screen: Screen,
     checked_storage: bool,
     round: usize,
-    pub new_round_started: bool
+    pub new_round_started: bool,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -35,7 +35,7 @@ impl Model {
             screen: Screen::Menu,
             checked_storage: false,
             round: 0,
-            new_round_started: true
+            new_round_started: true,
         }
     }
 
@@ -68,7 +68,7 @@ impl Model {
             if i != 0 && self.players[i].id == id {
                 let moved_player = self.players.remove(i);
 
-                self.players.insert(i-1, moved_player);
+                self.players.insert(i - 1, moved_player);
             }
         }
     }
@@ -77,12 +77,12 @@ impl Model {
         for i in 0..self.players.len() - 1 {
             if self.players[i].id == id {
                 let moved_player = self.players.remove(i);
-    
+
                 if i < self.players.len() {
-                    self.players.insert(i+1, moved_player);
+                    self.players.insert(i + 1, moved_player);
                 };
 
-                break
+                break;
             }
         }
     }

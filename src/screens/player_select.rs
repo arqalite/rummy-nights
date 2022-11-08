@@ -103,7 +103,7 @@ fn player_list(cx: Scope) -> Element {
 
 fn player_input(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    let buffer = use_state(&cx, || String::new());
+    let buffer = use_state(&cx, String::new);
     let execute = use_eval(&cx);
 
     let onsubmit = move |_| {
@@ -137,7 +137,7 @@ fn player_input(cx: Scope) -> Element {
                     class: "h-5 w-5 rounded-full bg-emerald-400"
                 }
             }
-        } 
+        }
     ))
 }
 

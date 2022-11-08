@@ -11,10 +11,12 @@ Someday, we hope it will be the one-stop shop for all your rummy playing needs.
 
 ## Project status
 Currently the app is undergoing heavy development. Expect things to change wildly and quickly.
+
 There are rough edges, bugs and unfinished features, but versioned releases should be usable and relatively stable.
 
 ## Try the app
 The latest stable release is automatically built and uploaded to Vercel at https://rummy-nights.vercel.app/.
+
 The latest commits are built and uploaded at https://rummy-nights-arqalite.vercel.app/
 
 ## Building from source

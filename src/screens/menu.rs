@@ -5,6 +5,7 @@ use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    log!("Rendering main menu.");
 
     cx.render(rsx!(
         div {
@@ -32,6 +33,8 @@ pub fn screen(cx: Scope) -> Element {
 }
 
 fn start_game_button(cx: Scope) -> Element {
+    log!("Rendering start game button.");
+
     let state = use_atom_ref(&cx, STATE);
 
     cx.render(rsx!(
@@ -51,6 +54,8 @@ fn start_game_button(cx: Scope) -> Element {
 }
 
 fn resume_game_button(cx: Scope) -> Element {
+    log!("Rendering resume game button.");
+
     let state = use_atom_ref(&cx, STATE);
 
     cx.render(rsx!(

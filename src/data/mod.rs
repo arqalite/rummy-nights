@@ -19,16 +19,16 @@ pub struct Model {
     pub players: Vec<Player>,
     pub game_status: GameStatus,
     pub screen: Screen,
-    checked_storage: bool,
+    pub checked_storage: bool,
     round: usize,
     pub new_round_started: bool,
+    pub show_end_once: bool,
+    pub tile_bonus_granted: bool,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
-struct TileBonusModel;
-
 impl Model {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
+        log!("Creating new state.");
         Self {
             players: Vec::new(),
             game_status: GameStatus::NotStarted,
@@ -36,10 +36,14 @@ impl Model {
             checked_storage: false,
             round: 0,
             new_round_started: true,
+            show_end_once: true,
+            tile_bonus_granted: false,
         }
     }
 
     pub fn add_player(&mut self, name: String) {
+        log!("Adding player.");
+
         let id = self.players.len() + 1;
 
         if self.players.len() < 4 {
@@ -47,12 +51,15 @@ impl Model {
                 id,
                 name,
                 score: BTreeMap::new(),
+                sum: 0,
                 bonus: BTreeMap::new(),
             });
         };
     }
 
     pub fn remove_player(&mut self, id: usize) {
+        log!("Removing player.");
+
         let mut counter = 1;
 
         self.players.retain(|player| player.id != id);
@@ -64,16 +71,19 @@ impl Model {
     }
 
     pub fn move_up(&mut self, id: usize) {
+        log!("Moving player up.");
+
         for i in 0..self.players.len() {
             if i != 0 && self.players[i].id == id {
                 let moved_player = self.players.remove(i);
-
                 self.players.insert(i - 1, moved_player);
             }
         }
     }
 
     pub fn move_down(&mut self, id: usize) {
+        log!("Moving player down.");
+
         for i in 0..self.players.len() - 1 {
             if self.players[i].id == id {
                 let moved_player = self.players.remove(i);
@@ -88,6 +98,8 @@ impl Model {
     }
 
     pub fn check_round(&mut self) {
+        log!("Checking round status.");
+
         let games_played: Vec<usize> = self
             .players
             .iter()
@@ -97,31 +109,48 @@ impl Model {
         let max_games = games_played.iter().max().unwrap();
         let min_games = games_played.iter().min().unwrap();
 
-        if max_games == min_games {
-            self.round = *max_games;
-            self.new_round_started = true;
+        if *max_games == *min_games && self.round != *max_games {
+                self.round = *max_games;
+                self.new_round_started = true;
+                self.tile_bonus_granted = false;
+        } else {
+            self.new_round_started = false;
         }
 
-        log!(format!("round is {}", self.round))
-    }
+        self.save_game()
+}
 
     pub fn grant_bonus(&mut self, id: usize) {
-        self.players[id - 1]
-            .bonus
-            .insert(self.round, TILE_BONUS_VALUE);
+        log!("Granting player bonus.");
 
-        self.new_round_started = false;
+        for mut player in &mut self.players {
+            if player.id == id {
+                player.bonus.insert(self.round, TILE_BONUS_VALUE);
+                player.sum = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
+
+            }
+        }
+        self.tile_bonus_granted = true;
+        self.save_game();
     }
 
     pub fn create_game(&mut self) {
+        log!("Creating new game.");
+
         LocalStorage::clear();
         SessionStorage::clear();
 
         *self = Model::new();
+        
+        // Since we create a new game, storage is already 'checked'.
+        self.checked_storage = true;
+        
         self.screen = Screen::PlayerSelect;
     }
 
     pub fn start_game(&mut self) {
+        log!("Starting new game.");
+
         if self.players.len() >= 2 {
             self.game_status = GameStatus::Ongoing;
             self.screen = Screen::Game;
@@ -129,18 +158,22 @@ impl Model {
     }
 
     pub fn load_existing_game(&mut self) {
-        if !self.checked_storage {
+            log!("Trying to load game from storage.");
             match LocalStorage::get::<serde_json::Value>("state") {
                 Ok(json_state) => match serde_json::from_value::<Self>(json_state) {
                     Ok(new_state) => {
-                        self.players = new_state.players;
-                        self.game_status = new_state.game_status;
-                        self.new_round_started = new_state.new_round_started;
-                        self.round = new_state.round;
+                        let current_screen = self.screen.clone();
 
+                        *self = new_state;
+                        self.screen = current_screen;
+
+                        log!("Loaded game.");
                         match SessionStorage::get::<serde_json::Value>("session") {
                             Ok(json_state) => match serde_json::from_value::<bool>(json_state) {
-                                Ok(_) => self.screen = Screen::Game,
+                                Ok(_) => {
+                                    self.screen = Screen::Game;
+                                    log!("Loaded session.");
+                                },
                                 Err(_) => log!("Could not parse session storage."),
                             },
                             Err(_) => log!("Could not read session storage."),
@@ -150,28 +183,26 @@ impl Model {
                 },
                 Err(_) => log!("Could not read local storage."),
             }
-        };
         self.checked_storage = true;
     }
 
     pub fn save_game(&self) {
+        log!("Saving game.");
+
         LocalStorage::set("state", self.clone()).unwrap();
         SessionStorage::set("session", true).unwrap();
     }
 
     pub fn check_game_status(&mut self) {
-        let (total_scores, games_played): (Vec<i32>, Vec<usize>) = self
+        log!("Checking game status.");
+
+        let total_scores: Vec<i32> = self
             .players
             .iter()
-            .map(|player| {
-                let total = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
-
-                (total, player.score.len())
-            })
-            .unzip();
+            .map(|player| player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>())
+            .collect();
 
         let max = *(total_scores.iter().max().unwrap());
-        log!(format!("max is {}", max));
 
         if max >= FINAL_SCORE && self.new_round_started {
             let no_of_winners = self
@@ -182,12 +213,34 @@ impl Model {
                 })
                 .count();
 
-            if (games_played.iter().min().unwrap() == games_played.iter().max().unwrap())
-                && no_of_winners == 1
+            if no_of_winners == 1
             {
                 self.game_status = GameStatus::Finished;
+                if self.show_end_once {
+                    self.screen = Screen::Winner;
+                    self.show_end_once = false;
+                };
+                self.save_game();
             }
         }
+
+    }
+
+    pub fn reset_game(&mut self) {
+        for player in &mut self.players {
+            player.score.clear();
+            player.bonus.clear();
+            player.sum = 0;
+        }
+        self.screen = Screen::Game;
+        self.game_status = GameStatus::Ongoing;
+        self.show_end_once = true;
+    }
+}
+
+impl Default for Model {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -196,6 +249,7 @@ pub struct Player {
     pub id: usize,
     pub name: String,
     pub score: BTreeMap<usize, i32>,
+    pub sum: i32,
     pub bonus: BTreeMap<usize, i32>,
 }
 

@@ -219,7 +219,15 @@ impl Model {
                 .count();
 
             if no_of_winners == 1 {
-                self.game_status = GameStatus::Finished;
+
+                let winner: Vec<&Player> = self
+                    .players
+                    .iter()
+                    .filter(|player| player.sum >= FINAL_SCORE)
+                    .collect();
+                let winner_name = &winner[0].name;
+
+                self.game_status = GameStatus::Finished(winner_name.to_string());
                 if self.show_end_once {
                     self.screen = Screen::Winner;
                     self.show_end_once = false;
@@ -260,7 +268,7 @@ pub struct Player {
 pub enum GameStatus {
     NotStarted,
     Ongoing,
-    Finished,
+    Finished(String),
 }
 
 #[derive(PartialEq, Eq, Clone, Serialize, Deserialize)]

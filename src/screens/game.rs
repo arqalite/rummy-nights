@@ -25,16 +25,23 @@ fn score_table(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
-    let (banner_text, border_color) = if **tile_bonus_toggle {
-        (
-            String::from("Who gets the bonus?"),
-            String::from("border-cyan-400"),
-        )
-    } else {
-        (
-            String::from("Good luck and have fun!"),
-            String::from("border-green-400"),
-        )
+    let (banner_text, border_color) = match &state.read().game_status {
+        GameStatus::Finished(winner) => {
+            (format!("{} won!", winner), String::from("border-red-600"))
+        }
+        _ => {
+            if **tile_bonus_toggle {
+                (
+                    String::from("Who gets the bonus?"),
+                    String::from("border-cyan-500"),
+                )
+            } else {
+                (
+                    String::from("Good luck and have fun!"),
+                    String::from("border-green-500"),
+                )
+            }
+        }
     };
 
     cx.render(rsx! (
@@ -216,7 +223,8 @@ fn score_input(cx: Scope, id: usize) -> Element {
             for player in &mut state.write().players {
                 if id == player.id {
                     player.score.insert(player.score.len(), number);
-                    player.sum = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
+                    player.sum =
+                        player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
                 }
             }
         }

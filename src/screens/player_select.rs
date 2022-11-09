@@ -1,12 +1,16 @@
 use dioxus::events::FormEvent;
-use dioxus::fermi::use_atom_ref;
+use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
 
 use crate::data::tailwind_classes;
 use crate::prelude::*;
 
+static INPUT_BUFFER: Atom<String> = |_| String::new();
+
 pub fn screen(cx: Scope) -> Element {
+    log!("Rendering player select.");
+
     cx.render(rsx!(
         div {
             class: "flex flex-col grow h-screen w-screen relative overflow-hidden px-[5%]",
@@ -30,6 +34,8 @@ pub fn screen(cx: Scope) -> Element {
 }
 
 fn start_game_button(cx: Scope) -> Element {
+    log!("Rendering begin game button.");
+
     let state = use_atom_ref(&cx, STATE);
 
     cx.render(rsx!(
@@ -50,11 +56,14 @@ fn start_game_button(cx: Scope) -> Element {
 
 fn player_list(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    log!("Rendering player list.");
 
     cx.render(rsx!(
         div {
             class: "flex flex-col gap-6",
             state.read().players.iter().map(|player| {
+                log!("Rendering player.");
+
                 let background_color = tailwind_classes::BG_COLORS[player.id-1];
                 let id = player.id;
 
@@ -103,12 +112,12 @@ fn player_list(cx: Scope) -> Element {
 
 fn player_input(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    let buffer = use_state(&cx, String::new);
+    let buffer = use_atom_state(&cx, INPUT_BUFFER);
     let execute = use_eval(&cx);
 
-    let onsubmit = move |_| {
+    let onsubmit = move |_| { 
         if buffer.len() > 0 {
-            state.write().add_player(buffer.to_string());
+            state.write().add_player(buffer.current().to_string());
             execute("document.getElementById('name_input').reset();".to_string());
             buffer.set(String::new());
         }
@@ -123,7 +132,7 @@ fn player_input(cx: Scope) -> Element {
             input {
                 class: "rounded-full w-3/5 h-8 ring-1 ring-grey text-center self-center",
                 placeholder: "Insert player name",
-                oninput: move |evt: FormEvent| buffer.set(evt.value.clone())
+                onchange: move |evt: FormEvent| buffer.set(evt.value.clone())
             }
             button {
                 r#type: "submit",
@@ -142,6 +151,8 @@ fn player_input(cx: Scope) -> Element {
 }
 
 fn top_bar(cx: Scope) -> Element {
+    log!("Rendering top bar.");
+
     let state = use_atom_ref(&cx, STATE);
 
     cx.render(rsx!(

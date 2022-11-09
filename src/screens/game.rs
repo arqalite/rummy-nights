@@ -14,6 +14,8 @@ pub static SHOW_END_ONCE: Atom<bool> = |_| true;
 static TILE_BONUS_TOGGLE: Atom<bool> = |_| false;
 
 pub fn screen(cx: Scope) -> Element {
+    log!("Rendering game screen.");
+
     let state = use_atom_ref(&cx, STATE);
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
     let show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
@@ -40,6 +42,8 @@ pub fn screen(cx: Scope) -> Element {
 }
 
 fn score_table(cx: Scope) -> Element {
+    log!("Rendering score table.");
+
     let state = use_atom_ref(&cx, STATE);
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
@@ -81,6 +85,8 @@ fn score_table(cx: Scope) -> Element {
 }
 
 fn game_menu(cx: Scope) -> Element {
+    log!("Rendering tile bonus menu.");
+
     let state = use_atom_ref(&cx, STATE);
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
@@ -129,6 +135,8 @@ fn game_menu(cx: Scope) -> Element {
 }
 
 fn player_column(cx: Scope, player: Player) -> Element {
+    log!("Rendering player column.");
+
     let mut game_count = 0;
     let state = use_atom_ref(&cx, STATE);
     let border = tailwind_classes::BORDER_COLORS[player.id - 1];
@@ -216,6 +224,8 @@ fn player_column(cx: Scope, player: Player) -> Element {
 
 #[inline_props]
 fn score_input(cx: Scope, id: usize) -> Element {
+    log!("Rendering score input.");
+
     let id = *id;
     let game_continues = use_atom_state(&cx, GAME_CONTINUES);
     let state = use_atom_ref(&cx, STATE);

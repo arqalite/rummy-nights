@@ -23,11 +23,13 @@ pub fn main() {
     let app: Component = |cx| {
         let state = use_atom_ref(&cx, STATE);
 
+        if !state.read().checked_storage {
             state.write().load_existing_game();
-        
-            crate::log!("Rendering screen.");
+        };
+
         render_screen(cx, &state.read().screen)
     };
-    crate::log!("Initializing app.");
+    
+    log!("Initializing app.");
     dioxus::web::launch(app);
 }

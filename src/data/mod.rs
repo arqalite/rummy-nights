@@ -19,7 +19,7 @@ pub struct Model {
     pub players: Vec<Player>,
     pub game_status: GameStatus,
     pub screen: Screen,
-    checked_storage: bool,
+    pub checked_storage: bool,
     round: usize,
     pub new_round_started: bool,
 }
@@ -28,7 +28,8 @@ pub struct Model {
 struct TileBonusModel;
 
 impl Model {
-    pub const fn new() -> Self {
+    pub fn new() -> Self {
+        log!("Creating new state.");
         Self {
             players: Vec::new(),
             game_status: GameStatus::NotStarted,
@@ -40,6 +41,8 @@ impl Model {
     }
 
     pub fn add_player(&mut self, name: String) {
+        log!("Adding player.");
+
         let id = self.players.len() + 1;
 
         if self.players.len() < 4 {
@@ -53,6 +56,8 @@ impl Model {
     }
 
     pub fn remove_player(&mut self, id: usize) {
+        log!("Removing player.");
+
         let mut counter = 1;
 
         self.players.retain(|player| player.id != id);
@@ -64,6 +69,8 @@ impl Model {
     }
 
     pub fn move_up(&mut self, id: usize) {
+        log!("Moving player up.");
+
         for i in 0..self.players.len() {
             if i != 0 && self.players[i].id == id {
                 let moved_player = self.players.remove(i);
@@ -74,6 +81,8 @@ impl Model {
     }
 
     pub fn move_down(&mut self, id: usize) {
+        log!("Moving player down.");
+
         for i in 0..self.players.len() - 1 {
             if self.players[i].id == id {
                 let moved_player = self.players.remove(i);
@@ -88,6 +97,8 @@ impl Model {
     }
 
     pub fn check_round(&mut self) {
+        log!("Checking round status.");
+
         let games_played: Vec<usize> = self
             .players
             .iter()
@@ -106,6 +117,8 @@ impl Model {
     }
 
     pub fn grant_bonus(&mut self, id: usize) {
+        log!("Granting player bonus.");
+
         self.players[id - 1]
             .bonus
             .insert(self.round, TILE_BONUS_VALUE);
@@ -114,14 +127,22 @@ impl Model {
     }
 
     pub fn create_game(&mut self) {
+        log!("Creating new game.");
+
         LocalStorage::clear();
         SessionStorage::clear();
 
         *self = Model::new();
+        
+        // Since we create a new game, storage is already 'checked'.
+        self.checked_storage = true;
+        
         self.screen = Screen::PlayerSelect;
     }
 
     pub fn start_game(&mut self) {
+        log!("Starting new game.");
+
         if self.players.len() >= 2 {
             self.game_status = GameStatus::Ongoing;
             self.screen = Screen::Game;
@@ -129,7 +150,7 @@ impl Model {
     }
 
     pub fn load_existing_game(&mut self) {
-        if !self.checked_storage {
+            log!("Trying to load game from storage.");
             match LocalStorage::get::<serde_json::Value>("state") {
                 Ok(json_state) => match serde_json::from_value::<Self>(json_state) {
                     Ok(new_state) => {
@@ -150,16 +171,19 @@ impl Model {
                 },
                 Err(_) => log!("Could not read local storage."),
             }
-        };
         self.checked_storage = true;
     }
 
     pub fn save_game(&self) {
+        log!("Saving game.");
+
         LocalStorage::set("state", self.clone()).unwrap();
         SessionStorage::set("session", true).unwrap();
     }
 
     pub fn check_game_status(&mut self) {
+        log!("Checking game status.");
+
         let (total_scores, games_played): (Vec<i32>, Vec<usize>) = self
             .players
             .iter()
@@ -188,6 +212,12 @@ impl Model {
                 self.game_status = GameStatus::Finished;
             }
         }
+    }
+}
+
+impl Default for Model {
+    fn default() -> Self {
+        Self::new()
     }
 }
 

@@ -9,11 +9,15 @@ static HAS_SORTED_ONCE: Atom<bool> = |_| false;
 static CLONED_PLAYERS: AtomRef<Vec<Player>> = |_| Vec::new();
 
 pub fn screen(cx: Scope) -> Element {
+    log!("Rendering end screen.");
+
     let state = use_atom_ref(&cx, STATE);
     let cloned_players = use_atom_ref(&cx, CLONED_PLAYERS);
     let is_sorted = use_atom_state(&cx, HAS_SORTED_ONCE);
 
     if !is_sorted {
+        log!("Sorting players.");
+
         *cloned_players.write() = state.read().players.clone();
 
         cloned_players.write().sort_by(|a, b| {
@@ -51,6 +55,8 @@ pub fn screen(cx: Scope) -> Element {
                 div {
                     class: "flex flex-col basis-1/2 grow-0 shrink justify-evenly content-evenly",
                     cloned_players.read().iter().map(|player| {
+                        log!("Rendering players.");
+
                         let background = tailwind_classes::BG_COLORS[player.id-1];
                         let border = tailwind_classes::BORDER_COLORS[player.id-1];
                         let score = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();

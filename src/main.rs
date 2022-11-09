@@ -22,9 +22,14 @@ use rummy_nights::screens::render_screen;
 pub fn main() {
     let app: Component = |cx| {
         let state = use_atom_ref(&cx, STATE);
-        state.write().load_existing_game();
+
+        if !state.read().checked_storage {
+            state.write().load_existing_game();
+        };
+
         render_screen(cx, &state.read().screen)
     };
-
+    
+    log!("Initializing app.");
     dioxus::web::launch(app);
 }

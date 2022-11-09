@@ -17,4 +17,7 @@ pub mod prelude {
     pub use crate::data::Screen;
     pub use crate::data::STATE;
     pub use crate::screens::*;
+
+    //This is added for logging throughout the app.
+    pub use gloo_console::log;
 }

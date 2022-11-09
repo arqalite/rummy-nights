@@ -9,16 +9,20 @@ static HAS_SORTED_ONCE: Atom<bool> = |_| false;
 static CLONED_PLAYERS: AtomRef<Vec<Player>> = |_| Vec::new();
 
 pub fn screen(cx: Scope) -> Element {
+    log!("Rendering end screen.");
+
     let state = use_atom_ref(&cx, STATE);
     let cloned_players = use_atom_ref(&cx, CLONED_PLAYERS);
     let is_sorted = use_atom_state(&cx, HAS_SORTED_ONCE);
 
     if !is_sorted {
+        log!("Sorting players.");
+
         *cloned_players.write() = state.read().players.clone();
 
         cloned_players.write().sort_by(|a, b| {
-            let temp_sum_a = a.score.values().sum::<i32>();
-            let temp_sum_b = b.score.values().sum::<i32>();
+            let temp_sum_a = a.sum;
+            let temp_sum_b = b.sum;
 
             temp_sum_a.cmp(&temp_sum_b)
         });
@@ -51,6 +55,8 @@ pub fn screen(cx: Scope) -> Element {
                 div {
                     class: "flex flex-col basis-1/2 grow-0 shrink justify-evenly content-evenly",
                     cloned_players.read().iter().map(|player| {
+                        log!("Rendering players.");
+
                         let background = tailwind_classes::BG_COLORS[player.id-1];
                         let border = tailwind_classes::BORDER_COLORS[player.id-1];
                         let score = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
@@ -98,7 +104,6 @@ pub fn screen(cx: Scope) -> Element {
 fn nav_bar(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let cloned_players = use_atom_ref(&cx, CLONED_PLAYERS);
-    let show_end_once = use_atom_state(&cx, crate::screens::game::SHOW_END_ONCE);
     let is_sorted = use_atom_state(&cx, HAS_SORTED_ONCE);
 
     let delete_and_exit_game = |_| {
@@ -109,15 +114,9 @@ fn nav_bar(cx: Scope) -> Element {
 
     let restart_game = |_| {
         cloned_players.write().clear();
-        show_end_once.set(true);
         is_sorted.set(false);
-        state.write().game_status = GameStatus::Ongoing;
-
-        for player in &mut state.write().players {
-            player.score.clear();
-            player.bonus.clear();
-        }
-        state.write().screen = Screen::Game;
+        
+        state.write().reset_game();
     };
 
     cx.render(rsx!(

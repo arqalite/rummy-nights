@@ -9,32 +9,10 @@ use std::ops::Not;
 use crate::data::tailwind_classes;
 use crate::prelude::*;
 
-static GAME_CONTINUES: Atom<bool> = |_| true;
-pub static SHOW_END_ONCE: Atom<bool> = |_| true;
 static TILE_BONUS_TOGGLE: Atom<bool> = |_| false;
 
 pub fn screen(cx: Scope) -> Element {
     log!("Rendering game screen.");
-
-    let state = use_atom_ref(&cx, STATE);
-    let game_continues = use_atom_state(&cx, GAME_CONTINUES);
-    let show_end_once = use_atom_state(&cx, SHOW_END_ONCE);
-
-    state.write().save_game();
-    let game_status = state.read().game_status.clone();
-
-    match game_status {
-        GameStatus::Finished => {
-            game_continues.set(false);
-            if **show_end_once {
-                state.write().screen = Screen::Winner;
-                show_end_once.set(false);
-            }
-        }
-        GameStatus::Ongoing | GameStatus::NotStarted => {
-            game_continues.set(true);
-        }
-    };
 
     cx.render(rsx! {
         self::score_table()
@@ -85,10 +63,10 @@ fn score_table(cx: Scope) -> Element {
 }
 
 fn game_menu(cx: Scope) -> Element {
-    log!("Rendering tile bonus menu.");
-
     let state = use_atom_ref(&cx, STATE);
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
+
+    log!("Rendering tile bonus menu.");
 
     let hidden = if state.read().game_status == GameStatus::Ongoing {
         ""
@@ -96,7 +74,7 @@ fn game_menu(cx: Scope) -> Element {
         "hidden"
     };
 
-    let grayscale = if state.read().new_round_started {
+    let grayscale = if !state.read().tile_bonus_granted {
         ""
     } else {
         "grayscale"
@@ -109,7 +87,7 @@ fn game_menu(cx: Scope) -> Element {
     };
 
     let tile_bonus = move |_| {
-        if state.read().new_round_started && state.read().game_status == GameStatus::Ongoing {
+        if !state.read().tile_bonus_granted && state.read().game_status == GameStatus::Ongoing {
             tile_bonus_toggle.set(true)
         }
     };
@@ -141,8 +119,6 @@ fn player_column(cx: Scope, player: Player) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let border = tailwind_classes::BORDER_COLORS[player.id - 1];
 
-    let sum = (player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>()).to_string();
-
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
     let (player_name_button_style, player_background, player_text_color) = if **tile_bonus_toggle {
@@ -167,10 +143,11 @@ fn player_column(cx: Scope, player: Player) -> Element {
                 // Name - first cell
                 class: "rounded-full h-8 {player_background} py-1 {player_name_button_style} w-full",
                 onclick: move |_| {
-                    if state.read().new_round_started {
+                    if !state.read().tile_bonus_granted {
                         state.write().grant_bonus(player.id);
                         state.write().new_round_started = false;
-                        tile_bonus_toggle.set(false)
+                        tile_bonus_toggle.set(false);
+                        state.write().save_game();
                     }
                 },
                 p {
@@ -215,7 +192,7 @@ fn player_column(cx: Scope, player: Player) -> Element {
                 class: "rounded border-b-[7px] {border} h-9 mt-2",
                 p {
                     class: "text-center text-lg font-semibold",
-                    "{sum}"
+                    "{player.sum}"
                 }
             }
         }
@@ -227,7 +204,6 @@ fn score_input(cx: Scope, id: usize) -> Element {
     log!("Rendering score input.");
 
     let id = *id;
-    let game_continues = use_atom_state(&cx, GAME_CONTINUES);
     let state = use_atom_ref(&cx, STATE);
     let buffer = use_state(&cx, String::new);
     let execute = use_eval(&cx);
@@ -237,12 +213,14 @@ fn score_input(cx: Scope, id: usize) -> Element {
             for player in &mut state.write().players {
                 if id == player.id {
                     player.score.insert(player.score.len(), number);
+                    player.sum = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
                 }
             }
         }
         buffer.set(String::new());
         state.write().check_round();
         state.write().check_game_status();
+        state.write().save_game();
 
         match id.cmp(&state.read().players.len()) {
             Ordering::Greater => (),
@@ -260,7 +238,7 @@ fn score_input(cx: Scope, id: usize) -> Element {
     let caret = tailwind_classes::CARET_COLORS[id - 1];
     let border = tailwind_classes::BORDER_COLORS[id - 1];
 
-    if **game_continues {
+    if state.read().game_status == GameStatus::Ongoing {
         cx.render(rsx!(
             form {
                 onsubmit: onsubmit,
@@ -272,7 +250,7 @@ fn score_input(cx: Scope, id: usize) -> Element {
                     value: "{buffer}",
                     onsubmit: onsubmit,
                     prevent_default: "onsubmit",
-                    oninput: move |evt: UiEvent<FormData>| {
+                    onchange: move |evt: UiEvent<FormData>| {
                         buffer.set(evt.value.clone());
                     },
                     outline: "none",
@@ -287,9 +265,8 @@ fn score_input(cx: Scope, id: usize) -> Element {
 
 fn nav_bar(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    let game_continues = use_atom_state(&cx, GAME_CONTINUES);
 
-    let button_position = if **game_continues {
+    let button_position = if state.read().game_status == GameStatus::Ongoing {
         "col-start-3 justify-self-end"
     } else {
         "col-start-1 justify-self-start"
@@ -298,7 +275,7 @@ fn nav_bar(cx: Scope) -> Element {
     cx.render(rsx!(
         div {
             class: "z-10 h-16 grid grid-cols-3 mx-auto w-full sm:max-w-lg",
-            game_continues.then(|| rsx!(
+            (state.read().game_status == GameStatus::Ongoing).then(|| rsx!(
                 button {
                     class: "col-start-1 justify-self-start",
                     onclick: |_| state.write().screen = Screen::PlayerSelect,
@@ -316,7 +293,7 @@ fn nav_bar(cx: Scope) -> Element {
                     src: "img/home.svg",
                 }
             }
-            game_continues.not().then(|| rsx!(
+            (state.read().game_status == GameStatus::Ongoing).not().then(|| rsx!(
                 button {
                     class: "col-start-3 justify-self-end",
                     onclick: |_| state.write().screen = Screen::Winner,

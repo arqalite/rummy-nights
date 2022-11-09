@@ -57,7 +57,7 @@ fn score_table(cx: Scope) -> Element {
             }
             div{
                 //Main table
-                class: "z-10 flex justify-evenly gap-x-4 pt-2 overflow-auto mx-auto w-full sm:max-w-lg",
+                class: "z-10 flex justify-evenly gap-x-4 pt-2 overflow-visible mx-auto w-full sm:max-w-lg",
 
                 state.read().players.iter().map(|player|
                     player_column(cx, player.clone())
@@ -152,7 +152,7 @@ fn player_column(cx: Scope, player: Player) -> Element {
             //Column for each player
             button {
                 // Name - first cell
-                class: "rounded-full h-8 {player_background} py-1 {player_name_button_style} w-full",
+                class: "relative rounded-full h-8 {player_background} py-1 {player_name_button_style} w-full",
                 tabindex: "{tabindex}",
                 onclick: move |_| {
                     if !state.read().tile_bonus_granted {
@@ -162,6 +162,12 @@ fn player_column(cx: Scope, player: Player) -> Element {
                         state.write().save_game();
                     }
                 },
+                ((((state.read().round + 5) - player.id) % 4 == 0) && state.read().game_status == GameStatus::Ongoing).then(|| rsx!(
+                    img {
+                        class: "h-6 w-6 absolute -top-4 -right-2",
+                        src: "img/pushpin.svg"
+                    }
+                )),
                 p {
                     class: "text-center my-auto {player_text_color} font-semibold",
                     "{player.name}"

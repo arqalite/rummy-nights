@@ -1,4 +1,4 @@
-const cacheName = "rummy-nights-v0.1.1"
+const cacheName = "rummy-nights-v0.2"
 const appShellFiles = [
     '/img/add-player.svg',
     '/img/arrow.svg',
@@ -17,6 +17,7 @@ const appShellFiles = [
     '/img/remove.svg',
     '/img/replay.svg',
     '/img/resume.svg',
+    '/img/pushpin.svg',
     '/img/save.svg',
     '/img/share.svg',
     '/img/trophy.svg',

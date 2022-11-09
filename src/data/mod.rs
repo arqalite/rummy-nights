@@ -20,7 +20,7 @@ pub struct Model {
     pub game_status: GameStatus,
     pub screen: Screen,
     pub checked_storage: bool,
-    round: usize,
+    pub round: usize,
     pub new_round_started: bool,
     pub show_end_once: bool,
     pub tile_bonus_granted: bool,

@@ -115,7 +115,7 @@ fn player_input(cx: Scope) -> Element {
     let onsubmit = move |evt: FormEvent| {
         let player_name = evt.values.get("player-name").unwrap();
 
-        if player_name.len() > 0 {
+        if !player_name.is_empty() {
             state.write().add_player(player_name.to_string());
             execute("document.getElementById('name_input').reset();".to_string());
         };

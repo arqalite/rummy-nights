@@ -219,7 +219,6 @@ impl Model {
                 .count();
 
             if no_of_winners == 1 {
-
                 let winner: Vec<&Player> = self
                     .players
                     .iter()

@@ -115,7 +115,7 @@ fn player_input(cx: Scope) -> Element {
     let buffer = use_atom_state(&cx, INPUT_BUFFER);
     let execute = use_eval(&cx);
 
-    let onsubmit = move |_| { 
+    let onsubmit = move |_| {
         if buffer.len() > 0 {
             state.write().add_player(buffer.current().to_string());
             execute("document.getElementById('name_input').reset();".to_string());

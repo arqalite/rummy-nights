@@ -60,10 +60,9 @@ impl Model {
     pub fn remove_player(&mut self, id: usize) {
         log!("Removing player.");
 
-        let mut counter = 1;
-
         self.players.retain(|player| player.id != id);
 
+        let mut counter = 1;
         for player in &mut self.players {
             player.id = counter;
             counter += 1;
@@ -110,15 +109,15 @@ impl Model {
         let min_games = games_played.iter().min().unwrap();
 
         if *max_games == *min_games && self.round != *max_games {
-                self.round = *max_games;
-                self.new_round_started = true;
-                self.tile_bonus_granted = false;
+            self.round = *max_games;
+            self.new_round_started = true;
+            self.tile_bonus_granted = false;
         } else {
             self.new_round_started = false;
         }
 
         self.save_game()
-}
+    }
 
     pub fn grant_bonus(&mut self, id: usize) {
         log!("Granting player bonus.");
@@ -126,8 +125,8 @@ impl Model {
         for mut player in &mut self.players {
             if player.id == id {
                 player.bonus.insert(self.round, TILE_BONUS_VALUE);
-                player.sum = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
-
+                player.sum =
+                    player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
             }
         }
         self.tile_bonus_granted = true;
@@ -141,10 +140,10 @@ impl Model {
         SessionStorage::clear();
 
         *self = Model::new();
-        
+
         // Since we create a new game, storage is already 'checked'.
         self.checked_storage = true;
-        
+
         self.screen = Screen::PlayerSelect;
     }
 
@@ -152,37 +151,43 @@ impl Model {
         log!("Starting new game.");
 
         if self.players.len() >= 2 {
+            let mut counter = 1;
+            for player in &mut self.players {
+                player.id = counter;
+                counter += 1;
+            }
+
             self.game_status = GameStatus::Ongoing;
             self.screen = Screen::Game;
         };
     }
 
     pub fn load_existing_game(&mut self) {
-            log!("Trying to load game from storage.");
-            match LocalStorage::get::<serde_json::Value>("state") {
-                Ok(json_state) => match serde_json::from_value::<Self>(json_state) {
-                    Ok(new_state) => {
-                        let current_screen = self.screen.clone();
+        log!("Trying to load game from storage.");
+        match LocalStorage::get::<serde_json::Value>("state") {
+            Ok(json_state) => match serde_json::from_value::<Self>(json_state) {
+                Ok(new_state) => {
+                    let current_screen = self.screen.clone();
 
-                        *self = new_state;
-                        self.screen = current_screen;
+                    *self = new_state;
+                    self.screen = current_screen;
 
-                        log!("Loaded game.");
-                        match SessionStorage::get::<serde_json::Value>("session") {
-                            Ok(json_state) => match serde_json::from_value::<bool>(json_state) {
-                                Ok(_) => {
-                                    self.screen = Screen::Game;
-                                    log!("Loaded session.");
-                                },
-                                Err(_) => log!("Could not parse session storage."),
-                            },
-                            Err(_) => log!("Could not read session storage."),
-                        }
+                    log!("Loaded game.");
+                    match SessionStorage::get::<serde_json::Value>("session") {
+                        Ok(json_state) => match serde_json::from_value::<bool>(json_state) {
+                            Ok(_) => {
+                                self.screen = Screen::Game;
+                                log!("Loaded session.");
+                            }
+                            Err(_) => log!("Could not parse session storage."),
+                        },
+                        Err(_) => log!("Could not read session storage."),
                     }
-                    Err(_) => log!("Could not parse local storage."),
-                },
-                Err(_) => log!("Could not read local storage."),
-            }
+                }
+                Err(_) => log!("Could not parse local storage."),
+            },
+            Err(_) => log!("Could not read local storage."),
+        }
         self.checked_storage = true;
     }
 
@@ -213,8 +218,7 @@ impl Model {
                 })
                 .count();
 
-            if no_of_winners == 1
-            {
+            if no_of_winners == 1 {
                 self.game_status = GameStatus::Finished;
                 if self.show_end_once {
                     self.screen = Screen::Winner;
@@ -223,7 +227,6 @@ impl Model {
                 self.save_game();
             }
         }
-
     }
 
     pub fn reset_game(&mut self) {

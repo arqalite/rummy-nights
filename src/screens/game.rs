@@ -94,9 +94,11 @@ fn game_menu(cx: Scope) -> Element {
     };
 
     let tile_bonus = move |_| {
-        if !state.read().tile_bonus_granted && state.read().game_status == GameStatus::Ongoing {
-            tile_bonus_toggle.set(true)
-        }
+        if **tile_bonus_toggle {
+            tile_bonus_toggle.set(false)
+        } else if !state.read().tile_bonus_granted && state.read().game_status == GameStatus::Ongoing {
+                tile_bonus_toggle.set(true)
+        };
     };
 
     cx.render(rsx!(

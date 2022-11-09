@@ -1,12 +1,10 @@
 use dioxus::events::FormEvent;
-use dioxus::fermi::{use_atom_ref, use_atom_state};
+use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
 
 use crate::data::tailwind_classes;
 use crate::prelude::*;
-
-static INPUT_BUFFER: Atom<String> = |_| String::new();
 
 pub fn screen(cx: Scope) -> Element {
     log!("Rendering player select.");
@@ -112,15 +110,15 @@ fn player_list(cx: Scope) -> Element {
 
 fn player_input(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    let buffer = use_atom_state(&cx, INPUT_BUFFER);
     let execute = use_eval(&cx);
 
-    let onsubmit = move |_| {
-        if buffer.len() > 0 {
-            state.write().add_player(buffer.current().to_string());
+    let onsubmit = move |evt: FormEvent| {
+        let player_name = evt.values.get("player-name").unwrap();
+
+        if player_name.len() > 0 {
+            state.write().add_player(player_name.to_string());
             execute("document.getElementById('name_input').reset();".to_string());
-            buffer.set(String::new());
-        }
+        };
     };
 
     cx.render(rsx!(
@@ -130,9 +128,9 @@ fn player_input(cx: Scope) -> Element {
             prevent_default: "onsubmit",
             onsubmit: onsubmit,
             input {
+                name: "player-name",
                 class: "rounded-full w-3/5 h-8 ring-1 ring-grey text-center self-center",
                 placeholder: "Insert player name",
-                onchange: move |evt: FormEvent| buffer.set(evt.value.clone())
             }
             button {
                 r#type: "submit",

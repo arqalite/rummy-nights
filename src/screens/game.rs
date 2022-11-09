@@ -95,8 +95,10 @@ fn game_menu(cx: Scope) -> Element {
     let tile_bonus = move |_| {
         if **tile_bonus_toggle {
             tile_bonus_toggle.set(false)
-        } else if !state.read().tile_bonus_granted && state.read().game_status == GameStatus::Ongoing {
-                tile_bonus_toggle.set(true)
+        } else if !state.read().tile_bonus_granted
+            && state.read().game_status == GameStatus::Ongoing
+        {
+            tile_bonus_toggle.set(true)
         };
     };
 
@@ -129,21 +131,22 @@ fn player_column(cx: Scope, player: Player) -> Element {
 
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
-    let (player_name_button_style, player_background, player_text_color, tabindex) = if **tile_bonus_toggle {
-        (
-            "pointer-events-auto",
-            "bg-white border border-black",
-            "text-black",
-            "0"
-        )
-    } else {
-        (
-            "pointer-events-none",
-            tailwind_classes::BG_COLORS[player.id - 1],
-            "text-white",
-            "-1"
-        )
-    };
+    let (player_name_button_style, player_background, player_text_color, tabindex) =
+        if **tile_bonus_toggle {
+            (
+                "pointer-events-auto",
+                "bg-white border border-black",
+                "text-black",
+                "0",
+            )
+        } else {
+            (
+                "pointer-events-none",
+                tailwind_classes::BG_COLORS[player.id - 1],
+                "text-white",
+                "-1",
+            )
+        };
 
     cx.render(rsx!(
         div{
@@ -161,7 +164,7 @@ fn player_column(cx: Scope, player: Player) -> Element {
                         state.write().save_game();
                     }
                 },
-                ((((state.read().round + 5) - player.id) % 4 == 0) && state.read().game_status == GameStatus::Ongoing).then(|| rsx!(
+                ((((state.read().round + state.read().players.len() + 1) - player.id) % state.read().players.len() == 0) && state.read().game_status == GameStatus::Ongoing).then(|| rsx!(
                     img {
                         class: "h-6 w-6 absolute -top-4 -right-2",
                         src: "img/pushpin.svg"

@@ -121,17 +121,19 @@ fn player_column(cx: Scope, player: Player) -> Element {
 
     let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
-    let (player_name_button_style, player_background, player_text_color) = if **tile_bonus_toggle {
+    let (player_name_button_style, player_background, player_text_color, tabindex) = if **tile_bonus_toggle {
         (
             "pointer-events-auto",
             "bg-white border border-black",
             "text-black",
+            "0"
         )
     } else {
         (
             "pointer-events-none",
             tailwind_classes::BG_COLORS[player.id - 1],
             "text-white",
+            "-1"
         )
     };
 
@@ -142,6 +144,7 @@ fn player_column(cx: Scope, player: Player) -> Element {
             button {
                 // Name - first cell
                 class: "rounded-full h-8 {player_background} py-1 {player_name_button_style} w-full",
+                tabindex: "{tabindex}",
                 onclick: move |_| {
                     if !state.read().tile_bonus_granted {
                         state.write().grant_bonus(player.id);

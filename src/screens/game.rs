@@ -1,5 +1,4 @@
-use dioxus::core::UiEvent;
-use dioxus::events::FormData;
+use dioxus::events::FormEvent;
 use dioxus::fermi::{use_atom_ref, use_atom_state};
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
@@ -223,11 +222,12 @@ fn score_input(cx: Scope, id: usize) -> Element {
 
     let id = *id;
     let state = use_atom_ref(&cx, STATE);
-    let buffer = use_state(&cx, String::new);
     let execute = use_eval(&cx);
 
-    let onsubmit = move |_| {
-        if let Ok(number) = buffer.parse::<i32>() {
+    let onsubmit = move |evt: FormEvent| {
+        let score = evt.values.get("score").unwrap();
+
+        if let Ok(number) = score.parse::<i32>() {
             for player in &mut state.write().players {
                 if id == player.id {
                     player.score.insert(player.score.len(), number);
@@ -236,7 +236,8 @@ fn score_input(cx: Scope, id: usize) -> Element {
                 }
             }
         }
-        buffer.set(String::new());
+
+        execute(format!("document.getElementById('{}').value = '';", id));
         state.write().check_round();
         state.write().check_game_status();
         state.write().save_game();
@@ -244,9 +245,7 @@ fn score_input(cx: Scope, id: usize) -> Element {
         match id.cmp(&state.read().players.len()) {
             Ordering::Greater => (),
             Ordering::Less => {
-                execute(
-                    "document.getElementById('".to_string() + &(id + 1).to_string() + "').focus();",
-                );
+                execute(format!("document.getElementById('{}').focus();", id + 1));
             }
             Ordering::Equal => {
                 execute("document.getElementById('1').focus();".to_string());
@@ -263,15 +262,10 @@ fn score_input(cx: Scope, id: usize) -> Element {
                 onsubmit: onsubmit,
                 prevent_default: "onsubmit",
                 input {
+                    name: "score",
                     class: "{caret} {border} text-lg appearance-none font-light bg-transparent h-9 mt-2 w-full text-center rounded focus:border-b-[8px] border-b-4",
                     id: "{id}",
                     style: "-moz-appearance:textfield",
-                    value: "{buffer}",
-                    onsubmit: onsubmit,
-                    prevent_default: "onsubmit",
-                    onchange: move |evt: UiEvent<FormData>| {
-                        buffer.set(evt.value.clone());
-                    },
                     outline: "none",
                     r#type: "number",
                 }

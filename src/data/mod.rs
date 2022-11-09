@@ -60,10 +60,9 @@ impl Model {
     pub fn remove_player(&mut self, id: usize) {
         log!("Removing player.");
 
-        let mut counter = 1;
-
         self.players.retain(|player| player.id != id);
 
+        let mut counter = 1;
         for player in &mut self.players {
             player.id = counter;
             counter += 1;
@@ -152,6 +151,12 @@ impl Model {
         log!("Starting new game.");
 
         if self.players.len() >= 2 {
+            let mut counter = 1;
+            for player in &mut self.players {
+                player.id = counter;
+                counter += 1;
+            }
+
             self.game_status = GameStatus::Ongoing;
             self.screen = Screen::Game;
         };
@@ -214,6 +219,7 @@ impl Model {
                 .count();
 
             if no_of_winners == 1 {
+
                 let winner: Vec<&Player> = self
                     .players
                     .iter()

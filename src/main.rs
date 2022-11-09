@@ -29,7 +29,7 @@ pub fn main() {
 
         render_screen(cx, &state.read().screen)
     };
-    
+
     log!("Initializing app.");
     dioxus::web::launch(app);
 }

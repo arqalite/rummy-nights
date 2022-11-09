@@ -115,7 +115,7 @@ fn nav_bar(cx: Scope) -> Element {
     let restart_game = |_| {
         cloned_players.write().clear();
         is_sorted.set(false);
-        
+
         state.write().reset_game();
     };
 

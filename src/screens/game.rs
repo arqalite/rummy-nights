@@ -45,7 +45,6 @@ fn score_table(cx: Scope) -> Element {
 
     cx.render(rsx! (
         div {
-            class: "flex flex-col grow h-screen w-screen relative overflow-hidden px-[5%]",
             nav_bar(),
             div {
                 class: "mb-4 w-max mx-auto",
@@ -63,7 +62,6 @@ fn score_table(cx: Scope) -> Element {
                 )
             }
             game_menu(),
-            decorative_spheres(),
         }
     ))
 }
@@ -319,18 +317,6 @@ fn nav_bar(cx: Scope) -> Element {
                     }
                 }
             ))
-        }
-    ))
-}
-
-fn decorative_spheres(cx: Scope) -> Element {
-    cx.render(rsx! (
-        div {
-            class: "z-0 absolute h-screen w-screen",
-            div {
-                class: "w-[100vw] h-[100vw] bottom-[-50vw] right-[-50vw] absolute rounded-full z-0",
-                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-            }
         }
     ))
 }

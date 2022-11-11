@@ -5,35 +5,68 @@ mod game_end;
 mod menu;
 mod player_select;
 
-use crate::data::Screen;
+use crate::data::{Screen, STATE};
 use dioxus::prelude::*;
 
-pub fn render_screen<'a>(cx: Scope<'a>, screen: &Screen) -> Element<'a> {
+pub fn render_screen(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+
     cx.render(rsx!(
         div {
-            class: "bg-white",
-            match *screen {
-                Screen::Menu => render_menu_screen(cx),
-                Screen::PlayerSelect => render_player_select_screen(cx),
-                Screen::Game => render_game_screen(cx),
-                Screen::Winner => render_game_end_screen(cx),
+            class: "flex flex-col bg-white h-screen w-screen relative overflow-hidden",
+            div {
+                class: "z-10 flex flex-col relative grow px-8",
+                match state.read().screen {
+                    Screen::Menu => menu::screen(cx),
+                    Screen::PlayerSelect => player_select::screen(cx),
+                    Screen::Game => game::screen(cx),
+                    Screen::Winner => game_end::screen(cx),
+                },
             }
+            decorative_spheres()
         }
     ))
 }
 
-pub fn render_menu_screen(cx: Scope) -> Element {
-    cx.render(rsx!(menu::screen()))
-}
-
-pub fn render_player_select_screen(cx: Scope) -> Element {
-    cx.render(rsx!(player_select::screen()))
-}
-
-pub fn render_game_screen(cx: Scope) -> Element {
-    cx.render(rsx!(game::screen()))
-}
-
-pub fn render_game_end_screen(cx: Scope) -> Element {
-    cx.render(rsx!(game_end::screen()))
+fn decorative_spheres(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+    cx.render(rsx!(
+        div {
+            class: "z-0 absolute h-screen w-screen",
+            match state.read().screen {
+                Screen::Menu => rsx!(
+                    div {
+                        class: "w-[80vw] h-[80vw] top-[-40vw] left-[-40vw] lg:max-w-[800px] lg:max-h-[800px] lg:top-[-400px] lg:left-[-400px] absolute rounded-full z-0",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    }
+                    div {
+                        class: "w-[80vw] h-[80vw] bottom-[-40vw] right-[-40vw] lg:max-w-[800px] lg:max-h-[800px] lg:bottom-[-400px] lg:right-[-400px] absolute rounded-full z-0",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    }
+                ),
+                Screen::PlayerSelect => rsx!(
+                    div {
+                        class: "w-[100vw] h-[100vw] bottom-[-50vw] left-[-50vw] lg:max-w-[1000px] lg:max-h-[1000px] lg:bottom-[-500px] lg:left-[-500px] absolute rounded-full z-0",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    }
+                ),
+                Screen::Game => rsx!(
+                    div {
+                        class: "w-[100vw] h-[100vw] bottom-[-50vw] right-[-50vw] lg:max-w-[1000px] lg:max-h-[1000px] lg:bottom-[-500px] lg:right-[-500px] absolute rounded-full z-0",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    }
+                ),
+                Screen::Winner => rsx!(
+                    div {
+                        class: "w-[80vw] h-[80vw] top-[-40vw] left-[-40vw] lg:max-w-[800px] lg:max-h-[800px] lg:top-[-400px] lg:left-[-400px] absolute rounded-full",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    },
+                    div {
+                        class: "w-[80vw] h-[80vw] bottom-[-40vw] right-[-40vw] lg:max-w-[800px] lg:max-h-[800px] lg:bottom-[-400px] lg:right-[-400px] absolute rounded-full",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    },                    
+                ),
+            }
+        }
+    ))
 }

@@ -27,7 +27,7 @@ pub fn main() {
             state.write().load_existing_game();
         };
 
-        render_screen(cx, &state.read().screen)
+        render_screen(cx)
     };
 
     log!("Initializing app.");

@@ -15,12 +15,12 @@ pub fn render_screen(cx: Scope) -> Element {
         div {
             class: "flex flex-col bg-white h-screen w-screen relative overflow-hidden",
             div {
-                class: "z-10 flex flex-col relative grow px-8",
+                class: "z-10 flex flex-col relative grow px-8 sm:max-w-lg mx-auto w-full",
                 match state.read().screen {
-                    Screen::Menu => menu::screen(cx),
-                    Screen::PlayerSelect => player_select::screen(cx),
-                    Screen::Game => game::screen(cx),
-                    Screen::Winner => game_end::screen(cx),
+                    Screen::Menu => rsx!(menu::screen()),
+                    Screen::PlayerSelect => rsx!(player_select::screen()),
+                    Screen::Game => rsx!(game::screen()),
+                    Screen::Winner => rsx!(game_end::screen()),
                 },
             }
             decorative_spheres()
@@ -64,7 +64,7 @@ fn decorative_spheres(cx: Scope) -> Element {
                     div {
                         class: "w-[80vw] h-[80vw] bottom-[-40vw] right-[-40vw] lg:max-w-[800px] lg:max-h-[800px] lg:bottom-[-400px] lg:right-[-400px] absolute rounded-full",
                         background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    },                    
+                    },
                 ),
             }
         }

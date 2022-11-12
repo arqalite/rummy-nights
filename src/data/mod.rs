@@ -23,7 +23,10 @@ pub struct Model {
     pub round: usize,
     pub new_round_started: bool,
     pub show_end_once: bool,
+    pub tile_bonus_toggle: bool,
     pub tile_bonus_granted: bool,
+    pub sorted_players: Vec<Player>,
+    pub is_sorted: bool,
 }
 
 impl Model {
@@ -37,7 +40,10 @@ impl Model {
             round: 0,
             new_round_started: true,
             show_end_once: true,
+            tile_bonus_toggle: false,
             tile_bonus_granted: false,
+            sorted_players: Vec::new(),
+            is_sorted: false,
         }
     }
 

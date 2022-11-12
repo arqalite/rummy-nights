@@ -1,5 +1,5 @@
 use dioxus::events::FormEvent;
-use dioxus::fermi::{use_atom_ref, use_atom_state};
+use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
 use std::cmp::Ordering;
@@ -8,28 +8,17 @@ use std::ops::Not;
 use crate::data::tailwind_classes;
 use crate::prelude::*;
 
-static TILE_BONUS_TOGGLE: Atom<bool> = |_| false;
-
 pub fn screen(cx: Scope) -> Element {
     log!("Rendering game screen.");
 
-    cx.render(rsx! {
-        self::score_table()
-    })
-}
-
-fn score_table(cx: Scope) -> Element {
-    log!("Rendering score table.");
-
     let state = use_atom_ref(&cx, STATE);
-    let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
 
     let (banner_text, border_color) = match &state.read().game_status {
         GameStatus::Finished(winner) => {
             (format!("{} won!", winner), String::from("border-red-600"))
         }
         _ => {
-            if **tile_bonus_toggle {
+            if state.read().tile_bonus_toggle {
                 (
                     String::from("Who gets the bonus?"),
                     String::from("border-cyan-500"),
@@ -44,32 +33,28 @@ fn score_table(cx: Scope) -> Element {
     };
 
     cx.render(rsx! (
+        nav_bar(),
         div {
-            nav_bar(),
-            div {
-                class: "mb-4 w-max mx-auto",
-                span {
-                    class: "font-semibold text-lg border-b-2 {border_color}",
-                    "{banner_text}",
-                }
+            class: "mb-4 w-max mx-auto",
+            span {
+                class: "font-semibold text-lg border-b-2 {border_color}",
+                "{banner_text}",
             }
-            div{
-                //Main table
-                class: "z-10 flex justify-evenly gap-x-4 pt-2 overflow-visible mx-auto w-full sm:max-w-lg",
-
-                state.read().players.iter().map(|player|
-                    player_column(cx, player.clone())
-                )
-            }
-            game_menu(),
         }
+        div{
+            //Main table
+            class: "z-10 flex justify-evenly gap-x-4 pt-2 overflow-visible",
+
+            state.read().players.iter().map(|player|
+                player_column(cx, player.clone())
+            )
+        }
+        game_menu(),
     ))
 }
 
 fn game_menu(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
-
     log!("Rendering tile bonus menu.");
 
     let hidden = if state.read().game_status == GameStatus::Ongoing {
@@ -84,19 +69,19 @@ fn game_menu(cx: Scope) -> Element {
         "grayscale"
     };
 
-    let shadow = if **tile_bonus_toggle {
+    let shadow = if state.read().tile_bonus_toggle {
         "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
     } else {
         "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
     };
 
     let tile_bonus = move |_| {
-        if **tile_bonus_toggle {
-            tile_bonus_toggle.set(false)
+        if state.read().tile_bonus_toggle {
+            state.write().tile_bonus_toggle = false;
         } else if !state.read().tile_bonus_granted
             && state.read().game_status == GameStatus::Ongoing
         {
-            tile_bonus_toggle.set(true)
+            state.write().tile_bonus_toggle = true;
         };
     };
 
@@ -127,10 +112,8 @@ fn player_column(cx: Scope, player: Player) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let border = tailwind_classes::BORDER_COLORS[player.id - 1];
 
-    let tile_bonus_toggle = use_atom_state(&cx, TILE_BONUS_TOGGLE);
-
     let (player_name_button_style, player_background, player_text_color, tabindex) =
-        if **tile_bonus_toggle {
+        if state.read().tile_bonus_toggle {
             (
                 "pointer-events-auto",
                 "bg-white border border-black",
@@ -158,7 +141,7 @@ fn player_column(cx: Scope, player: Player) -> Element {
                     if !state.read().tile_bonus_granted {
                         state.write().grant_bonus(player.id);
                         state.write().new_round_started = false;
-                        tile_bonus_toggle.set(false);
+                        state.write().tile_bonus_toggle = false;
                         state.write().save_game();
                     }
                 },

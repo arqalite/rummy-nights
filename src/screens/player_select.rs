@@ -10,19 +10,16 @@ pub fn screen(cx: Scope) -> Element {
     log!("Rendering player select.");
 
     cx.render(rsx!(
-            top_bar()
-            div {
-                class: "z-10 flex flex-col grow relative mx-auto w-full sm:max-w-lg",
-                div {
-                    class: "mb-6 w-max mx-auto",
-                    span {
-                        class: "font-semibold text-lg border-b-2 border-emerald-300",
-                        "Add up to 4 players"
-                    }
-                }
-                player_list()
-                start_game_button()
+        top_bar()
+        div {
+            class: "mb-6 w-max mx-auto",
+            span {
+                class: "font-semibold text-lg border-b-2 border-emerald-300",
+                "Add up to 4 players"
             }
+        }
+        player_list()
+        start_game_button()
     ))
 }
 
@@ -33,7 +30,7 @@ fn start_game_button(cx: Scope) -> Element {
 
     cx.render(rsx!(
         button {
-            class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-0 bottom-32",
+            class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-8 bottom-32",
             onclick: |_| state.write().start_game(),
             span {
                 class: "flex self-center text-xl font-bold w-max",

@@ -5,35 +5,68 @@ mod game_end;
 mod menu;
 mod player_select;
 
-use crate::data::Screen;
+use crate::prelude::*;
 use dioxus::prelude::*;
 
-pub fn render_screen<'a>(cx: Scope<'a>, screen: &Screen) -> Element<'a> {
+pub fn render_screen(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+
     cx.render(rsx!(
         div {
-            class: "bg-white",
-            match *screen {
-                Screen::Menu => render_menu_screen(cx),
-                Screen::PlayerSelect => render_player_select_screen(cx),
-                Screen::Game => render_game_screen(cx),
-                Screen::Winner => render_game_end_screen(cx),
+            class: "flex flex-col bg-white h-screen w-screen relative overflow-hidden",
+            div {
+                class: "z-10 flex flex-col grow px-8 mx-auto w-full sm:max-w-lg",
+                match state.read().screen {
+                    Screen::Menu => rsx!(menu::screen()),
+                    Screen::PlayerSelect => rsx!(player_select::screen()),
+                    Screen::Game => rsx!(game::screen()),
+                    Screen::Winner => rsx!(game_end::screen()),
+                },
             }
+            decorative_spheres()
         }
     ))
 }
 
-pub fn render_menu_screen(cx: Scope) -> Element {
-    cx.render(rsx!(menu::screen()))
-}
-
-pub fn render_player_select_screen(cx: Scope) -> Element {
-    cx.render(rsx!(player_select::screen()))
-}
-
-pub fn render_game_screen(cx: Scope) -> Element {
-    cx.render(rsx!(game::screen()))
-}
-
-pub fn render_game_end_screen(cx: Scope) -> Element {
-    cx.render(rsx!(game_end::screen()))
+fn decorative_spheres(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+    cx.render(rsx!(
+        div {
+            class: "z-0 absolute h-screen w-screen",
+            match state.read().screen {
+                Screen::Menu => rsx!(
+                    div {
+                        class: "w-[50vw] h-[50vw] top-[-25vw] left-[-25vw] absolute rounded-full z-0",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    }
+                    div {
+                        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full z-0",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    }
+                ),
+                Screen::PlayerSelect => rsx!(
+                    div {
+                        class: "w-[50vw] h-[50vw] bottom-[-25vw] left-[-25vw] absolute rounded-full z-0",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    }
+                ),
+                Screen::Game => rsx!(
+                    div {
+                        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full z-0",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    }
+                ),
+                Screen::Winner => rsx!(
+                    div {
+                        class: "w-[50vw] h-[50vw] top-[-25vw] left-[-25vw] absolute rounded-full",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    },
+                    div {
+                        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    },
+                ),
+            }
+        }
+    ))
 }

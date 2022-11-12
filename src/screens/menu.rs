@@ -9,25 +9,21 @@ pub fn screen(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "flex relative h-screen overflow-hidden",
-            decorative_spheres(),
+            class : "flex flex-col grow gap-8 justify-center",
+            img {
+                class: "w-full max-w-lg",
+                src: "img/intro.gif",
+            }
             div {
-                class : "z-10 flex flex-col grow self-center my-16",
-                img {
-                    class: "mx-auto w-full max-w-lg mb-8",
-                    src: "img/intro.gif",
-                }
-                div {
-                    class: "flex flex-col gap-y-8 mx-auto relative",
-                    start_game_button()
-                    (state.read().game_status == GameStatus::Ongoing).then(|| resume_game_button(cx)),
-                }
+                class: "flex flex-col gap-8",
+                start_game_button()
+                (state.read().game_status == GameStatus::Ongoing).then(|| resume_game_button(cx)),
             }
-            p {
-                class: "text-white font-semibold text-lg text-center w-max max-w-1/2 px-2 absolute bottom-2 left-2 rounded-full",
-                background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
-                print_version_number()
-            }
+        }
+        p {
+            class: "text-white font-semibold text-lg text-center w-max max-w-1/2 px-2 absolute bottom-2 left-2 rounded-full",
+            background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
+            print_version_number()
         }
     ))
 }
@@ -39,7 +35,7 @@ fn start_game_button(cx: Scope) -> Element {
 
     cx.render(rsx!(
         button {
-            class: "grid grid-cols-6 items-center w-full mx-auto",
+            class: "grid grid-cols-6 items-center",
             onclick: |_| state.write().create_game(),
             p {
                 class: "font-semibold text-center text-2xl col-span-2 col-start-2 justify-self-end",
@@ -60,7 +56,7 @@ fn resume_game_button(cx: Scope) -> Element {
 
     cx.render(rsx!(
         button {
-            class: "grid grid-cols-6 items-center w-full mx-auto",
+            class: "grid grid-cols-6 items-center",
             onclick: |_| state.write().screen = Screen::Game,
             p {
                 class: "font-semibold text-center text-2xl col-span-3 col-start-1 justify-self-end",
@@ -69,22 +65,6 @@ fn resume_game_button(cx: Scope) -> Element {
             img {
                 class: "h-20 w-20 col-start-5 col-span-2",
                 src: "img/resume.svg",
-            }
-        }
-    ))
-}
-
-fn decorative_spheres(cx: Scope) -> Element {
-    cx.render(rsx!(
-        div {
-            class: "z-0 absolute h-screen w-screen",
-            div {
-                class: "w-[80vw] h-[80vw] top-[-40vw] left-[-40vw] absolute rounded-full z-0",
-                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-            }
-            div {
-                class: "w-[80vw] h-[80vw] bottom-[-40vw] right-[-40vw] absolute rounded-full z-0",
-                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
             }
         }
     ))

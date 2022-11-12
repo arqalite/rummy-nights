@@ -26,14 +26,11 @@ pub fn screen(cx: Scope) -> Element {
         });
         log!("Sorting players worked.");
 
-
         state_writer.sorted_players.reverse();
         log!("Reversing players worked.");
 
-
         state_writer.is_sorted = true;
         log!("Finishing players worked.");
-
     };
 
     let mut player_count = 0;
@@ -41,18 +38,15 @@ pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(
         nav_bar(),
         div {
-            class: "mt-8",
+            class: "flex flex-col absolute w-screen px-8 sm:max-w-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 gap-6 justify-evenly",
             img {
                 src: "img/trophy.svg",
                 class: "h-20 w-20 mx-auto"
             }
             p {
-                class: "text-center font-bold text-4xl mt-2",
+                class: "text-center font-bold text-4xl",
                 "THE WINNER IS"
             }
-        },
-        div {
-            class: "flex flex-col basis-1/2 grow-0 shrink justify-evenly content-evenly",
             state.read().sorted_players.iter().map(|player| {
                 log!("Rendering players.");
 
@@ -76,7 +70,7 @@ pub fn screen(cx: Scope) -> Element {
 
                 rsx! (
                 div {
-                    class: "flex flex-row justify-evenly items-center",
+                    class: "flex flex-row basis-1/2 justify-evenly items-center",
                     div {
                         class: "{style}",
                         p {

@@ -34,16 +34,13 @@ pub fn screen(cx: Scope) -> Element {
 
     cx.render(rsx! (
         nav_bar(),
-        div {
-            class: "mb-4 w-max mx-auto",
-            span {
-                class: "font-semibold text-lg border-b-2 {border_color}",
-                "{banner_text}",
-            }
+        span {
+            class: "mb-8 w-max mx-auto font-semibold text-lg border-b-2 {border_color}",
+            "{banner_text}",
         }
-        div{
+        div {
             //Main table
-            class: "z-10 flex justify-evenly gap-x-4 pt-2 overflow-visible",
+            class: "z-10 flex justify-evenly gap-x-4 overflow-visible",
 
             state.read().players.iter().map(|player|
                 player_column(cx, player.clone())
@@ -116,7 +113,7 @@ fn player_column(cx: Scope, player: Player) -> Element {
         if state.read().tile_bonus_toggle {
             (
                 "pointer-events-auto",
-                "bg-white border border-black",
+                "bg-white outline outline-1 outline-black",
                 "text-black",
                 "0",
             )
@@ -131,11 +128,11 @@ fn player_column(cx: Scope, player: Player) -> Element {
 
     cx.render(rsx!(
         div{
-            class: "w-full",
+            class: "flex flex-col gap-2 w-full",
             //Column for each player
             button {
                 // Name - first cell
-                class: "relative rounded-full h-8 {player_background} py-1 {player_name_button_style} w-full",
+                class: "relative rounded-full h-8 {player_background} {player_name_button_style} w-full",
                 tabindex: "{tabindex}",
                 onclick: move |_| {
                     if !state.read().tile_bonus_granted {
@@ -156,41 +153,39 @@ fn player_column(cx: Scope, player: Player) -> Element {
                     "{player.name}"
                 }
             }
-            div {
-                //Scores - dynamic
-                player.score.values().map(|score| {
-                    let score_text = score.to_string();
+            //Scores - dynamic
+            player.score.values().map(|score| {
+                let score_text = score.to_string();
 
-                    let bonus_visibility = if player.bonus.contains_key(&game_count) {
-                        String::from("")
-                    } else {
-                        String::from("hidden")
-                    };
+                let bonus_visibility = if player.bonus.contains_key(&game_count) {
+                    String::from("")
+                } else {
+                    String::from("hidden")
+                };
 
-                    game_count += 1;
+                game_count += 1;
 
-                    rsx!(
-                        div {
-                            class: "relative rounded border-b-4 h-9 mt-2 {border}",
-                            p {
-                                class: "text-lg text-center",
-                                "{score_text}"
-                            }
-                            img {
-                                class: "absolute h-4 w-4 top-1/2 right-0 -translate-y-1/2 {bonus_visibility}",
-                                src: "img/bonus.svg",
-
-                            }
+                rsx!(
+                    div {
+                        class: "flex flex-row justify-center relative rounded border-b-4 h-10 {border}",
+                        p {
+                            class: "text-lg text-center self-center",
+                            "{score_text}"
                         }
-                    )
-                })
-            }
+                        img {
+                            class: "absolute right-0 self-center h-4 w-4 {bonus_visibility}",
+                            src: "img/bonus.svg",
+                        }
+
+                    }
+                )
+            })
             self::score_input {
                 id: player.id
             },
             div {
                 //Total box
-                class: "rounded border-b-[7px] {border} h-9 mt-2",
+                class: "rounded border-b-[7px] {border} h-10",
                 p {
                     class: "text-center text-lg font-semibold",
                     "{player.sum}"
@@ -247,7 +242,7 @@ fn score_input(cx: Scope, id: usize) -> Element {
                 prevent_default: "onsubmit",
                 input {
                     name: "score",
-                    class: "{caret} {border} text-lg appearance-none font-light bg-transparent h-9 mt-2 w-full text-center rounded focus:border-b-[8px] border-b-4",
+                    class: "{caret} {border} text-lg appearance-none font-light bg-transparent h-10 w-full text-center rounded focus:border-b-[8px] border-b-4",
                     id: "{id}",
                     style: "-moz-appearance:textfield",
                     outline: "none",
@@ -271,7 +266,7 @@ fn nav_bar(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "z-10 h-16 grid grid-cols-3 mx-auto w-full sm:max-w-lg",
+            class: "z-10 h-16 grid grid-cols-3 sm:max-w-lg",
             (state.read().game_status == GameStatus::Ongoing).then(|| rsx!(
                 button {
                     class: "col-start-1 justify-self-start",

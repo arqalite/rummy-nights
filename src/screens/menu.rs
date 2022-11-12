@@ -9,13 +9,13 @@ pub fn screen(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class : "z-10 flex flex-col grow justify-center",
+            class : "flex flex-col grow gap-8 justify-center",
             img {
-                class: "mx-auto w-full max-w-lg mb-8",
+                class: "w-full max-w-lg",
                 src: "img/intro.gif",
             }
             div {
-                class: "flex flex-col gap-y-8 mx-auto relative",
+                class: "flex flex-col gap-8",
                 start_game_button()
                 (state.read().game_status == GameStatus::Ongoing).then(|| resume_game_button(cx)),
             }
@@ -35,7 +35,7 @@ fn start_game_button(cx: Scope) -> Element {
 
     cx.render(rsx!(
         button {
-            class: "grid grid-cols-6 items-center w-full mx-auto",
+            class: "grid grid-cols-6 items-center",
             onclick: |_| state.write().create_game(),
             p {
                 class: "font-semibold text-center text-2xl col-span-2 col-start-2 justify-self-end",
@@ -56,7 +56,7 @@ fn resume_game_button(cx: Scope) -> Element {
 
     cx.render(rsx!(
         button {
-            class: "grid grid-cols-6 items-center w-full mx-auto",
+            class: "grid grid-cols-6 items-center",
             onclick: |_| state.write().screen = Screen::Game,
             p {
                 class: "font-semibold text-center text-2xl col-span-3 col-start-1 justify-self-end",

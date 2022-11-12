@@ -11,12 +11,9 @@ pub fn screen(cx: Scope) -> Element {
 
     cx.render(rsx!(
         top_bar()
-        div {
-            class: "mb-6 w-max mx-auto",
-            span {
-                class: "font-semibold text-lg border-b-2 border-emerald-300",
-                "Add up to 4 players"
-            }
+        span {
+            class: "font-semibold text-lg border-b-2 border-emerald-300 w-max mx-auto mb-8",
+            "Add up to 4 players"
         }
         player_list()
         start_game_button()
@@ -33,7 +30,7 @@ fn start_game_button(cx: Scope) -> Element {
             class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-8 bottom-32",
             onclick: |_| state.write().start_game(),
             span {
-                class: "flex self-center text-xl font-bold w-max",
+                class: "flex self-center text-xl font-bold",
                 "Start game"
             }
             img {
@@ -59,9 +56,9 @@ fn player_list(cx: Scope) -> Element {
 
                 rsx!(
                     div {
-                        class: "flex justify-evenly h-16 rounded-full bg-slate-200 pr-2",
+                        class: "flex justify-evenly h-16 rounded-full bg-slate-200",
                         div {
-                            class: "flex justify-center	content-center h-8 w-3/5 self-center rounded-full {background_color}",
+                            class: "flex justify-center h-8 w-3/5 self-center rounded-full {background_color}",
                             p {
                                 class: "flex self-center text-white font-semibold",
                                 "{player.name}"
@@ -75,7 +72,7 @@ fn player_list(cx: Scope) -> Element {
                             }
                         }
                         div {
-                            class: "flex flex-col gap-1 justify-center",
+                            class: "flex flex-col gap-1 justify-center self-center h-8 w-8",
                             button {
                                 onclick: move |_| state.write().move_up(id),
                                 img {

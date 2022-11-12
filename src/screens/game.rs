@@ -142,7 +142,7 @@ fn player_column(cx: Scope, player: Player) -> Element {
                         state.write().save_game();
                     }
                 },
-                ((((state.read().round + state.read().players.len() + 1) - player.id) % state.read().players.len() == 0) && state.read().game_status == GameStatus::Ongoing).then(|| rsx!(
+                ((((state.read().round + state.read().players.len() + 1) - player.id + state.read().total_rounds) % state.read().players.len() == 0) && state.read().game_status == GameStatus::Ongoing).then(|| rsx!(
                     img {
                         class: "h-6 w-6 absolute -top-4 -right-2",
                         src: "img/pushpin.svg"

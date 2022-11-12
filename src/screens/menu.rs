@@ -7,6 +7,10 @@ pub fn screen(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     log!("Rendering main menu.");
 
+    if !state.read().checked_storage {
+        state.write().load_existing_game();
+    };
+
     cx.render(rsx!(
         div {
             class : "flex flex-col grow gap-8 justify-center",
@@ -38,7 +42,7 @@ fn start_game_button(cx: Scope) -> Element {
             class: "grid grid-cols-6 items-center",
             onclick: |_| state.write().create_game(),
             p {
-                class: "font-semibold text-center text-2xl col-span-2 col-start-2 justify-self-end",
+                class: "w-max font-semibold text-center text-2xl col-span-2 col-start-2 justify-self-end",
                 "Start Game"
             }
             img {
@@ -59,7 +63,7 @@ fn resume_game_button(cx: Scope) -> Element {
             class: "grid grid-cols-6 items-center",
             onclick: |_| state.write().screen = Screen::Game,
             p {
-                class: "font-semibold text-center text-2xl col-span-3 col-start-1 justify-self-end",
+                class: "w-max font-semibold text-center text-2xl col-span-3 col-start-1 justify-self-end",
                 "Resume Game"
             }
             img {

@@ -2,6 +2,7 @@ use dioxus::events::FormEvent;
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
+use gloo_storage::{Storage, SessionStorage};
 
 use crate::data::tailwind_classes;
 use crate::prelude::*;
@@ -147,7 +148,11 @@ fn top_bar(cx: Scope) -> Element {
             class: "h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: |_| state.write().screen = Screen::Menu,
+                onclick: |_| {
+                    state.write().screen = Screen::Menu;
+                    state.write().checked_storage = false;
+                    SessionStorage::clear();
+                },
                 img {
                     class: "h-8 w-8",
                     src: "img/back.svg",

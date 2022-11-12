@@ -21,6 +21,7 @@ pub struct Model {
     pub screen: Screen,
     pub checked_storage: bool,
     pub round: usize,
+    pub total_rounds: usize,
     pub new_round_started: bool,
     pub show_end_once: bool,
     pub tile_bonus_toggle: bool,
@@ -38,6 +39,7 @@ impl Model {
             screen: Screen::Menu,
             checked_storage: false,
             round: 0,
+            total_rounds: 0,
             new_round_started: true,
             show_end_once: true,
             tile_bonus_toggle: false,
@@ -142,14 +144,10 @@ impl Model {
     pub fn create_game(&mut self) {
         log!("Creating new game.");
 
-        LocalStorage::clear();
-        SessionStorage::clear();
-
         *self = Model::new();
 
         // Since we create a new game, storage is already 'checked'.
         self.checked_storage = true;
-
         self.screen = Screen::PlayerSelect;
     }
 
@@ -163,8 +161,12 @@ impl Model {
                 counter += 1;
             }
 
+            LocalStorage::clear();
+            SessionStorage::clear();
+    
             self.game_status = GameStatus::Ongoing;
             self.screen = Screen::Game;
+            self.save_game();
         };
     }
 
@@ -173,10 +175,8 @@ impl Model {
         match LocalStorage::get::<serde_json::Value>("state") {
             Ok(json_state) => match serde_json::from_value::<Self>(json_state) {
                 Ok(new_state) => {
-                    let current_screen = self.screen.clone();
-
                     *self = new_state;
-                    self.screen = current_screen;
+                    self.screen = Screen::Menu;
 
                     log!("Loaded game.");
                     match SessionStorage::get::<serde_json::Value>("session") {
@@ -251,6 +251,14 @@ impl Model {
         self.screen = Screen::Game;
         self.game_status = GameStatus::Ongoing;
         self.show_end_once = true;
+        self.total_rounds += self.round;
+        self.round = 0;
+        self.new_round_started = true;
+        self.show_end_once = true;
+        self.tile_bonus_toggle = false;
+        self.tile_bonus_granted = false;
+        self.sorted_players = Vec::new();
+        self.is_sorted = false;
     }
 }
 

@@ -90,7 +90,8 @@ fn game_menu(cx: Scope) -> Element {
                 onclick: tile_bonus,
                 box_shadow: "{shadow}",
                 img {
-                    class: "h-10 w-10 self-center",
+                    class: "h-10 w-10 self-center rounded-full",
+                    background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
                     src: "img/bonus.svg"
                 }
                 span {
@@ -144,7 +145,7 @@ fn player_column(cx: Scope, player: Player) -> Element {
                 },
                 ((((state.read().round + state.read().players.len() + 1) - player.id + state.read().total_rounds) % state.read().players.len() == 0) && state.read().game_status == GameStatus::Ongoing).then(|| rsx!(
                     img {
-                        class: "h-6 w-6 absolute -top-4 -right-2",
+                        class: "h-7 absolute -top-4 -right-4 scale-x-[-1]",
                         src: "img/pushpin.svg"
                     }
                 )),
@@ -173,7 +174,8 @@ fn player_column(cx: Scope, player: Player) -> Element {
                             "{score_text}"
                         }
                         img {
-                            class: "absolute right-0 self-center h-4 w-4 {bonus_visibility}",
+                            class: "absolute right-0 self-center h-5 w-5 {bonus_visibility} rounded-full",
+                            background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
                             src: "img/bonus.svg",
                         }
 
@@ -272,7 +274,7 @@ fn nav_bar(cx: Scope) -> Element {
                     class: "col-start-1 justify-self-start",
                     onclick: |_| state.write().screen = Screen::PlayerSelect,
                     img {
-                        class: "h-8 w-8",
+                        class: "h-10 scale-x-[-1]",
                         src: "img/back.svg",
                     }
                 }
@@ -281,7 +283,7 @@ fn nav_bar(cx: Scope) -> Element {
                 class: "{button_position}",
                 onclick: |_| state.write().screen = Screen::Menu,
                 img {
-                    class: "h-8 w-8",
+                    class: "h-10",
                     src: "img/home.svg",
                 }
             }
@@ -290,7 +292,7 @@ fn nav_bar(cx: Scope) -> Element {
                     class: "col-start-3 justify-self-end",
                     onclick: |_| state.write().screen = Screen::Winner,
                     img {
-                        class: "h-8 w-8 scale-x-[-1]",
+                        class: "h-10",
                         src: "img/back.svg",
                     }
                 }

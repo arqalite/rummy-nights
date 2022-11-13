@@ -3,11 +3,6 @@ Rummy Nights is a rummy score counter PWA (progressive web app) written with [Ru
 
 It aims to be a helpful tool for players of Romanian Tile Rummy ([rules here]), helping them keep track of scores, bonuses and dealers, all in a lightweight package that runs on both desktop and mobile.
 
-[Rust]: https://www.rust-lang.org/
-[Dioxus]: https://dioxuslabs.com/
-[Tailwind CSS]: https://tailwindcss.com/
-[rules here]: https://www.pagat.com/rummy/romtile.html
-
 ## Project status
 Currently the app is undergoing heavy development. Expect things to change wildly and quickly.
 
@@ -39,9 +34,20 @@ Our contributors:
 
 <sub>Made with [contrib.rocks](https://contrib.rocks)</sub>
 
+## Credits
+Made with [Rust], [Dioxus] and [Tailwind CSS].
+Icons by [Ikonate] and [Charm Icons].
+
 ## License
 This project is licensed under the [MIT license](https://github.com/arqalite/rummy-nights/blob/main/LICENSE).
 
 Unless you explicitly state otherwise, any contribution intentionally submitted
 for inclusion in Rummy Nights, shall be licensed as MIT, without any additional
 terms or conditions. We reserve the right to reject contributions that will not be licensed as such.
+
+[Rust]: https://www.rust-lang.org/
+[Dioxus]: https://dioxuslabs.com/
+[Tailwind CSS]: https://tailwindcss.com/
+[Ikonate]: https://ikonate.com/
+[Charm Icons]: https://github.com/jaynewey/charm-icons
+[rules here]: https://www.pagat.com/rummy/romtile.html

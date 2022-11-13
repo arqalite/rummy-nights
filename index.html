@@ -10,19 +10,19 @@
     <link data-trunk rel="copy-dir" href="assets/img">
     <link data-trunk rel="copy-file" href="assets/img/favicon.ico">
 
-    <link data-trunk rel="copy-file" href="assets/js/app.webmanifest">
+    <!-- <link data-trunk rel="copy-file" href="assets/js/app.webmanifest">
     <link rel="manifest" href="app.webmanifest">
 
-    <link data-trunk rel="copy-file" href="assets/js/service-worker.js">
+    <link data-trunk rel="copy-file" href="assets/js/service-worker.js"> -->
     <script type="application/javascript">
         // register ServiceWorker
-        window.onload = () => {
-            'use strict';
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker
-                  .register('./service-worker.js');
-            }
-        }
+        // window.onload = () => {
+        //     'use strict';
+        //     if ('serviceWorker' in navigator) {
+        //         navigator.serviceWorker
+        //           .register('./service-worker.js');
+        //     }
+        // }
 
         var viewport = document.querySelector("meta[name=viewport]");
         viewport.setAttribute("content", viewport.content + ", height=" + window.innerHeight);

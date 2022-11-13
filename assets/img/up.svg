@@ -1,16 +1,8 @@
-<?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 20010904//EN"
- "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="512.000000pt" height="512.000000pt" viewBox="0 0 512.000000 512.000000"
- preserveAspectRatio="xMidYMid meet">
+<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg" color="#000" fill="none" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="#000" aria-labelledby="chevronUpIconTitle" role="img">
+ <title id="chevronUpIconTitle">Chevron Up</title>
 
-<g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
-<path d="M2468 4005 c-26 -7 -67 -24 -90 -38 -24 -14 -556 -540 -1184 -1169
--1283 -1286 -1188 -1178 -1188 -1338 -1 -72 4 -94 27 -145 71 -153 234 -238
-393 -205 33 7 77 21 99 32 26 13 388 368 1038 1016 l997 997 998 -997 c649
--648 1011 -1003 1037 -1016 186 -92 405 -15 492 173 23 51 28 73 27 145 0 160
-95 52 -1188 1338 -628 629 -1160 1155 -1183 1169 -84 49 -184 63 -275 38z"/>
-</g>
+ <g>
+  <title>Layer 1</title>
+  <polyline id="svg_1" points="2,11 8,5 14,11 14,11 "/>
+ </g>
 </svg>

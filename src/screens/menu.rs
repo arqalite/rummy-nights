@@ -13,7 +13,7 @@ pub fn screen(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class : "flex flex-col grow gap-8 justify-center",
+            class : "flex flex-col grow gap-16 justify-center",
             img {
                 class: "w-full max-w-lg",
                 src: "img/intro.gif",
@@ -26,7 +26,7 @@ pub fn screen(cx: Scope) -> Element {
         }
         p {
             class: "text-white font-semibold text-lg text-center w-max max-w-1/2 px-2 absolute bottom-2 left-2 rounded-full",
-            background: "linear-gradient(225deg, #9EFBD3 0%, #57E9F2 47.87%, #45D4FB 100%)",
+            background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
             print_version_number()
         }
     ))
@@ -46,8 +46,9 @@ fn start_game_button(cx: Scope) -> Element {
                 "Start Game"
             }
             img {
-                class: "h-20 w-20 col-start-5 col-span-2",
-                src: "img/new.svg",
+                class: "h-20 w-20 col-start-5 col-span-2 rounded-full",
+                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                src: "img/new_game.svg",
             }
         }
     ))
@@ -67,8 +68,9 @@ fn resume_game_button(cx: Scope) -> Element {
                 "Resume Game"
             }
             img {
-                class: "h-20 w-20 col-start-5 col-span-2",
-                src: "img/resume.svg",
+                class: "h-20 w-20 col-start-5 col-span-2 rounded-full",
+                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                src: "img/resume_game.svg",
             }
         }
     ))

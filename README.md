@@ -1,13 +1,12 @@
 # Rummy Nights
 Rummy Nights is a rummy score counter PWA (progressive web app) written with [Rust], [Dioxus] and [Tailwind CSS].
 
+It aims to be a helpful tool for players of Romanian Tile Rummy ([rules here]), helping them keep track of scores, bonuses and dealers, all in a lightweight package that runs on both desktop and mobile.
+
 [Rust]: https://www.rust-lang.org/
 [Dioxus]: https://dioxuslabs.com/
 [Tailwind CSS]: https://tailwindcss.com/
-
-It can be used to keep track of player scores during each round, and the plan is to add features (exposed tile bonuses/"atu", sets of games, tracking the dealer) for all kinds of rummy, from Romanian Tile Rummy to Gin Rummy to Okey. 
-
-Someday, we hope it will be the one-stop shop for all your rummy playing needs.
+[rules here]: https://www.pagat.com/rummy/romtile.html
 
 ## Project status
 Currently the app is undergoing heavy development. Expect things to change wildly and quickly.
@@ -29,8 +28,8 @@ In order to build the app, you need:
 Once set-up, run `trunk serve --open` and it should be good to go!
 
 ## Contributing
-We happily accept pull requests!
-Read [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.
+Pull requests are accepted and encouraged.
+Before contributing, please read [CONTRIBUTING.md](./CONTRIBUTING.md) for more details and instructions.
 
 Our contributors:
 

@@ -46,12 +46,12 @@ fn max_score_setting(cx: Scope) -> Element {
                 "Maximum score:"
             }
             form {
-                class: "flex flex-row w-max justify-evenly",
+                class: "flex flex-row w-1/2 justify-evenly",
                 onsubmit: onsubmit,
                 prevent_default: "onsubmit",
                 input {
                     name: "max_score",
-                    class: "text-lg appearance-none font-light bg-transparent h-10 w-full text-center rounded focus:border-b-[8px] border-b-4 border-green-400",
+                    class: "text-lg appearance-none font-light bg-transparent h-10 w-3/4 text-center rounded focus:border-b-[8px] border-b-4 border-green-400",
                     id: "max_score",
                     style: "-moz-appearance:textfield",
                     outline: "none",

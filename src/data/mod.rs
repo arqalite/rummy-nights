@@ -163,7 +163,7 @@ impl Model {
 
             LocalStorage::clear();
             SessionStorage::clear();
-    
+
             self.game_status = GameStatus::Ongoing;
             self.screen = Screen::Game;
             self.save_game();

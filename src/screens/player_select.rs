@@ -2,7 +2,7 @@ use dioxus::events::FormEvent;
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
-use gloo_storage::{Storage, SessionStorage};
+use gloo_storage::{SessionStorage, Storage};
 
 use crate::data::tailwind_classes;
 use crate::prelude::*;

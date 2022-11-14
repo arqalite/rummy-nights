@@ -9,10 +9,42 @@ use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-static FINAL_SCORE: i32 = 1000;
-static TILE_BONUS_VALUE: i32 = 50;
-
 pub static STATE: AtomRef<Model> = |_| Model::new();
+pub static SETTINGS: AtomRef<Settings> = |_| Settings::new();
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct Settings {
+    pub max_score: i32,
+    pub tile_bonus_value: i32,
+    pub checked_storage: bool,
+}
+
+impl Settings {
+    fn new() -> Self {
+        Settings { max_score: 1000, tile_bonus_value: 50, checked_storage: false }
+    }
+
+    pub fn load(&mut self) {
+        log!("Trying to load settings from storage.");
+        match LocalStorage::get::<serde_json::Value>("settings") {
+            Ok(json_settings) => match serde_json::from_value::<Self>(json_settings) {
+                Ok(new_settings) => {
+                    *self = new_settings;
+                    log!(format!("Loaded settings: {:?}", self));
+                }
+                Err(_) => log!("Could not parse settings from local storage."),
+            },
+            Err(_) => log!("Could not read settings from local storage."),
+        }
+        self.checked_storage = true;
+    }
+
+    pub fn save(&self) {
+        log!("Saving settings.");
+
+        LocalStorage::set("settings", self.clone()).unwrap();
+    }
+}
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Model {
@@ -28,6 +60,7 @@ pub struct Model {
     pub tile_bonus_granted: bool,
     pub sorted_players: Vec<Player>,
     pub is_sorted: bool,
+    pub settings: Settings,
 }
 
 impl Model {
@@ -46,6 +79,7 @@ impl Model {
             tile_bonus_granted: false,
             sorted_players: Vec::new(),
             is_sorted: false,
+            settings: Settings::new()
         }
     }
 
@@ -132,7 +166,7 @@ impl Model {
 
         for mut player in &mut self.players {
             if player.id == id {
-                player.bonus.insert(self.round, TILE_BONUS_VALUE);
+                player.bonus.insert(self.round, self.settings.tile_bonus_value);
                 player.sum =
                     player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
             }
@@ -144,7 +178,13 @@ impl Model {
     pub fn create_game(&mut self) {
         log!("Creating new game.");
 
+        let settings = self.settings.clone();
+        log!(format!("Backed up settings are {:?}", settings));
+
         *self = Model::new();
+        self.settings = settings;
+        log!(format!("Actual settings are {:?}", self.settings));
+
 
         // Since we create a new game, storage is already 'checked'.
         self.checked_storage = true;
@@ -161,8 +201,8 @@ impl Model {
                 counter += 1;
             }
 
-            LocalStorage::clear();
-            SessionStorage::clear();
+            LocalStorage::delete("state");
+            SessionStorage::delete("session");
     
             self.game_status = GameStatus::Ongoing;
             self.screen = Screen::Game;
@@ -215,7 +255,7 @@ impl Model {
 
         let max = *(total_scores.iter().max().unwrap());
 
-        if max >= FINAL_SCORE && self.new_round_started {
+        if max >= self.settings.max_score && self.new_round_started {
             let no_of_winners = self
                 .players
                 .iter()
@@ -228,7 +268,7 @@ impl Model {
                 let winner: Vec<&Player> = self
                     .players
                     .iter()
-                    .filter(|player| player.sum >= FINAL_SCORE)
+                    .filter(|player| player.sum >= self.settings.max_score)
                     .collect();
                 let winner_name = &winner[0].name;
 

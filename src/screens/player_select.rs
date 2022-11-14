@@ -154,7 +154,7 @@ fn top_bar(cx: Scope) -> Element {
                 onclick: |_| {
                     state.write().screen = Screen::Menu;
                     state.write().checked_storage = false;
-                    SessionStorage::clear();
+                    SessionStorage::delete("session");
                 },
                 img {
                     class: "h-10 scale-x-[-1]",

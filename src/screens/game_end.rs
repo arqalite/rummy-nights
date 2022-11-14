@@ -97,8 +97,8 @@ fn nav_bar(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
     let delete_and_exit_game = |_| {
-        LocalStorage::clear();
-        SessionStorage::clear();
+        LocalStorage::delete("state");
+        SessionStorage::delete("session");
         *state.write() = Model::new();
     };
 

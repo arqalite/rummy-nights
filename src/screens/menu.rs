@@ -5,10 +5,18 @@ use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let settings = use_atom_ref(&cx, SETTINGS);
     log!("Rendering main menu.");
+
+
+    if !settings.read().checked_storage {
+        settings.write().load();
+    };
 
     if !state.read().checked_storage {
         state.write().load_existing_game();
+        state.write().settings = settings.read().clone();
+        log!("Is this executing?");
     };
 
     cx.render(rsx!(
@@ -44,6 +52,7 @@ fn start_game_button(cx: Scope) -> Element {
     log!("Rendering start game button.");
 
     let state = use_atom_ref(&cx, STATE);
+    log!(format!("Settings at menu level are {:?}", state.read().settings));
 
     cx.render(rsx!(
         button {

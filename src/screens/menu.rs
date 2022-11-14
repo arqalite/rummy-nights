@@ -12,6 +12,13 @@ pub fn screen(cx: Scope) -> Element {
     };
 
     cx.render(rsx!(
+        button {
+            class: "absolute top-4 right-4",
+            img {
+                class: "h-14",
+                src: "img/settings.svg",
+            }
+        }
         div {
             class : "flex flex-col grow gap-16 justify-center",
             img {

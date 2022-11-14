@@ -174,7 +174,7 @@ fn player_column(cx: Scope, player: Player) -> Element {
                             "{score_text}"
                         }
                         img {
-                            class: "absolute right-0 self-center h-5 w-5 {bonus_visibility} rounded-full",
+                            class: "absolute right-0 self-center h-4 w-4 {bonus_visibility} rounded-full",
                             background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
                             src: "img/bonus.svg",
                         }

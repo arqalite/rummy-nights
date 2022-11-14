@@ -36,7 +36,9 @@ Our contributors:
 
 ## Credits
 Made with [Rust], [Dioxus] and [Tailwind CSS].
-Favicon derived from [gambling icons created by Freepik at Flaticon].
+
+Favicon derived from [this icon, created by Freepik at Flaticon].
+
 All other icons are made by [Ikonate] and [Charm Icons].
 
 ## License
@@ -49,7 +51,7 @@ terms or conditions. We reserve the right to reject contributions that will not 
 [Rust]: https://www.rust-lang.org/
 [Dioxus]: https://dioxuslabs.com/
 [Tailwind CSS]: https://tailwindcss.com/
-[gambling icons created by Freepik - Flaticon]: https://www.flaticon.com/free-icon/poker_8304852?term=gambling&page=1&position=20&page=1&position=20&related_id=8304852&origin=style
+[this icon, created by Freepik at Flaticon]: https://www.flaticon.com/free-icon/poker_8304852?term=gambling&page=1&position=20&page=1&position=20&related_id=8304852&origin=style
 [Ikonate]: https://ikonate.com/
 [Charm Icons]: https://github.com/jaynewey/charm-icons
 [rules here]: https://www.pagat.com/rummy/romtile.html

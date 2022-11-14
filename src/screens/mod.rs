@@ -4,6 +4,7 @@ mod game;
 mod game_end;
 mod menu;
 mod player_select;
+mod settings;
 
 use crate::prelude::*;
 use dioxus::prelude::*;
@@ -20,7 +21,8 @@ pub fn render_screen(cx: Scope) -> Element {
                     Screen::Menu => rsx!(menu::screen()),
                     Screen::PlayerSelect => rsx!(player_select::screen()),
                     Screen::Game => rsx!(game::screen()),
-                    Screen::Winner => rsx!(game_end::screen()),
+                    Screen::EndGame => rsx!(game_end::screen()),
+                    Screen::Settings => rsx!(settings::screen()),
                 },
             }
             decorative_spheres()
@@ -56,7 +58,7 @@ fn decorative_spheres(cx: Scope) -> Element {
                         background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
                     }
                 ),
-                Screen::Winner => rsx!(
+                Screen::EndGame => rsx!(
                     div {
                         class: "w-[50vw] h-[50vw] top-[-25vw] left-[-25vw] absolute rounded-full",
                         background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
@@ -66,6 +68,7 @@ fn decorative_spheres(cx: Scope) -> Element {
                         background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
                     },
                 ),
+                Screen::Settings => rsx!(Fragment {}),
             }
         }
     ))

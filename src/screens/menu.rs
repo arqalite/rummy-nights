@@ -14,9 +14,10 @@ pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(
         button {
             class: "absolute top-4 right-4",
+            onclick: |_| state.write().screen = Screen::Settings,
             img {
                 class: "h-14",
-                src: "img/settings.svg",
+                src: "img/settings.svg"
             }
         }
         div {

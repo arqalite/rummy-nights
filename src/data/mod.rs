@@ -234,7 +234,7 @@ impl Model {
 
                 self.game_status = GameStatus::Finished(winner_name.to_string());
                 if self.show_end_once {
-                    self.screen = Screen::Winner;
+                    self.screen = Screen::EndGame;
                     self.show_end_once = false;
                 };
                 self.save_game();
@@ -289,7 +289,8 @@ pub enum Screen {
     Menu,
     PlayerSelect,
     Game,
-    Winner,
+    EndGame,
+    Settings
 }
 
 /// Renders the version number (for releases) or the timestamp

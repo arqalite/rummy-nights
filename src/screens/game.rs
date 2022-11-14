@@ -290,7 +290,7 @@ fn nav_bar(cx: Scope) -> Element {
             (state.read().game_status == GameStatus::Ongoing).not().then(|| rsx!(
                 button {
                     class: "col-start-3 justify-self-end",
-                    onclick: |_| state.write().screen = Screen::Winner,
+                    onclick: |_| state.write().screen = Screen::EndGame,
                     img {
                         class: "h-10",
                         src: "img/back.svg",

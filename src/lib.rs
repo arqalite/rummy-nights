@@ -15,8 +15,8 @@ pub mod prelude {
     pub use crate::data::Model;
     pub use crate::data::Player;
     pub use crate::data::Screen;
-    pub use crate::data::STATE;
     pub use crate::data::SETTINGS;
+    pub use crate::data::STATE;
     pub use crate::screens::*;
 
     //This is added for logging throughout the app.

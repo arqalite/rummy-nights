@@ -21,7 +21,11 @@ pub struct Settings {
 
 impl Settings {
     fn new() -> Self {
-        Settings { max_score: 1000, tile_bonus_value: 50, checked_storage: false }
+        Settings {
+            max_score: 1000,
+            tile_bonus_value: 50,
+            checked_storage: false,
+        }
     }
 
     pub fn load(&mut self) {
@@ -79,7 +83,7 @@ impl Model {
             tile_bonus_granted: false,
             sorted_players: Vec::new(),
             is_sorted: false,
-            settings: Settings::new()
+            settings: Settings::new(),
         }
     }
 
@@ -166,7 +170,9 @@ impl Model {
 
         for mut player in &mut self.players {
             if player.id == id {
-                player.bonus.insert(self.round, self.settings.tile_bonus_value);
+                player
+                    .bonus
+                    .insert(self.round, self.settings.tile_bonus_value);
                 player.sum =
                     player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
             }
@@ -185,7 +191,6 @@ impl Model {
         self.settings = settings;
         log!(format!("Actual settings are {:?}", self.settings));
 
-
         // Since we create a new game, storage is already 'checked'.
         self.checked_storage = true;
         self.screen = Screen::PlayerSelect;
@@ -203,7 +208,7 @@ impl Model {
 
             LocalStorage::delete("state");
             SessionStorage::delete("session");
-    
+
             self.game_status = GameStatus::Ongoing;
             self.screen = Screen::Game;
             self.save_game();
@@ -330,7 +335,7 @@ pub enum Screen {
     PlayerSelect,
     Game,
     EndGame,
-    Settings
+    Settings,
 }
 
 /// Renders the version number (for releases) or the timestamp

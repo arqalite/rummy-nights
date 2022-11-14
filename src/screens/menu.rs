@@ -8,7 +8,6 @@ pub fn screen(cx: Scope) -> Element {
     let settings = use_atom_ref(&cx, SETTINGS);
     log!("Rendering main menu.");
 
-
     if !settings.read().checked_storage {
         settings.write().load();
     };
@@ -52,7 +51,10 @@ fn start_game_button(cx: Scope) -> Element {
     log!("Rendering start game button.");
 
     let state = use_atom_ref(&cx, STATE);
-    log!(format!("Settings at menu level are {:?}", state.read().settings));
+    log!(format!(
+        "Settings at menu level are {:?}",
+        state.read().settings
+    ));
 
     cx.render(rsx!(
         button {

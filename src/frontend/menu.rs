@@ -9,10 +9,10 @@ pub fn screen(cx: Scope) -> Element {
     log!("Rendering main menu.");
     cx.render(rsx!(
         button {
-            class: "absolute top-4 right-4",
+            class: "absolute right-4 top-4",
             onclick: |_| state.write().screen = Screen::Settings,
             img {
-                class: "h-14",
+                class: "h-12",
                 src: "img/settings.svg"
             }
         }

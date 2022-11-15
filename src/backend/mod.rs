@@ -10,9 +10,9 @@ pub mod prelude {
     pub use crate::backend::game::Game;
     pub use crate::backend::model::Model;
     pub use crate::backend::model::STATE;
+    pub use crate::backend::player::Player;
     pub use crate::backend::settings::Settings;
     pub use crate::backend::GameStatus;
-    pub use crate::backend::player::Player;
     pub use crate::backend::Screen;
 }
 

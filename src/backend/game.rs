@@ -218,7 +218,7 @@ impl Game {
         self.winner_name.clone()
     }
 
-    pub fn start_game(&mut self) {
+    pub fn start_game(&mut self) -> bool {
         log!("Starting new game.");
 
         if self.players.len() >= 2 {
@@ -233,7 +233,11 @@ impl Game {
 
             self.status = GameStatus::Ongoing;
             self.save_game();
-        };
+
+            true
+        } else {
+            false
+        }
     }
     pub fn save_game(&self) {
         log!("Saving game.");

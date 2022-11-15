@@ -55,7 +55,7 @@ fn player_table(cx: Scope) -> Element {
                             class: "relative rounded-full h-8 {player_background} {player_name_button_style} w-full",
                             tabindex: "{tabindex}",
                             onclick: move |_| {
-                                if !state.read().game.tile_bonus_granted {
+                                if !state.read().game.tile_bonus_granted && state.read().settings.use_tile_bonus {
                                     state.write().grant_bonus(player_id);
                                 }
                             },
@@ -158,6 +158,11 @@ fn score_input(cx: Scope, id: usize) -> Element {
 
 fn game_menu(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+
+    if !state.read().settings.use_tile_bonus {
+        return None
+    };
+
     log!("Rendering tile bonus menu.");
 
     let hidden = if state.read().game.status == GameStatus::Ongoing {

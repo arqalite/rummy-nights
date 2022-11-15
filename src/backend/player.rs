@@ -13,15 +13,11 @@ pub struct Player {
 impl Player {
     pub fn add_score(&mut self, value: i32) {
         self.score.insert(self.score.len(), value);
-        self.sum =
-            self.score.values().sum::<i32>() + self.bonus.values().sum::<i32>();
-
+        self.sum = self.score.values().sum::<i32>() + self.bonus.values().sum::<i32>();
     }
 
     pub fn grant_bonus(&mut self, round: usize, value: i32) {
         self.bonus.insert(round, value);
-        self.sum =
-            self.score.values().sum::<i32>() + self.bonus.values().sum::<i32>();
-
+        self.sum = self.score.values().sum::<i32>() + self.bonus.values().sum::<i32>();
     }
 }

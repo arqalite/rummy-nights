@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Settings {
     pub max_score: i32,
+    pub use_tile_bonus: bool,
     pub tile_bonus_value: i32,
     pub checked_storage: bool,
 }
@@ -14,6 +15,7 @@ impl Settings {
         log!("Initializing settings.");
         Settings {
             max_score: 1000,
+            use_tile_bonus: true,
             tile_bonus_value: 50,
             checked_storage: false,
         }
@@ -38,6 +40,23 @@ impl Settings {
         log!("Saving settings.");
 
         LocalStorage::set("settings", self.clone()).unwrap();
+    }
+
+    pub fn set_max_score(&mut self, value: i32) {
+        log!(format!("actually setting score to {}", value));
+        self.max_score = value;
+        self.save();
+        self.checked_storage = false;
+        log!(format!("so now score is {}", self.max_score));
+    }
+
+    pub fn set_tile_bonus(&mut self, value: i32) {
+        log!(format!("actually setting tile bonus to {}", value));
+        self.tile_bonus_value = value;
+        self.save();
+        self.checked_storage = false;
+        log!(format!("so now tile bonus is {}", self.tile_bonus_value));
+
     }
 }
 

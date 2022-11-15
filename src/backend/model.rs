@@ -36,7 +36,11 @@ impl Model {
 
         *self = Model::new();
         self.settings = settings;
+        self.game.tile_bonus_value = self.settings.tile_bonus_value;
+        self.game.max_score = self.settings.max_score;
+
         log!(format!("Actual settings are {:?}", self.settings));
+        log!(format!("Game settings are {:?} and {:?}", self.game.tile_bonus_value, self.game.max_score));
 
         // Since we create a new game, storage is already 'checked'.
         self.checked_storage = true;
@@ -86,8 +90,9 @@ impl Model {
     }
 
     pub fn start_game(&mut self) {
-        self.game.start_game();
-        self.screen = Screen::Game;
+        if self.game.start_game() {
+            self.screen = Screen::Game;
+        };
     }
 
     pub fn reset_game(&mut self) {

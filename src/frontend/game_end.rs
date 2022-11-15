@@ -2,39 +2,17 @@ use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
-use crate::data::tailwind_classes;
 use crate::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
-    log!("Rendering end screen.");
-
     let state = use_atom_ref(&cx, STATE);
-
-    if !state.read().is_sorted {
-        let mut state_writer = state.write();
-
-        log!("Sorting players.");
-
-        state_writer.sorted_players = state_writer.players.clone();
-        log!("Getting players worked.");
-
-        state_writer.sorted_players.sort_by(|a, b| {
-            let temp_sum_a = a.sum;
-            let temp_sum_b = b.sum;
-
-            temp_sum_a.cmp(&temp_sum_b)
-        });
-        log!("Sorting players worked.");
-
-        state_writer.sorted_players.reverse();
-        log!("Reversing players worked.");
-
-        state_writer.is_sorted = true;
-        log!("Finishing players worked.");
-    };
-
     let mut player_count = 0;
 
+    if !state.read().game.is_sorted {
+        state.write().sort_players();
+    }
+
+    log!("Rendering end screen.");
     cx.render(rsx!(
         nav_bar(),
         div {
@@ -48,11 +26,11 @@ pub fn screen(cx: Scope) -> Element {
                 class: "text-center font-bold text-4xl",
                 "THE WINNER IS"
             }
-            state.read().sorted_players.iter().map(|player| {
+            state.read().game.sorted_players.iter().map(|player| {
                 log!("Rendering players.");
 
-                let background = tailwind_classes::BG_COLORS[player.id-1];
-                let border = tailwind_classes::BORDER_COLORS[player.id-1];
+                let background = BG_COLORS[player.id-1];
+                let border = BORDER_COLORS[player.id-1];
                 let score = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
                 let mut style;
                 let style2;
@@ -103,8 +81,6 @@ fn nav_bar(cx: Scope) -> Element {
     };
 
     let restart_game = |_| {
-        state.write().sorted_players.clear();
-        state.write().is_sorted = false;
         state.write().reset_game();
     };
 

@@ -4,7 +4,6 @@ use dioxus::prelude::*;
 use dioxus::web::use_eval;
 use gloo_storage::{SessionStorage, Storage};
 
-use crate::data::tailwind_classes;
 use crate::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
@@ -21,27 +20,6 @@ pub fn screen(cx: Scope) -> Element {
     ))
 }
 
-fn start_game_button(cx: Scope) -> Element {
-    log!("Rendering begin game button.");
-
-    let state = use_atom_ref(&cx, STATE);
-
-    cx.render(rsx!(
-        button {
-            class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-8 bottom-32",
-            onclick: |_| state.write().start_game(),
-            span {
-                class: "flex self-center text-xl font-bold",
-                "Start game"
-            }
-            img {
-                class: "h-12 self-center",
-                src: "img/arrow.svg"
-            }
-        }
-    ))
-}
-
 fn player_list(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     log!("Rendering player list.");
@@ -49,12 +27,11 @@ fn player_list(cx: Scope) -> Element {
     cx.render(rsx!(
         div {
             class: "flex flex-col gap-6",
-            state.read().players.iter().map(|player| {
-                log!("Rendering player.");
-
-                let background_color = tailwind_classes::BG_COLORS[player.id-1];
+            state.read().game.players.iter().map(|player| {
+                let background_color = BG_COLORS[player.id-1];
                 let id = player.id;
 
+                log!("Rendering player.");
                 rsx!(
                     div {
                         class: "flex justify-evenly h-16 rounded-full bg-slate-200",
@@ -66,7 +43,7 @@ fn player_list(cx: Scope) -> Element {
                             }
                         }
                         button {
-                            onclick: move |_| state.write().remove_player(id),
+                            onclick: move |_| state.write().game.remove_player(id),
                             img {
                                 class: "h-10",
                                 src: "img/remove.svg",
@@ -76,7 +53,7 @@ fn player_list(cx: Scope) -> Element {
                             class: "flex flex-col justify-center self-center h-16 w-8",
                             button {
                                 class: "place-self-center",
-                                onclick: move |_| state.write().move_up(id),
+                                onclick: move |_| state.write().game.move_up(id),
                                 img {
                                     class: "h-6",
                                     src: "img/up.svg"
@@ -84,7 +61,7 @@ fn player_list(cx: Scope) -> Element {
                             }
                             button {
                                 class: "place-self-center",
-                                onclick: move |_| state.write().move_down(id),
+                                onclick: move |_| state.write().game.move_down(id),
                                 img {
                                     class: "h-6	rotate-180",
                                     src: "img/up.svg"
@@ -94,22 +71,28 @@ fn player_list(cx: Scope) -> Element {
                     }
                 )
             }),
-
-            (state.read().players.len() <= 3).then(|| player_input(cx)),
+            player_input(),
         }
     ))
 }
 
 fn player_input(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    let execute = use_eval(&cx);
+
+    if state.read().game.players.len() >= 4 {
+        return None;
+    }
 
     let onsubmit = move |evt: FormEvent| {
-        let player_name = evt.values.get("player-name").unwrap();
+        let name = evt.values.get("player-name").unwrap().to_string();
 
-        if !player_name.is_empty() {
-            state.write().add_player(player_name.to_string());
-            execute("document.getElementById('name_input').reset();".to_string());
+        if !name.is_empty() {
+            state.write().game.add_player(name);
+
+            //Execute some JS on the spot - weird ergonomics but it works
+            use_eval(&cx)(String::from(
+                "document.getElementById('name_input').reset();",
+            ));
         };
     };
 
@@ -136,6 +119,26 @@ fn player_input(cx: Scope) -> Element {
                 div {
                     class: "h-6 w-6 rounded-full bg-emerald-400 place-self-center"
                 }
+            }
+        }
+    ))
+}
+
+fn start_game_button(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+
+    log!("Rendering begin game button.");
+    cx.render(rsx!(
+        button {
+            class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-8 bottom-32",
+            onclick: |_| state.write().start_game(),
+            span {
+                class: "flex self-center text-xl font-bold",
+                "Start game"
+            }
+            img {
+                class: "h-12 self-center",
+                src: "img/arrow.svg"
             }
         }
     ))

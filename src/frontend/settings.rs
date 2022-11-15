@@ -11,8 +11,8 @@ pub fn screen(cx: Scope) -> Element {
 }
 
 fn max_score_setting(cx: Scope) -> Element {
-    let settings = use_atom_ref(&cx, SETTINGS);
-    let score = settings.read().max_score;
+    let state = use_atom_ref(&cx, STATE);
+    let score = state.read().settings.max_score;
     let execute = use_eval(&cx);
 
     let changed = use_state(&cx, || false);
@@ -31,9 +31,9 @@ fn max_score_setting(cx: Scope) -> Element {
         log!(format!("Final max score text is {}", max_score));
 
         if max_score > 0 {
-            settings.write().max_score = max_score;
-            settings.write().save();
-            settings.write().checked_storage = false;
+            state.write().settings.max_score = max_score;
+            state.write().settings.save();
+            state.write().settings.checked_storage = false;
             changed.set(false);
         };
     };
@@ -120,13 +120,11 @@ fn _switch(cx: Scope) -> Element {
 
 fn top_bar(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    let settings = use_atom_ref(&cx, SETTINGS);
 
     cx.render(rsx!(
         button {
             class: "absolute top-4 left-4",
             onclick: |_| {
-                state.write().settings = settings.read().clone();
                 state.write().screen = Screen::Menu;
             },
             img {

@@ -1,23 +1,12 @@
-use crate::data::print_version_number;
+use crate::backend::print_version_number;
 use crate::prelude::*;
 use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    let settings = use_atom_ref(&cx, SETTINGS);
+
     log!("Rendering main menu.");
-
-    if !settings.read().checked_storage {
-        settings.write().load();
-    };
-
-    if !state.read().checked_storage {
-        state.write().load_existing_game();
-        state.write().settings = settings.read().clone();
-        log!("Is this executing?");
-    };
-
     cx.render(rsx!(
         button {
             class: "absolute top-4 right-4",
@@ -35,27 +24,22 @@ pub fn screen(cx: Scope) -> Element {
             }
             div {
                 class: "flex flex-col gap-8",
-                start_game_button()
-                (state.read().game_status == GameStatus::Ongoing).then(|| resume_game_button(cx)),
+                start_game_button(),
+                resume_game_button(),
             }
         }
         p {
             class: "text-white font-semibold text-lg text-center w-max max-w-1/2 px-2 absolute bottom-2 left-2 rounded-full",
             background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-            print_version_number()
+            print_version_number(),
         }
     ))
 }
 
 fn start_game_button(cx: Scope) -> Element {
-    log!("Rendering start game button.");
-
     let state = use_atom_ref(&cx, STATE);
-    log!(format!(
-        "Settings at menu level are {:?}",
-        state.read().settings
-    ));
 
+    log!("Rendering start game button.");
     cx.render(rsx!(
         button {
             class: "grid grid-cols-6 items-center",
@@ -74,10 +58,14 @@ fn start_game_button(cx: Scope) -> Element {
 }
 
 fn resume_game_button(cx: Scope) -> Element {
-    log!("Rendering resume game button.");
-
     let state = use_atom_ref(&cx, STATE);
 
+    //Hide the resume game button if there is no ongoing game.
+    if state.read().game.status != GameStatus::Ongoing {
+        return None;
+    }
+
+    log!("Rendering resume game button.");
     cx.render(rsx!(
         button {
             class: "grid grid-cols-6 items-center",

@@ -58,5 +58,11 @@ Help us make the app better!
   Example commits: `feat: add tile bonus functionality`, `fix: read storage regardless of game status`, `refactor: moved web assets to their own folder`
   You can use other types if needed, but try to stick to these ones as much as possible.
 
+#### Code structure
+In Backend we should only have logic, data structures, function definitions and such.
+No rsx! calls or rendering stuff, no CSS classes or HTML elements unless absolutely necessary.
+
+In Frontend, the opposite - only HTML/CSS stuff, rsx! calls, and very basic logic that deals with the displaying of elements. If you need to compute something complex, do it in the backend and expose the result through a function or struct field to the frontend to use instead.
+
 ## Something else?
 If you want to help us out in a way that's not detailed here - reach out to us and we'll point you in the right direction.

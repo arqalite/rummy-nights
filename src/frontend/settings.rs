@@ -12,6 +12,11 @@ pub fn screen(cx: Scope) -> Element {
 
 fn max_score_setting(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+
+    if !state.read().settings.end_game_at_score {
+        return None
+    }
+
     let max_score = use_state(&cx, || state.read().settings.max_score);
     let changed = use_state(&cx, || false);
 
@@ -44,13 +49,13 @@ fn max_score_setting(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "flex flex-row gap-8 h-16 justify-center items-center",
+            class: "grid grid-cols-2 gap-4 h-16",
             span {
-                class: "text-center font-semibold text-lg",
+                class: "col-span-1 justify-self-end font-semibold text-lg",
                 "Maximum score:"
             }
             form {
-                class: "flex flex-row w-1/2 justify-evenly",
+                class: "flex flex-row w-full justify-evenly",
                 onsubmit: onsubmit,
                 prevent_default: "onsubmit",
                 input {
@@ -67,12 +72,12 @@ fn max_score_setting(cx: Scope) -> Element {
                     },
                 }
                 div {
-                    class: "w-10 h-10",
+                    class: "w-10 h-10 flex justify-center items-center",
                     button {
                         class: "{is_button_hidden}",
                         r#type: "submit",
                         img {
-                            class: "h-10",
+                            class: "h-6",
                             src: "img/add.svg",
                         }
                     }
@@ -121,13 +126,13 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "flex flex-row gap-8 h-16 justify-center items-center",
+            class: "grid grid-cols-2 gap-4 h-16",
             span {
-                class: "text-center font-semibold text-lg",
+                class: "col-span-1 justify-self-end font-semibold text-lg",
                 "Tile bonus value:"
             }
             form {
-                class: "flex flex-row w-1/2 justify-evenly",
+                class: "flex flex-row w-full justify-evenly",
                 onsubmit: onsubmit,
                 prevent_default: "onsubmit",
                 input {
@@ -144,12 +149,12 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
                     },
                 }
                 div {
-                    class: "w-10 h-10",
+                    class: "w-10 h-10 flex justify-center items-center",
                     button {
                         class: "{is_button_hidden}",
                         r#type: "submit",
                         img {
-                            class: "h-10",
+                            class: "h-6",
                             src: "img/add.svg",
                         }
                     }
@@ -164,10 +169,17 @@ fn settings_menu(cx: Scope) -> Element {
         div {
             class: "flex flex-col grow justify-evenly",
             div {
-                class: "flex flex-col gap-8 justify-evenly",
-                max_score_setting(),
-                tile_bonus_enable(),
-                tile_bonus_value_setting(),
+                class: "flex flex-col divide-y divide-slate-300 justify-evenly",
+                div {
+                    class: "flex flex-col gap-4",
+                    max_score_enable(),
+                    max_score_setting(),
+                }
+                div {
+                    class: "flex flex-col gap-4",
+                    tile_bonus_enable(),
+                    tile_bonus_value_setting(),
+                }
             }
         }
     ))
@@ -179,13 +191,13 @@ fn tile_bonus_enable(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "flex flex-row gap-8 h-16 justify-center items-center",
+            class: "grid grid-cols-2 gap-4 h-16 pt-4",
             span {
-                class: "text-center font-semibold text-lg",
-                "Use tile bonus"
+                class: "col-span-1 justify-self-start font-semibold text-lg",
+                "Tile bonus"
             }
             label {
-                class: "inline-flex relative items-center cursor-pointer",
+                class: "inline-flex relative cursor-pointer justify-self-end",
                 input {
                     r#type: "checkbox",
                     id: "default-toggle",
@@ -199,6 +211,38 @@ fn tile_bonus_enable(cx: Scope) -> Element {
                 }
                 div {
                     class: "w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[url('/img/purple_gradient.svg')]"
+                }
+            }
+        }
+    ))
+}
+
+fn max_score_enable(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+    let enabled = use_state(&cx, || state.read().settings.end_game_at_score);
+
+    cx.render(rsx!(
+        div {
+            class: "grid grid-cols-6 gap-4 h-16 pt-4",
+            span {
+                class: "col-span-5 justify-self-start font-semibold text-lg",
+                "End game at maximum score"
+            }
+            label {
+                class: "inline-flex relative cursor-pointer justify-self-end",
+                input {
+                    r#type: "checkbox",
+                    id: "default-toggle",
+                    class: "sr-only peer",
+                    checked: "{enabled}",
+                    onchange: move |_| {
+                        enabled.set(!enabled);
+                        state.write().settings.end_game_at_score = *enabled.current();
+                        log!(format!("Max score enabled: {:?}", state.read().settings.end_game_at_score));
+                    }
+                }
+                div {
+                    class: "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[url('/img/purple_gradient.svg')]"
                 }
             }
         }

@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Settings {
+    pub end_game_at_score: bool,
     pub max_score: i32,
     pub use_tile_bonus: bool,
     pub tile_bonus_value: i32,
@@ -14,6 +15,7 @@ impl Settings {
     pub fn new() -> Self {
         log!("Initializing settings.");
         Settings {
+            end_game_at_score: true,
             max_score: 1000,
             use_tile_bonus: true,
             tile_bonus_value: 50,

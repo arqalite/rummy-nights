@@ -105,6 +105,10 @@ impl Model {
     }
 
     pub fn check_status(&mut self) {
+        if !self.settings.end_game_at_score {
+            return
+        };
+
         self.game.check_status();
 
         if self.game.status == GameStatus::Finished && self.show_end_once {

@@ -51,9 +51,10 @@ Help us make the app better!
   - `fix` - for bug fixes, patches that resolve a problem with the app
   - `feat` - new features, stuff that is user-facing and interactable in the app
   - `perf` - performance tweaks, optimizing code and reducing the amount of resources used
-  - `refactor` - rewriting code, formatting, increasing code quality without changing app functionality or performance
+  - `refactor` - rewriting code, formatting, increasing code quality without changing app functionality or performance, moving files/folders
   - `ci` - changes to GitHub actions/workflows, Vercel stuff, or to any automated tasks
   - `doc` - changes to documentation, wikis, license and other texts (like this document!)
+  - `style` - contrary to the Angular/Conventional spec, we use this one for frontend CSS styling changes. Code styling commits should use `refactor` instead.
   
   Example commits: `feat: add tile bonus functionality`, `fix: read storage regardless of game status`, `refactor: moved web assets to their own folder`
   You can use other types if needed, but try to stick to these ones as much as possible.

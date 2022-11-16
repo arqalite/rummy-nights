@@ -60,7 +60,6 @@ impl Settings {
         self.save();
         self.checked_storage = false;
         log!(format!("so now tile bonus is {}", self.tile_bonus_value));
-
     }
 }
 

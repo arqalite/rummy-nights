@@ -71,7 +71,7 @@ fn max_score_setting(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
     if !state.read().settings.end_game_at_score {
-        return None
+        return None;
     }
 
     let max_score = use_state(&cx, || state.read().settings.max_score);
@@ -148,7 +148,7 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
     if !state.read().settings.use_tile_bonus {
-        return None
+        return None;
     }
 
     let tile_bonus = use_state(&cx, || state.read().settings.tile_bonus_value);

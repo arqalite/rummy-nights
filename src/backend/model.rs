@@ -40,7 +40,10 @@ impl Model {
         self.game.max_score = self.settings.max_score;
 
         log!(format!("Actual settings are {:?}", self.settings));
-        log!(format!("Game settings are {:?} and {:?}", self.game.tile_bonus_value, self.game.max_score));
+        log!(format!(
+            "Game settings are {:?} and {:?}",
+            self.game.tile_bonus_value, self.game.max_score
+        ));
 
         // Since we create a new game, storage is already 'checked'.
         self.checked_storage = true;
@@ -106,7 +109,7 @@ impl Model {
 
     pub fn check_status(&mut self) {
         if !self.settings.end_game_at_score {
-            return
+            return;
         };
 
         self.game.check_status();

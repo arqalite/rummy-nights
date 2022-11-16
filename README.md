@@ -36,7 +36,9 @@ Our contributors:
 
 ## Credits
 Made with [Rust], [Dioxus] and [Tailwind CSS].
-Favicon derived from [gambling icons created by Freepik at Flaticon].
+
+Favicon derived from [this icon, created by Freepik at Flaticon].
+
 All other icons are made by [Ikonate] and [Charm Icons].
 
 ## License

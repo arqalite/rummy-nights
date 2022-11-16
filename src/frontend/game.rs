@@ -10,7 +10,6 @@ use crate::prelude::*;
 pub fn screen(cx: Scope) -> Element {
     log!("Rendering game screen.");
 
-    
     cx.render(rsx! (
         nav_bar(),
         banner()
@@ -173,7 +172,7 @@ fn game_menu(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
     if !state.read().settings.use_tile_bonus {
-        return None
+        return None;
     };
 
     log!("Rendering tile bonus menu.");
@@ -307,7 +306,7 @@ fn dealer_pin(cx: Scope, player_id: usize) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
     if !state.read().settings.enable_dealer_tracking {
-        return None
+        return None;
     }
 
     if !((((state.read().game.round + state.read().game.players.len() + 1) - player_id

@@ -15,20 +15,20 @@ fn settings_menu(cx: Scope) -> Element {
         div {
             class: "flex flex-col grow justify-evenly",
             div {
-                class: "flex flex-col divide-y divide-slate-300 justify-evenly",
+                class: "flex flex-col divide-y divide-slate-200 justify-evenly border-y border-slate-200",
                 div {
                     class: "flex flex-col gap-4",
-                    max_score_enable(),
-                    max_score_setting(),
-                }
+                    dealer_enable(),
+                },
                 div {
                     class: "flex flex-col gap-4",
                     tile_bonus_enable(),
                     tile_bonus_value_setting(),
-                }
+                },
                 div {
                     class: "flex flex-col gap-4",
-                    dealer_enable(),
+                    max_score_enable(),
+                    max_score_setting(),
                 }
             }
         }

@@ -10,6 +10,63 @@ pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(top_bar(), settings_menu()))
 }
 
+fn settings_menu(cx: Scope) -> Element {
+    cx.render(rsx!(
+        div {
+            class: "flex flex-col grow justify-evenly",
+            div {
+                class: "flex flex-col divide-y divide-slate-300 justify-evenly",
+                div {
+                    class: "flex flex-col gap-4",
+                    max_score_enable(),
+                    max_score_setting(),
+                }
+                div {
+                    class: "flex flex-col gap-4",
+                    tile_bonus_enable(),
+                    tile_bonus_value_setting(),
+                }
+                div {
+                    class: "flex flex-col gap-4",
+                    dealer_enable(),
+                }
+            }
+        }
+    ))
+}
+
+fn dealer_enable(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+    let enabled = use_state(&cx, || state.read().settings.enable_dealer_tracking);
+
+    cx.render(rsx!(
+        div {
+            class: "grid grid-cols-6 gap-4 h-16 pt-4",
+            span {
+                class: "col-span-5 justify-self-start font-semibold text-lg",
+                "Dealer tracking"
+            }
+            label {
+                class: "inline-flex relative cursor-pointer justify-self-end",
+                input {
+                    r#type: "checkbox",
+                    id: "default-toggle",
+                    class: "sr-only peer",
+                    checked: "{enabled}",
+                    onchange: move |_| {
+                        enabled.set(!enabled);
+                        state.write().settings.enable_dealer_tracking = *enabled.current();
+                        log!(format!("Dealer enabled: {:?}", state.read().settings.enable_dealer_tracking));
+                    }
+                }
+                div {
+                    class: "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[url('/img/purple_gradient.svg')]"
+                }
+            }
+        }
+    ))
+}
+
 fn max_score_setting(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
@@ -158,27 +215,6 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
                             src: "img/add.svg",
                         }
                     }
-                }
-            }
-        }
-    ))
-}
-
-fn settings_menu(cx: Scope) -> Element {
-    cx.render(rsx!(
-        div {
-            class: "flex flex-col grow justify-evenly",
-            div {
-                class: "flex flex-col divide-y divide-slate-300 justify-evenly",
-                div {
-                    class: "flex flex-col gap-4",
-                    max_score_enable(),
-                    max_score_setting(),
-                }
-                div {
-                    class: "flex flex-col gap-4",
-                    tile_bonus_enable(),
-                    tile_bonus_value_setting(),
                 }
             }
         }

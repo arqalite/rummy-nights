@@ -249,33 +249,6 @@ fn max_score_enable(cx: Scope) -> Element {
     ))
 }
 
-fn _switch(cx: Scope) -> Element {
-    let enabled = use_state(&cx, || false);
-
-    cx.render(rsx!(
-        enabled.then(|| rsx!(
-            p {
-                "Text"
-            }
-        )),
-        div {
-            class: "flex flex-col justify-center h-screen w-screen",
-            label {
-                class: "inline-flex relative items-center cursor-pointer",
-                input {
-                    r#type: "checkbox",
-                    id: "default-toggle",
-                    class: "sr-only peer",
-                    onchange: move |_| enabled.set(!enabled),
-                }
-                div {
-                    class: "w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[url('/img/purple_gradient.svg')]"
-                }
-            }
-        }
-    ))
-}
-
 fn top_bar(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 

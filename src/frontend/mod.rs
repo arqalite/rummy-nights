@@ -8,9 +8,12 @@ mod settings;
 
 use crate::prelude::*;
 use dioxus::prelude::*;
+use dioxus::web::use_eval;
 
 pub fn render_screen(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+
+    use_eval(&cx)("var viewport=document.querySelector(\"meta[name=viewport]\");viewport.setAttribute(\"content\",viewport.content+\", height=\"+window.innerHeight),viewport.setAttribute(\"content\",viewport.content+\", width=\"+window.innerWidth);");
 
     cx.render(rsx!(
         div {

@@ -9,6 +9,7 @@ pub fn main() {
 
         if !state.read().checked_storage {
             state.write().load_existing_game();
+            state.write().settings.load();
         };
 
         render_screen(cx)

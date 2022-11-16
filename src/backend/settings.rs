@@ -8,6 +8,7 @@ pub struct Settings {
     pub max_score: i32,
     pub use_tile_bonus: bool,
     pub tile_bonus_value: i32,
+    pub enable_dealer_tracking: bool,
     pub checked_storage: bool,
 }
 
@@ -19,6 +20,7 @@ impl Settings {
             max_score: 1000,
             use_tile_bonus: true,
             tile_bonus_value: 50,
+            enable_dealer_tracking: true,
             checked_storage: false,
         }
     }

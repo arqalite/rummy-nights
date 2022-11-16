@@ -283,6 +283,7 @@ fn top_bar(cx: Scope) -> Element {
         button {
             class: "absolute top-4 left-4",
             onclick: |_| {
+                state.write().settings.save();
                 state.write().screen = Screen::Menu;
             },
             img {

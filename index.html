@@ -15,13 +15,13 @@
 
     <link data-trunk rel="copy-file" href="assets/js/service-worker.js">
     <script type="application/javascript">
-        // window.onload = () => {
-        //     'use strict';
-        //     if ('serviceWorker' in navigator) {
-        //         navigator.serviceWorker
-        //           .register('./service-worker.js');
-        //     }
-        // }
+        window.onload = () => {
+            'use strict';
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker
+                  .register('./service-worker.js');
+            }
+        }
 
         var viewport = document.querySelector("meta[name=viewport]");
         viewport.setAttribute("content", viewport.content + ", height=" + window.innerHeight);

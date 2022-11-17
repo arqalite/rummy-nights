@@ -30,6 +30,7 @@ pub enum Screen {
     Game,
     EndGame,
     Settings,
+    Credits,
 }
 
 /// Renders the version number (for releases) or the timestamp

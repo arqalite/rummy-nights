@@ -14,5 +14,6 @@
     ],
     "start_url": "/",
     "id": "/",
-    "display": "standalone"
+    "display": "standalone",
+    "scope": "/"
 }

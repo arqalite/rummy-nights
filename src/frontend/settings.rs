@@ -26,7 +26,7 @@ fn reset_restart_buttons(cx: Scope) -> Element {
         div {
             class: "flex flex-col absolute bottom-4 w-2/3 gap-4 h-max justify-center place-content-center place-self-center",
             button {
-                class: "flex flex-row gap-2 h-10 items-center w-1/2 place-self-center justify-center",
+                class: "flex flex-row gap-2 h-10 items-center w-full place-self-center justify-center",
                 onclick: restart_app,
                 img {
                     class: "h-8",
@@ -38,7 +38,7 @@ fn reset_restart_buttons(cx: Scope) -> Element {
                 }
             }
             button {
-                class: "flex flex-row gap-2 h-10 items-center w-1/2 place-self-center justify-center",
+                class: "flex flex-row gap-2 h-10 items-center w-full place-self-center justify-center",
                 onclick: clear_data,
                 img {
                     class: "h-8",

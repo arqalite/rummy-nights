@@ -3,11 +3,54 @@ use dioxus::events::FormEvent;
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
 use gloo_console::log;
+use gloo_storage::{LocalStorage, Storage, SessionStorage};
 
 pub fn screen(cx: Scope) -> Element {
     log!("Rendering settings menu.");
 
-    cx.render(rsx!(top_bar(), settings_menu()))
+    cx.render(rsx!(top_bar(), settings_menu(), reset_restart_buttons()))
+}
+
+fn reset_restart_buttons(cx: Scope) -> Element {
+    let restart_app = move |_| {
+        SessionStorage::clear();
+        use_eval(&cx)("location.reload()");
+    };
+    let clear_data = move |_| {
+        LocalStorage::clear();
+        SessionStorage::clear();
+        use_eval(&cx)("location.reload()");
+    };
+
+    cx.render(rsx!(
+        div {
+            class: "self-end flex flex-col relative bottom-4 w-full gap-4 h-max justify-center place-content-center",
+            button {
+                class: "flex flex-row gap-2 h-10 items-center w-1/2 place-self-center justify-center",
+                onclick: restart_app,
+                img {
+                    class: "h-8",
+                    src: "img/restart_app.svg",
+                }
+                span {
+                    class: "font-semibold text-lg h-8",
+                    "Restart app"
+                }
+            }
+            button {
+                class: "flex flex-row gap-2 h-10 items-center w-1/2 place-self-center justify-center",
+                onclick: clear_data,
+                img {
+                    class: "h-8",
+                    src: "img/bin.svg",
+                }
+                span {
+                    class: "font-semibold text-lg h-8",
+                    "Clear data"
+                }
+            }
+        }
+    ))
 }
 
 fn settings_menu(cx: Scope) -> Element {

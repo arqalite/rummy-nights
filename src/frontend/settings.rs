@@ -24,7 +24,7 @@ fn reset_restart_buttons(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "self-end flex flex-col relative bottom-4 w-full gap-4 h-max justify-center place-content-center",
+            class: "flex flex-col absolute bottom-4 w-2/3 gap-4 h-max justify-center place-content-center place-self-center",
             button {
                 class: "flex flex-row gap-2 h-10 items-center w-1/2 place-self-center justify-center",
                 onclick: restart_app,

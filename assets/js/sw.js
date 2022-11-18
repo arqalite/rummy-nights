@@ -12,16 +12,45 @@ var version = 'v0.3::';
    then the service worker won't be installed either.
 */
 var offlineFundamentals = [
-  '/',
-  '/img',
-  '/snippets'
+  '/favicon.ico',
+  '/index.html',
+  '/manifest.json',
+  '/rummy-nights.js',
+  '/rummy-nights_bg.wasm',
+  '/style.css',
+  '/sw.js',
+  '/img/add.svg',
+  '/img/arrow.svg',
+  '/img/back.svg',
+  '/img/bin.svg',
+  '/img/blue_gradient.svg',
+  '/img/bonus.svg',
+  '/img/favicon.ico',
+  '/img/github.svg',
+  '/img/home.svg',
+  '/img/info.svg',
+  '/img/intro.gif',
+  '/img/logo_192.png',
+  '/img/logo_512.png',
+  '/img/new_game.svg',
+  '/img/purple_gradient.svg',
+  '/img/pushpin.svg',
+  '/img/remove.svg',
+  '/img/replay.svg',
+  '/img/restart_app.svg',
+  '/img/resume_game.svg',
+  '/img/save.svg',
+  '/img/settings.svg',
+  '/img/trophy.svg',
+  '/img/up.svg',
+  '/snippets/dioxus-interpreter-js-459fb15b86d869f7/src/interpreter.js'
 ];
 
 /* The install event fires when the service worker is first installed.
    You can use this event to prepare the service worker to be able to serve
    files while visitors are offline.
 */
-self.addEventListener("install", function(event) {
+self.addEventListener("install", function (event) {
   console.log('WORKER: install event in progress.');
   /* Using event.waitUntil(p) blocks the installation process on the provided
      promise. If the promise is rejected, the service worker won't be installed.
@@ -36,14 +65,14 @@ self.addEventListener("install", function(event) {
          one fell swoop later, when phasing out an older service worker.
       */
       .open(version + 'fundamentals')
-      .then(function(cache) {
+      .then(function (cache) {
         /* After the cache is opened, we can fill it with the offline fundamentals.
            The method below will add all resources in `offlineFundamentals` to the
            cache, after making requests for them.
         */
         return cache.addAll(offlineFundamentals);
       })
-      .then(function() {
+      .then(function () {
         console.log('WORKER: install completed');
       })
   );
@@ -54,7 +83,7 @@ self.addEventListener("install", function(event) {
    comprehends even the request for the HTML page on first load, as well as JS and
    CSS resources, fonts, any images, etc.
 */
-self.addEventListener("fetch", function(event) {
+self.addEventListener("fetch", function (event) {
   console.log('WORKER: fetch event in progress.');
 
   /* We should only cache GET requests, and deal with the rest of method in the
@@ -78,7 +107,7 @@ self.addEventListener("fetch", function(event) {
          to the fetch request.
       */
       .match(event.request)
-      .then(function(cached) {
+      .then(function (cached) {
         /* Even if the response is in our cache, we go to the network as well.
            This pattern is known for producing "eventually fresh" responses,
            where we return cached responses immediately, and meanwhile pull
@@ -117,7 +146,7 @@ self.addEventListener("fetch", function(event) {
               */
               cache.put(event.request, cacheCopy);
             })
-            .then(function() {
+            .then(function () {
               console.log('WORKER: fetch response stored in cache.', event.request.url);
             });
 
@@ -131,7 +160,7 @@ self.addEventListener("fetch", function(event) {
            you probably want to display a "Service Unavailable" view or a generic
            error response.
         */
-        function unableToResolve () {
+        function unableToResolve() {
           /* There's a couple of things we can do here.
              - Test the Accept header and then return one of the `offlineFundamentals`
                e.g: `return caches.match('/some/cached/image.png')`
@@ -164,7 +193,7 @@ self.addEventListener("fetch", function(event) {
    we delete old caches that don't match the version in the worker we just finished
    installing.
 */
-self.addEventListener("activate", function(event) {
+self.addEventListener("activate", function (event) {
   /* Just like with the install event, event.waitUntil blocks activate on a promise.
      Activation will fail unless the promise is fulfilled.
   */
@@ -192,7 +221,7 @@ self.addEventListener("activate", function(event) {
             })
         );
       })
-      .then(function() {
+      .then(function () {
         console.log('WORKER: activate completed.');
       })
   );

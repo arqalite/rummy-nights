@@ -47,19 +47,17 @@ impl Settings {
     }
 
     pub fn set_max_score(&mut self, value: i32) {
-        log!(format!("actually setting score to {}", value));
+        log!("Set max score.");
         self.max_score = value;
         self.save();
         self.checked_storage = false;
-        log!(format!("so now score is {}", self.max_score));
     }
 
     pub fn set_tile_bonus(&mut self, value: i32) {
-        log!(format!("actually setting tile bonus to {}", value));
+        log!("Set tile bonus.");
         self.tile_bonus_value = value;
         self.save();
         self.checked_storage = false;
-        log!(format!("so now tile bonus is {}", self.tile_bonus_value));
     }
 }
 

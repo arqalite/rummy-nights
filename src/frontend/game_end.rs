@@ -75,15 +75,18 @@ fn nav_bar(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
     let delete_and_exit_game = |_| {
+        log!("Deleting game and returning to main menu.");
         LocalStorage::delete("state");
         SessionStorage::delete("session");
         *state.write() = Model::new();
     };
 
     let restart_game = |_| {
+        log!("Restarting game.");
         state.write().reset_game();
     };
 
+    log!("Rendering nav bar.");
     cx.render(rsx!(
         div {
             class: "h-16 grid grid-cols-3",

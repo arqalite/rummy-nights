@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 use serde::{Deserialize, Serialize};
+use gloo_console::log;
 
 mod game;
 mod model;
@@ -38,6 +39,7 @@ pub enum Screen {
 ///
 /// It uses the `BUILD_VERSION` environment variable created in build.rs.
 pub fn print_version_number(cx: Scope) -> Element {
+    log!("Calculating version number.");
     let version = env!("BUILD_VERSION");
     cx.render(rsx!("{version}"))
 }

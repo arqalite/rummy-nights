@@ -96,6 +96,8 @@ fn player_input(cx: Scope) -> Element {
         };
     };
 
+    log!("Rendering player input.");
+
     cx.render(rsx!(
         form {
             id: "name_input",

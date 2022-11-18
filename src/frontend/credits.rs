@@ -3,6 +3,7 @@ use crate::prelude::*;
 use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
+    log!("Rendering credits.");
     cx.render(rsx!(
         top_bar(),
         div {
@@ -103,6 +104,7 @@ pub fn screen(cx: Scope) -> Element {
 fn top_bar(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
+    log!("Rendering nav bar.");
     cx.render(rsx!(
         button {
             class: "absolute top-4 left-4",

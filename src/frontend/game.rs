@@ -19,7 +19,7 @@ pub fn screen(cx: Scope) -> Element {
 }
 
 fn player_table(cx: Scope) -> Element {
-    log!("Rendering player column.");
+    log!("Rendering player table.");
 
     let mut game_count = 0;
     let state = use_atom_ref(&cx, STATE);
@@ -29,6 +29,7 @@ fn player_table(cx: Scope) -> Element {
             //Main table
             class: "z-10 flex justify-evenly gap-x-4 h-[65%]",
             state.read().game.players.iter().map(|player| {
+                log!("Rendering player column.");
                 let player_id = player.id;
                 let border = BORDER_COLORS[player_id - 1];
                 let (player_name_button_style, player_background, player_text_color, tabindex) =
@@ -49,7 +50,7 @@ fn player_table(cx: Scope) -> Element {
                     };
                 rsx!(
                     div {
-                        class: "flex flex-col gap-2",
+                        class: "flex flex-col gap-2 w-full",
                         button {
                             // Name - first cell
                             class: "relative rounded-full h-8 {player_background} {player_name_button_style} w-full",
@@ -234,6 +235,7 @@ fn nav_bar(cx: Scope) -> Element {
         "col-start-1 justify-self-start"
     };
 
+    log!("Render nav bar.");
     cx.render(rsx!(
         div {
             class: "z-10 h-16 grid grid-cols-3 sm:max-w-lg",
@@ -292,6 +294,7 @@ fn banner(cx: Scope) -> Element {
         }
     };
 
+    log!("Render banner.");
     cx.render(rsx!(
         span {
             class: "mb-8 w-max mx-auto font-semibold text-lg border-b-2 {banner_color}",
@@ -317,6 +320,7 @@ fn dealer_pin(cx: Scope, player_id: usize) -> Element {
         return None;
     }
 
+    log!("Render dealer pin.");
     cx.render(rsx!(img {
         class: "h-7 absolute -top-4 -right-4 scale-x-[-1]",
         src: "img/pushpin.svg"

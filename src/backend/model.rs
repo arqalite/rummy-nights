@@ -80,34 +80,44 @@ impl Model {
     // Just exposing functions so frontend doesn't have to reach deep into the state,
     // and extending those that need to modify the state.
     pub fn get_winner(&self) -> String {
+        log!("Checking if winner exists.");
         self.game.get_winner()
     }
 
     pub fn sort_players(&mut self) {
+        log!("Sorting players.");
         self.game.sort_players()
     }
 
     pub fn add_score(&mut self, player_id: usize, value: i32) {
+        log!("Adding score.");
         self.game.add_score(player_id, value);
         self.check_status()
     }
 
     pub fn start_game(&mut self) {
+        log!("Starting game.");
+
         if self.game.start_game() {
             self.screen = Screen::Game;
         };
     }
 
     pub fn reset_game(&mut self) {
+        log!("Resetting game.");
         self.game.reset_game();
         self.screen = Screen::Game;
     }
 
     pub fn grant_bonus(&mut self, id: usize) {
+        log!("Granting bonus.");
+
         self.game.grant_bonus(id);
     }
 
     pub fn check_status(&mut self) {
+        log!("Check game status.");
+
         if !self.settings.end_game_at_score {
             return;
         };

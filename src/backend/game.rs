@@ -118,6 +118,7 @@ impl Game {
     }
 
     pub fn add_score(&mut self, player_id: usize, value: i32) {
+        log!("Adding score.");
         for player in &mut self.players {
             if player_id == player.id {
                 player.add_score(value)
@@ -165,6 +166,7 @@ impl Game {
     }
 
     pub fn reset_game(&mut self) {
+        log!("Actually resetting game.");
         for player in &mut self.players {
             player.score.clear();
             player.bonus.clear();

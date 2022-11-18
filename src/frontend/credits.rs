@@ -1,6 +1,6 @@
-use dioxus::prelude::*;
-use crate::prelude::*;
 use crate::backend::print_version_number;
+use crate::prelude::*;
+use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(
@@ -8,7 +8,7 @@ pub fn screen(cx: Scope) -> Element {
         div {
             class: "flex flex-col gap-8 h-screen justify-center items-center",
             div {
-                class: "flex flex-col items-center gap-4",
+                class: "flex flex-col items-center gap-8",
                 img {
                     class: "w-2/3",
                     src: "img/intro.gif",

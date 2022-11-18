@@ -1,11 +1,11 @@
 //! The front-end part of the app, rendering the individual app screens.
 
+mod credits;
 mod game;
 mod game_end;
 mod menu;
 mod player_select;
 mod settings;
-mod credits;
 
 use crate::prelude::*;
 use dioxus::prelude::*;
@@ -16,6 +16,7 @@ pub fn render_screen(cx: Scope) -> Element {
 
     use_eval(&cx)("var viewport=document.querySelector(\"meta[name=viewport]\");viewport.setAttribute(\"content\",viewport.content+\", height=\"+window.innerHeight),viewport.setAttribute(\"content\",viewport.content+\", width=\"+window.innerWidth);");
 
+    log!("Start render.");
     cx.render(rsx!(
         div {
             class: "flex flex-col bg-white h-screen w-screen relative overflow-hidden",
@@ -37,6 +38,7 @@ pub fn render_screen(cx: Scope) -> Element {
 
 fn decorative_spheres(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    log!("Rendering decorations.");
     cx.render(rsx!(
         div {
             class: "z-0 absolute h-screen w-screen",

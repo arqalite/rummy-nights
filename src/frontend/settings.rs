@@ -3,7 +3,7 @@ use dioxus::events::FormEvent;
 use dioxus::prelude::*;
 use dioxus::web::use_eval;
 use gloo_console::log;
-use gloo_storage::{LocalStorage, Storage, SessionStorage};
+use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
 pub fn screen(cx: Scope) -> Element {
     log!("Rendering settings menu.");

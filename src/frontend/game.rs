@@ -50,59 +50,58 @@ fn player_table(cx: Scope) -> Element {
                 rsx!(
                     div {
                         class: "flex flex-col gap-2",
-                        div {
-                            class: "flex flex-col gap-2 w-full",
-                            button {
-                                // Name - first cell
-                                class: "relative rounded-full h-8 {player_background} {player_name_button_style} w-full",
-                                tabindex: "{tabindex}",
-                                onclick: move |_| {
-                                    if !state.read().game.tile_bonus_granted && state.read().settings.use_tile_bonus {
-                                        state.write().grant_bonus(player_id);
-                                    }
-                                },
-                                self::dealer_pin {
-                                    player_id: player_id
-                                },
-                                p {
-                                    class: "text-center my-auto {player_text_color} font-semibold",
-                                    "{player.name}"
+                        button {
+                            // Name - first cell
+                            class: "relative rounded-full h-8 {player_background} {player_name_button_style} w-full",
+                            tabindex: "{tabindex}",
+                            onclick: move |_| {
+                                if !state.read().game.tile_bonus_granted && state.read().settings.use_tile_bonus {
+                                    state.write().grant_bonus(player_id);
                                 }
+                            },
+                            self::dealer_pin {
+                                player_id: player_id
+                            },
+                            p {
+                                class: "text-center my-auto {player_text_color} font-semibold",
+                                "{player.name}"
                             }
-                        },
-                        div {
-                            class: "flex flex-col gap-2 w-full overflow-scroll scroll-smooth",
-                            id: "score_{player_id}",
-                            style: "scrollbar-width: none;",
-                            //Scores - dynamic
-                            player.score.values().map(|score| {
-                                let score_text = score.to_string();
-
-                                let bonus_visibility = if player.bonus.contains_key(&game_count) {
-                                    String::from("")
-                                } else {
-                                    String::from("hidden")
-                                };
-
-                                game_count += 1;
-
-                                rsx!(
-                                    div {
-                                        class: "flex flex-row justify-center relative rounded border-b-4 h-10 {border}",
-                                        p {
-                                            class: "text-lg text-center self-center",
-                                            "{score_text}"
-                                        }
-                                        img {
-                                            class: "absolute right-0 self-center h-4 w-4 {bonus_visibility} rounded-full",
-                                            background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                                            src: "img/bonus.svg",
-                                        }
-
-                                    }
-                                )
-                            })
                         }
+                        (player.score.len() > 0).then(|| rsx!(
+                            div {
+                                class: "flex flex-col gap-2 w-full overflow-auto scroll-smooth",
+                                id: "score_{player_id}",
+                                style: "scrollbar-width: none;",
+                                //Scores - dynamic
+                                player.score.values().map(|score| {
+                                    let score_text = score.to_string();
+
+                                    let bonus_visibility = if player.bonus.contains_key(&game_count) {
+                                        String::from("")
+                                    } else {
+                                        String::from("hidden")
+                                    };
+
+                                    game_count += 1;
+
+                                    rsx!(
+                                        div {
+                                            class: "flex flex-row justify-center relative rounded border-b-4 h-10 {border}",
+                                            p {
+                                                class: "text-lg text-center self-center",
+                                                "{score_text}"
+                                            }
+                                            img {
+                                                class: "absolute right-0 self-center h-4 w-4 {bonus_visibility} rounded-full",
+                                                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                                                src: "img/bonus.svg",
+                                            }
+
+                                        }
+                                    )
+                                })
+                            }
+                        ))
                         div {
                             class: "flex flex-col gap-2 w-full",
                             self::score_input {

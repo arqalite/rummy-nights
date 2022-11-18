@@ -4,24 +4,25 @@
     <title>Rummy Nights</title>
 
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, height=device-height"/>
+    <meta name="viewport" content="width=device-width, height=device-height" />
 
-    <link data-trunk rel="css" href="assets/css/style.css"/>
+    <link data-trunk rel="css" href="assets/css/style.css" />
     <link data-trunk rel="copy-dir" href="assets/img">
     <link data-trunk rel="copy-file" href="assets/img/favicon.ico">
-
+    <link data-trunk rel="copy-file" href="assets/js/sw.js">
     <link data-trunk rel="copy-file" href="assets/js/manifest.json">
     <link rel="manifest" href="manifest.json">
 
-    <link data-trunk rel="copy-file" href="assets/js/sw.js">
     <script>
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register(
           '/sw.js'
         );
       }
+
+      var viewport = document.querySelector("meta[name=viewport]"); viewport.setAttribute("content", viewport.content + ", height=" + window.innerHeight), viewport.setAttribute("content", viewport.content + ", width=" + window.innerWidth);
     </script>
-    
+
   </head>
 
   <body id="main" class="relative overscroll-contain"></body>

@@ -21,7 +21,7 @@
   ],
   "start_url": "/",
   "id": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "scope": "/",
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
@@ -31,9 +31,8 @@
   "lang": "en",
   "orientation": "portrait",
   "display_override": [
-    "window-controls-overlay",
-    "standalone",
-    "fullscreen"
+    "fullscreen",
+    "standalone"
   ],
   "categories": [
     "entertainment",

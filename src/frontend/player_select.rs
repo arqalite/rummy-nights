@@ -28,7 +28,7 @@ fn player_list(cx: Scope) -> Element {
         div {
             class: "flex flex-col gap-6",
             state.read().game.players.iter().map(|player| {
-                let background_color = BG_COLORS[player.id-1];
+                let background_color = BG_COLORS[player.color_index];
                 let id = player.id;
 
                 log!("Rendering player.");
@@ -78,16 +78,26 @@ fn player_list(cx: Scope) -> Element {
 
 fn player_input(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let hide_color_bar = use_state(&cx, || true);
+    let color_index = use_state(&cx, || 0);
+    let selected_color = BG_COLORS[**color_index];
+    let mut color_id = 0;
 
     if state.read().game.players.len() >= 4 {
         return None;
     }
 
+    let hidden = if **hide_color_bar {
+        "hidden"
+    } else {
+        ""
+    };
+
     let onsubmit = move |evt: FormEvent| {
         let name = evt.values.get("player-name").unwrap().to_string();
 
         if !name.is_empty() {
-            state.write().game.add_player(name);
+            state.write().game.add_player(name, **color_index);
 
             //Execute some JS on the spot - weird ergonomics but it works
             use_eval(&cx)(String::from(
@@ -99,6 +109,7 @@ fn player_input(cx: Scope) -> Element {
     log!("Rendering player input.");
 
     cx.render(rsx!(
+    div {
         form {
             id: "name_input",
             class: "flex flex-row w-full justify-evenly h-16 rounded-full bg-slate-200",
@@ -118,11 +129,26 @@ fn player_input(cx: Scope) -> Element {
             }
             button {
                 class: "flex flex-col justify-center h-16 w-8",
+                onclick: move |_| hide_color_bar.set(!hide_color_bar),
                 div {
-                    class: "h-6 w-6 rounded-full bg-emerald-400 place-self-center"
+                    class: "h-6 w-6 rounded-full {selected_color} place-self-center"
                 }
             }
         }
+        div {
+            class: "{hidden} flex flex-row w-full justify-evenly h-10 mt-2 rounded-full bg-slate-200",
+            BG_COLORS.iter().map(|color| {
+                color_id += 1;
+                rsx!(
+                    button {
+                        id: "{color_id}",
+                        class: "h-6 w-6 rounded-full {color} place-self-center",
+                        onclick: move |_| color_index.set(color_id-1),
+                    }
+                )
+            })
+        }
+    }
     ))
 }
 

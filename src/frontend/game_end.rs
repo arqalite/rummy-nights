@@ -29,8 +29,8 @@ pub fn screen(cx: Scope) -> Element {
             state.read().game.sorted_players.iter().map(|player| {
                 log!("Rendering players.");
 
-                let background = BG_COLORS[player.id-1];
-                let border = BORDER_COLORS[player.id-1];
+                let background = BG_COLORS[player.color_index];
+                let border = BORDER_COLORS[player.color_index];
                 let score = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
                 let mut style;
                 let style2;

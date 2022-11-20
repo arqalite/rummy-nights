@@ -95,23 +95,32 @@ fn decorative_spheres(cx: Scope) -> Element {
     ))
 }
 
-pub static BG_COLORS: [&str; 4] = [
-    "bg-rose-400",
-    "bg-cyan-400",
-    "bg-green-400",
-    "bg-violet-400",
+pub static BG_COLORS: [&str; 7] = [
+    "bg-red-500",
+    "bg-orange-500",
+    "bg-yellow-500",
+    "bg-green-500",	
+    "bg-blue-500",
+    "bg-indigo-500",
+    "bg-violet-500"
 ];
 
-pub static BORDER_COLORS: [&str; 4] = [
-    "border-rose-400",
-    "border-cyan-400",
-    "border-green-400",
-    "border-violet-400",
+pub static BORDER_COLORS: [&str; 7] = [
+    "border-red-500",
+    "border-orange-500",
+    "border-yellow-500",
+    "border-green-500",	
+    "border-blue-500",
+    "border-indigo-500",
+    "border-violet-500"
 ];
 
-pub static CARET_COLORS: [&str; 4] = [
-    "caret-rose-400",
-    "caret-cyan-400",
-    "caret-green-400",
-    "caret-violet-400",
+pub static CARET_COLORS: [&str; 7] = [
+    "caret-red-500",
+    "caret-orange-500",
+    "caret-yellow-500",
+    "caret-green-500",	
+    "caret-blue-500",
+    "caret-indigo-500",
+    "caret-violet-500"
 ];

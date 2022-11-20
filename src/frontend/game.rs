@@ -46,7 +46,7 @@ fn player_table(cx: Scope) -> Element {
             state.read().game.players.iter().map(|player| {
                 log!("Rendering player column.");
                 let player_id = player.id;
-                let border = BORDER_COLORS[player_id - 1];
+                let border = BORDER_COLORS[player.color_index];
                 let (player_name_button_style, player_background, player_text_color, tabindex) =
                     if state.read().game.tile_bonus_toggle {
                         (
@@ -58,7 +58,7 @@ fn player_table(cx: Scope) -> Element {
                     } else {
                         (
                             "pointer-events-none",
-                            BG_COLORS[player_id - 1],
+                            BG_COLORS[player.color_index],
                             "text-white",
                             "-1",
                         )
@@ -138,7 +138,6 @@ fn player_table(cx: Scope) -> Element {
                                                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
                                                 src: "img/bonus.svg",
                                             }
-
                                         }
                                     )
                                 })
@@ -169,14 +168,21 @@ fn player_table(cx: Scope) -> Element {
 #[inline_props]
 fn score_input(cx: Scope, id: usize) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let mut color_index = 0;
 
     if state.read().game.status != GameStatus::Ongoing {
         return None;
     };
 
+    for player in &state.read().game.players {
+        if player.id == *id {
+            color_index = player.color_index;
+        }
+    }
+
     let id = *id;
-    let caret = CARET_COLORS[id - 1];
-    let border = BORDER_COLORS[id - 1];
+    let caret = CARET_COLORS[color_index];
+    let border = BORDER_COLORS[color_index];
 
     let onsubmit = move |evt: FormEvent| {
         if let Ok(score) = evt.values.get("score").unwrap().parse::<i32>() {

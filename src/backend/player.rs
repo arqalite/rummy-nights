@@ -8,6 +8,7 @@ pub struct Player {
     pub score: BTreeMap<usize, i32>,
     pub sum: i32,
     pub bonus: BTreeMap<usize, i32>,
+    pub color_index: usize,
 }
 
 impl Player {

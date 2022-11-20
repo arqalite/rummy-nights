@@ -39,7 +39,7 @@ impl Game {
         }
     }
 
-    pub fn add_player(&mut self, name: String) {
+    pub fn add_player(&mut self, name: String, color_index: usize) {
         log!("Adding player.");
 
         if self.players.len() < 4 && !name.is_empty() {
@@ -51,6 +51,7 @@ impl Game {
                 score: BTreeMap::new(),
                 sum: 0,
                 bonus: BTreeMap::new(),
+                color_index,
             });
         };
     }

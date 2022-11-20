@@ -86,7 +86,7 @@ fn player_list(cx: Scope) -> Element {
                                 button {
                                     id: "{color_id}",
                                     class: "h-6 w-6 rounded-full {color} place-self-center",
-                                    onclick: move |_| state.write().change_player_color(id, color_id),
+                                    onclick: move |_| state.write().game.change_player_color(id, color_id),
                                 }
                             )
                         })
@@ -109,11 +109,7 @@ fn player_input(cx: Scope) -> Element {
         return None;
     }
 
-    let hidden = if **hide_color_bar {
-        "hidden"
-    } else {
-        ""
-    };
+    let hidden = if **hide_color_bar { "hidden" } else { "" };
 
     let onsubmit = move |evt: FormEvent| {
         let name = evt.values.get("player-name").unwrap().to_string();
@@ -178,10 +174,14 @@ fn player_input(cx: Scope) -> Element {
 fn start_game_button(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
+    if state.read().game.players.len() < 2 {
+        return None;
+    };
+
     log!("Rendering begin game button.");
     cx.render(rsx!(
         button {
-            class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-8 bottom-32",
+            class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-8 bottom-[30vw]",
             onclick: |_| state.write().start_game(),
             span {
                 class: "flex self-center text-xl font-bold",
@@ -217,7 +217,7 @@ fn top_bar(cx: Scope) -> Element {
             }
             button {
                 class: "col-start-3 justify-self-end",
-                //onclick:
+                onclick: |_| state.write().screen = Screen::Templates,
                 img {
                     class: "h-10",
                     src: "img/save.svg",

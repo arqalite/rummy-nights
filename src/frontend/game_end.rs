@@ -9,7 +9,7 @@ pub fn screen(cx: Scope) -> Element {
     let mut player_count = 0;
 
     if !state.read().game.is_sorted {
-        state.write().sort_players();
+        state.write().game.sort_players();
     }
 
     log!("Rendering end screen.");

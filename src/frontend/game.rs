@@ -21,12 +21,8 @@ pub fn screen(cx: Scope) -> Element {
 fn player_table(cx: Scope) -> Element {
     log!("Rendering player table.");
 
-    let mut score_id = 0;
-
-    let mut game_count = 0;
     let state = use_atom_ref(&cx, STATE);
-
-    let editable = state.read().settings.enable_score_editing;
+    let mut game_count = 0;
 
     let edit_score = move |evt: FormEvent| {
         log!(format!("This has {:?}", evt.values));
@@ -63,6 +59,8 @@ fn player_table(cx: Scope) -> Element {
                             "-1",
                         )
                     };
+                let mut score_id = 0;
+
                 rsx!(
                     div {
                         class: "flex flex-col gap-2 w-full",
@@ -72,7 +70,7 @@ fn player_table(cx: Scope) -> Element {
                             tabindex: "{tabindex}",
                             onclick: move |_| {
                                 if !state.read().game.tile_bonus_granted && state.read().settings.use_tile_bonus {
-                                    state.write().grant_bonus(player_id);
+                                    state.write().game.grant_bonus(player_id);
                                 }
                             },
                             self::dealer_pin {
@@ -102,7 +100,7 @@ fn player_table(cx: Scope) -> Element {
                                     rsx!(
                                         div {
                                             class: "flex flex-row justify-center relative rounded border-b-4 h-10 {border}",
-                                            editable.then(|| rsx!(
+                                            (state.read().settings.enable_score_editing).then(|| rsx!(
                                                 form {
                                                     onsubmit: edit_score,
                                                     prevent_default: "onsubmit",
@@ -127,7 +125,7 @@ fn player_table(cx: Scope) -> Element {
                                                     }
                                                 }
                                             )),
-                                            (!editable).then(|| rsx!(
+                                            (!state.read().settings.enable_score_editing).then(|| rsx!(
                                                 p {
                                                     class: "text-lg text-center self-center",
                                                     "{score}"
@@ -254,7 +252,7 @@ fn game_menu(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "z-20 absolute bottom-2 left-2 {hidden}",
+            class: "z-20 absolute bottom-4 left-4 {hidden}",
             button {
                 class: "flex flex-row gap-2 h-14 w-max p-2 border border-slate-100 rounded-full {grayscale}",
                 onclick: tile_bonus,
@@ -323,7 +321,7 @@ fn banner(cx: Scope) -> Element {
 
     let (banner_text, banner_color) = match &state.read().game.status {
         GameStatus::Finished => (
-            format!("{} won!", state.read().get_winner()),
+            format!("{} won!", state.read().game.get_winner()),
             String::from("border-red-600"),
         ),
         _ => {

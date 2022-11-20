@@ -6,6 +6,7 @@ mod game;
 mod model;
 mod player;
 mod settings;
+mod templates;
 
 pub mod prelude {
     pub use crate::backend::game::Game;
@@ -28,6 +29,7 @@ pub enum GameStatus {
 pub enum Screen {
     Menu,
     PlayerSelect,
+    Templates,
     Game,
     EndGame,
     Settings,

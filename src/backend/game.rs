@@ -83,7 +83,7 @@ impl Game {
         }
     }
 
-    pub fn change_player_color(&mut self, player_id: usize, color_id: usize) {        
+    pub fn change_player_color(&mut self, player_id: usize, color_id: usize) {
         for player in &mut self.players {
             if player_id == player.id {
                 player.change_color(color_id);

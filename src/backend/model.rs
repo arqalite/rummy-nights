@@ -4,6 +4,7 @@ use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};
 
 use crate::backend::prelude::*;
+use crate::backend::templates::Template;
 
 pub static STATE: AtomRef<Model> = |_| Model::new();
 
@@ -14,6 +15,7 @@ pub struct Model {
     pub show_end_once: bool,
     pub checked_storage: bool,
     pub settings: Settings,
+    pub templates: Vec<Template>,
 }
 
 impl Model {
@@ -25,6 +27,7 @@ impl Model {
             show_end_once: true,
             checked_storage: false,
             settings: Settings::new(),
+            templates: Vec::new(),
         }
     }
 
@@ -32,12 +35,14 @@ impl Model {
         log!("Creating new game.");
 
         let settings = self.settings.clone();
+        let templates = self.templates.clone();
         log!(format!("Backed up settings are {:?}", settings));
 
         *self = Model::new();
         self.settings = settings;
         self.game.tile_bonus_value = self.settings.tile_bonus_value;
         self.game.max_score = self.settings.max_score;
+        self.templates = templates;
 
         log!(format!("Actual settings are {:?}", self.settings));
         log!(format!(
@@ -77,18 +82,6 @@ impl Model {
         self.checked_storage = true;
     }
 
-    // Just exposing functions so frontend doesn't have to reach deep into the state,
-    // and extending those that need to modify the state.
-    pub fn get_winner(&self) -> String {
-        log!("Checking if winner exists.");
-        self.game.get_winner()
-    }
-
-    pub fn sort_players(&mut self) {
-        log!("Sorting players.");
-        self.game.sort_players()
-    }
-
     pub fn add_score(&mut self, player_id: usize, value: i32) {
         log!("Adding score.");
         self.game.add_score(player_id, value);
@@ -115,12 +108,6 @@ impl Model {
         self.screen = Screen::Game;
     }
 
-    pub fn grant_bonus(&mut self, id: usize) {
-        log!("Granting bonus.");
-
-        self.game.grant_bonus(id);
-    }
-
     pub fn check_status(&mut self) {
         log!("Check game status.");
 
@@ -136,8 +123,57 @@ impl Model {
         };
     }
 
-    pub fn change_player_color(&mut self, player_id: usize, color_id: usize) {
-        self.game.change_player_color(player_id, color_id)
+    pub fn add_template(&mut self) {
+        if self.game.players.len() < 2 {
+            return;
+        }
+
+        let mut template_name = String::from("Template ");
+        template_name.push_str(&(self.templates.len() + 1).to_string());
+
+        self.templates.push(Template {
+            id: self.templates.len() + 1,
+            name: template_name,
+            players: self.game.players.clone(),
+        });
+
+        self.save_templates();
+
+        log!(format!("Saved templates: {:#?}", self.templates));
+    }
+
+    pub fn load_template(&mut self, id: usize) {
+        for template in &self.templates {
+            if template.id == id {
+                self.game.players = template.players.clone();
+                self.screen = Screen::PlayerSelect;
+            }
+        }
+    }
+
+    pub fn delete_template(&mut self, id: usize) {
+        self.templates.retain(|template| template.id != id);
+        self.save_templates();
+    }
+
+    pub fn save_templates(&mut self) {
+        LocalStorage::set("templates", self.templates.clone()).unwrap();
+    }
+
+    pub fn load_saved_templates(&mut self) {
+        log!("Trying to load templates.");
+
+        match LocalStorage::get::<serde_json::Value>("templates") {
+            Ok(json_state) => match serde_json::from_value::<Vec<Template>>(json_state) {
+                Ok(saved_templates) => {
+                    log!(format!("Loaded: {:#?}", saved_templates));
+                    self.templates = saved_templates;
+                    log!(format!("Live is: {:#?}", self.templates));
+                }
+                Err(_) => log!("Could not parse templates."),
+            },
+            Err(_) => log!("Could not read templates."),
+        }
     }
 }
 

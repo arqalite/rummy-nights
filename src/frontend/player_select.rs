@@ -31,12 +31,21 @@ fn player_list(cx: Scope) -> Element {
                 let background_color = BG_COLORS[player.color_index];
                 let id = player.id;
 
+                let hide_color_bar = use_state(&cx, || true);
+                let hidden = if **hide_color_bar {
+                    "hidden"
+                } else {
+                    ""
+                };
+                let mut color_id = 0;
+
                 log!("Rendering player.");
                 rsx!(
                     div {
                         class: "flex justify-evenly h-16 rounded-full bg-slate-200",
-                        div {
+                        button {
                             class: "flex justify-center h-8 w-3/5 self-center rounded-full {background_color}",
+                            onclick: move |_| hide_color_bar.set(!hide_color_bar),
                             p {
                                 class: "flex self-center text-white font-semibold",
                                 "{player.name}"
@@ -68,6 +77,19 @@ fn player_list(cx: Scope) -> Element {
                                 },
                             }
                         }
+                    },
+                    div {
+                        class: "{hidden} flex flex-row w-full justify-evenly h-10 mt-2 rounded-full bg-slate-200",
+                        BG_COLORS.iter().map(|color| {
+                            color_id += 1;
+                            rsx!(
+                                button {
+                                    id: "{color_id}",
+                                    class: "h-6 w-6 rounded-full {color} place-self-center",
+                                    onclick: move |_| state.write().change_player_color(id, color_id),
+                                }
+                            )
+                        })
                     }
                 )
             }),
@@ -129,6 +151,7 @@ fn player_input(cx: Scope) -> Element {
             }
             button {
                 class: "flex flex-col justify-center h-16 w-8",
+                prevent_default: "onclick",
                 onclick: move |_| hide_color_bar.set(!hide_color_bar),
                 div {
                     class: "h-6 w-6 rounded-full {selected_color} place-self-center"

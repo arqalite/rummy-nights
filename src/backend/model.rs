@@ -135,6 +135,10 @@ impl Model {
             self.show_end_once = false;
         };
     }
+
+    pub fn change_player_color(&mut self, player_id: usize, color_id: usize) {
+        self.game.change_player_color(player_id, color_id)
+    }
 }
 
 impl Default for Model {

@@ -28,4 +28,8 @@ impl Player {
         self.bonus.insert(round, value);
         self.sum = self.score.values().sum::<i32>() + self.bonus.values().sum::<i32>();
     }
+
+    pub fn change_color(&mut self, color_id: usize) {
+        self.color_index = color_id - 1;
+    }
 }

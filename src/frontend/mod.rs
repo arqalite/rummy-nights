@@ -5,6 +5,7 @@ mod game;
 mod game_end;
 mod menu;
 mod player_select;
+mod templates;
 mod settings;
 
 use crate::prelude::*;
@@ -22,6 +23,7 @@ pub fn render_screen(cx: Scope) -> Element {
                 match state.read().screen {
                     Screen::Menu => rsx!(menu::screen()),
                     Screen::PlayerSelect => rsx!(player_select::screen()),
+                    Screen::Templates => rsx!(templates::screen()),
                     Screen::Game => rsx!(game::screen()),
                     Screen::EndGame => rsx!(game_end::screen()),
                     Screen::Settings => rsx!(settings::screen()),
@@ -51,6 +53,20 @@ fn decorative_spheres(cx: Scope) -> Element {
                     }
                 ),
                 Screen::PlayerSelect => rsx!(
+                    div {
+                        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full z-0",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    }
+                    div {
+                        class: "w-[50vw] h-[50vw] bottom-[-25vw] left-[-25vw] absolute rounded-full z-0",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    }
+                ),
+                Screen::Templates => rsx!(
+                    div {
+                        class: "w-[50vw] h-[50vw] top-[-25vw] right-[-25vw] absolute rounded-full z-0",
+                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                    }
                     div {
                         class: "w-[50vw] h-[50vw] bottom-[-25vw] left-[-25vw] absolute rounded-full z-0",
                         background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",

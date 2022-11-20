@@ -174,10 +174,14 @@ fn player_input(cx: Scope) -> Element {
 fn start_game_button(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
+    if state.read().game.players.len() < 2 {
+        return None
+    };
+
     log!("Rendering begin game button.");
     cx.render(rsx!(
         button {
-            class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-8 bottom-32",
+            class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-8 bottom-[30vw]",
             onclick: |_| state.write().start_game(),
             span {
                 class: "flex self-center text-xl font-bold",
@@ -213,7 +217,7 @@ fn top_bar(cx: Scope) -> Element {
             }
             button {
                 class: "col-start-3 justify-self-end",
-                //onclick:
+                onclick: |_| state.write().screen = Screen::Templates,
                 img {
                     class: "h-10",
                     src: "img/save.svg",

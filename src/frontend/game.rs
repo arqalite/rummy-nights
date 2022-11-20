@@ -252,7 +252,7 @@ fn game_menu(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "z-20 absolute bottom-2 left-2 {hidden}",
+            class: "z-20 absolute bottom-4 left-4 {hidden}",
             button {
                 class: "flex flex-row gap-2 h-14 w-max p-2 border border-slate-100 rounded-full {grayscale}",
                 onclick: tile_bonus,

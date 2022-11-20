@@ -72,7 +72,7 @@ fn player_table(cx: Scope) -> Element {
                             tabindex: "{tabindex}",
                             onclick: move |_| {
                                 if !state.read().game.tile_bonus_granted && state.read().settings.use_tile_bonus {
-                                    state.write().grant_bonus(player_id);
+                                    state.write().game.grant_bonus(player_id);
                                 }
                             },
                             self::dealer_pin {
@@ -323,7 +323,7 @@ fn banner(cx: Scope) -> Element {
 
     let (banner_text, banner_color) = match &state.read().game.status {
         GameStatus::Finished => (
-            format!("{} won!", state.read().get_winner()),
+            format!("{} won!", state.read().game.get_winner()),
             String::from("border-red-600"),
         ),
         _ => {

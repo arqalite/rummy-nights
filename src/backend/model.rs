@@ -77,18 +77,6 @@ impl Model {
         self.checked_storage = true;
     }
 
-    // Just exposing functions so frontend doesn't have to reach deep into the state,
-    // and extending those that need to modify the state.
-    pub fn get_winner(&self) -> String {
-        log!("Checking if winner exists.");
-        self.game.get_winner()
-    }
-
-    pub fn sort_players(&mut self) {
-        log!("Sorting players.");
-        self.game.sort_players()
-    }
-
     pub fn add_score(&mut self, player_id: usize, value: i32) {
         log!("Adding score.");
         self.game.add_score(player_id, value);
@@ -115,12 +103,6 @@ impl Model {
         self.screen = Screen::Game;
     }
 
-    pub fn grant_bonus(&mut self, id: usize) {
-        log!("Granting bonus.");
-
-        self.game.grant_bonus(id);
-    }
-
     pub fn check_status(&mut self) {
         log!("Check game status.");
 
@@ -134,10 +116,6 @@ impl Model {
             self.screen = Screen::EndGame;
             self.show_end_once = false;
         };
-    }
-
-    pub fn change_player_color(&mut self, player_id: usize, color_id: usize) {
-        self.game.change_player_color(player_id, color_id)
     }
 }
 

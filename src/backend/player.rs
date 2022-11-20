@@ -16,6 +16,13 @@ impl Player {
         self.sum = self.score.values().sum::<i32>() + self.bonus.values().sum::<i32>();
     }
 
+    pub fn edit_score(&mut self, score_id: usize, value: i32) {
+        let score = self.score.get_mut(&(score_id - 1)).unwrap();
+        *score = value;
+
+        self.sum = self.score.values().sum::<i32>() + self.bonus.values().sum::<i32>();
+    }
+
     pub fn grant_bonus(&mut self, round: usize, value: i32) {
         self.bonus.insert(round, value);
         self.sum = self.score.values().sum::<i32>() + self.bonus.values().sum::<i32>();

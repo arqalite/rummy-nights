@@ -95,6 +95,12 @@ impl Model {
         self.check_status()
     }
 
+    pub fn edit_score(&mut self, player_id: usize, score_id: usize, value: i32) {
+        log!("Editing score.");
+        self.game.edit_score(player_id, score_id, value);
+        self.check_status()
+    }
+
     pub fn start_game(&mut self) {
         log!("Starting game.");
 

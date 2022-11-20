@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
-use serde::{Deserialize, Serialize};
 use gloo_console::log;
+use serde::{Deserialize, Serialize};
 
 mod game;
 mod model;

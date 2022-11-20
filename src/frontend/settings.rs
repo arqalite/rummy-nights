@@ -61,6 +61,10 @@ fn settings_menu(cx: Scope) -> Element {
                 class: "flex flex-col divide-y divide-slate-200 justify-evenly border-y border-slate-200",
                 div {
                     class: "flex flex-col gap-4",
+                    edit_enable(),
+                },
+                div {
+                    class: "flex flex-col gap-4",
                     dealer_enable(),
                 },
                 div {
@@ -72,6 +76,37 @@ fn settings_menu(cx: Scope) -> Element {
                     class: "flex flex-col gap-4",
                     max_score_enable(),
                     max_score_setting(),
+                }
+            }
+        }
+    ))
+}
+fn edit_enable(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+    let enabled = use_state(&cx, || state.read().settings.enable_score_editing);
+
+    cx.render(rsx!(
+        div {
+            class: "grid grid-cols-6 gap-4 h-16 pt-4",
+            span {
+                class: "col-span-5 justify-self-start font-semibold text-lg",
+                "Allow score editing"
+            }
+            label {
+                class: "inline-flex relative cursor-pointer justify-self-end",
+                input {
+                    r#type: "checkbox",
+                    id: "default-toggle",
+                    class: "sr-only peer",
+                    checked: "{enabled}",
+                    onchange: move |_| {
+                        enabled.set(!enabled);
+                        state.write().settings.enable_score_editing = *enabled.current();
+                        log!(format!("Score editing enabled: {:?}", state.read().settings.enable_score_editing));
+                    }
+                }
+                div {
+                    class: "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[url('/img/purple_gradient.svg')]"
                 }
             }
         }

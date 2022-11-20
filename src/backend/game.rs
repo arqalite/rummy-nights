@@ -128,6 +128,16 @@ impl Game {
         self.save_game();
     }
 
+    pub fn edit_score(&mut self, player_id: usize, score_id: usize, value: i32) {
+        for player in &mut self.players {
+            if player_id == player.id {
+                player.edit_score(score_id, value);
+            }
+        }
+        self.check_round();
+        self.save_game();
+    }
+
     pub fn grant_bonus(&mut self, id: usize) {
         log!("Granting player bonus.");
 

@@ -21,8 +21,23 @@ pub fn screen(cx: Scope) -> Element {
 fn player_table(cx: Scope) -> Element {
     log!("Rendering player table.");
 
+    let mut score_id = 0;
+
     let mut game_count = 0;
     let state = use_atom_ref(&cx, STATE);
+
+    let editable = state.read().settings.enable_score_editing;
+
+    let edit_score = move |evt: FormEvent| {
+        log!(format!("This has {:?}", evt.values));
+        if let Ok(score) = evt.values.get("score").unwrap().parse::<i32>() {
+            if let Ok(score_id) = evt.values.get("score_id").unwrap().parse::<usize>() {
+                if let Ok(player_id) = evt.values.get("player_id").unwrap().parse::<usize>() {
+                    state.write().edit_score(player_id, score_id, score);
+                }
+            }
+        };
+    };
 
     cx.render(rsx!(
         div {
@@ -68,15 +83,13 @@ fn player_table(cx: Scope) -> Element {
                                 "{player.name}"
                             }
                         }
-                        (player.score.len() > 0).then(|| rsx!(
+                        (!player.score.is_empty()).then(|| rsx!(
                             div {
                                 class: "flex flex-col gap-2 w-full overflow-auto scroll-smooth",
                                 id: "score_{player_id}",
                                 style: "scrollbar-width: none;",
                                 //Scores - dynamic
                                 player.score.values().map(|score| {
-                                    let score_text = score.to_string();
-
                                     let bonus_visibility = if player.bonus.contains_key(&game_count) {
                                         String::from("")
                                     } else {
@@ -84,14 +97,42 @@ fn player_table(cx: Scope) -> Element {
                                     };
 
                                     game_count += 1;
+                                    score_id += 1;
 
                                     rsx!(
                                         div {
                                             class: "flex flex-row justify-center relative rounded border-b-4 h-10 {border}",
-                                            p {
-                                                class: "text-lg text-center self-center",
-                                                "{score_text}"
-                                            }
+                                            editable.then(|| rsx!(
+                                                form {
+                                                    onsubmit: edit_score,
+                                                    prevent_default: "onsubmit",
+                                                    input {
+                                                        name: "score",
+                                                        onsubmit: edit_score,
+                                                        class: "text-lg appearance-none font-light bg-transparent h-10 w-full text-center",
+                                                        style: "-moz-appearance:textfield",
+                                                        value: "{score}",
+                                                        outline: "none",
+                                                        r#type: "number",
+                                                    }
+                                                    input {
+                                                        name: "score_id",
+                                                        r#type: "hidden",
+                                                        value: "{score_id}",
+                                                    }
+                                                    input {
+                                                        name: "player_id",
+                                                        r#type: "hidden",
+                                                        value: "{player_id}",
+                                                    }
+                                                }
+                                            )),
+                                            (!editable).then(|| rsx!(
+                                                p {
+                                                    class: "text-lg text-center self-center",
+                                                    "{score}"
+                                                }
+                                            ))
                                             img {
                                                 class: "absolute right-0 self-center h-4 w-4 {bonus_visibility} rounded-full",
                                                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",

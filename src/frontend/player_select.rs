@@ -109,11 +109,7 @@ fn player_input(cx: Scope) -> Element {
         return None;
     }
 
-    let hidden = if **hide_color_bar {
-        "hidden"
-    } else {
-        ""
-    };
+    let hidden = if **hide_color_bar { "hidden" } else { "" };
 
     let onsubmit = move |evt: FormEvent| {
         let name = evt.values.get("player-name").unwrap().to_string();

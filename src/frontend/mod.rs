@@ -99,28 +99,28 @@ pub static BG_COLORS: [&str; 7] = [
     "bg-red-500",
     "bg-orange-500",
     "bg-yellow-500",
-    "bg-green-500",	
+    "bg-green-500",
     "bg-blue-500",
     "bg-indigo-500",
-    "bg-violet-500"
+    "bg-violet-500",
 ];
 
 pub static BORDER_COLORS: [&str; 7] = [
     "border-red-500",
     "border-orange-500",
     "border-yellow-500",
-    "border-green-500",	
+    "border-green-500",
     "border-blue-500",
     "border-indigo-500",
-    "border-violet-500"
+    "border-violet-500",
 ];
 
 pub static CARET_COLORS: [&str; 7] = [
     "caret-red-500",
     "caret-orange-500",
     "caret-yellow-500",
-    "caret-green-500",	
+    "caret-green-500",
     "caret-blue-500",
     "caret-indigo-500",
-    "caret-violet-500"
+    "caret-violet-500",
 ];

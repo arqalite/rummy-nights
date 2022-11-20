@@ -21,12 +21,8 @@ pub fn screen(cx: Scope) -> Element {
 fn player_table(cx: Scope) -> Element {
     log!("Rendering player table.");
 
-    let mut score_id = 0;
-
-    let mut game_count = 0;
     let state = use_atom_ref(&cx, STATE);
-
-    let editable = state.read().settings.enable_score_editing;
+    let mut game_count = 0;
 
     let edit_score = move |evt: FormEvent| {
         log!(format!("This has {:?}", evt.values));
@@ -63,6 +59,8 @@ fn player_table(cx: Scope) -> Element {
                             "-1",
                         )
                     };
+                let mut score_id = 0;
+
                 rsx!(
                     div {
                         class: "flex flex-col gap-2 w-full",
@@ -102,7 +100,7 @@ fn player_table(cx: Scope) -> Element {
                                     rsx!(
                                         div {
                                             class: "flex flex-row justify-center relative rounded border-b-4 h-10 {border}",
-                                            editable.then(|| rsx!(
+                                            (state.read().settings.enable_score_editing).then(|| rsx!(
                                                 form {
                                                     onsubmit: edit_score,
                                                     prevent_default: "onsubmit",
@@ -127,7 +125,7 @@ fn player_table(cx: Scope) -> Element {
                                                     }
                                                 }
                                             )),
-                                            (!editable).then(|| rsx!(
+                                            (!state.read().settings.enable_score_editing).then(|| rsx!(
                                                 p {
                                                     class: "text-lg text-center self-center",
                                                     "{score}"

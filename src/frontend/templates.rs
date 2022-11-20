@@ -1,11 +1,8 @@
-use dioxus::prelude::*;
 use crate::prelude::*;
+use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
-    cx.render(rsx!(
-        top_bar(),
-        template_list(),
-    ))
+    cx.render(rsx!(top_bar(), template_list(),))
 }
 
 fn template_list(cx: Scope) -> Element {
@@ -14,7 +11,7 @@ fn template_list(cx: Scope) -> Element {
     cx.render(rsx!(
         div {
             class: "flex flex-col grow justify-center",
-            (state.read().templates.len() == 0).then(|| rsx!(
+            (state.read().templates.is_empty()).then(|| rsx!(
                 span {
                     class: "font-semibold text-lg border-b-2 border-indigo-500 w-max mx-auto mb-8",
                     "No templates saved yet - add some!"
@@ -86,7 +83,7 @@ fn template_list(cx: Scope) -> Element {
                         src: "img/save.svg"
                     }
                 }
-            ))                
+            ))
         }
     ))
 }
@@ -112,4 +109,3 @@ fn top_bar(cx: Scope) -> Element {
         }
     ))
 }
-

@@ -1,5 +1,5 @@
-use serde::{Serialize, Deserialize};
 use crate::prelude::*;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Template {

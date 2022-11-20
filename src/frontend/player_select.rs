@@ -175,7 +175,7 @@ fn start_game_button(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
     if state.read().game.players.len() < 2 {
-        return None
+        return None;
     };
 
     log!("Rendering begin game button.");

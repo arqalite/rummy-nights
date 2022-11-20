@@ -15,7 +15,7 @@ pub struct Model {
     pub show_end_once: bool,
     pub checked_storage: bool,
     pub settings: Settings,
-    pub templates: Vec<Template>
+    pub templates: Vec<Template>,
 }
 
 impl Model {
@@ -27,7 +27,7 @@ impl Model {
             show_end_once: true,
             checked_storage: false,
             settings: Settings::new(),
-            templates: Vec::new()
+            templates: Vec::new(),
         }
     }
 
@@ -134,7 +134,7 @@ impl Model {
         self.templates.push(Template {
             id: self.templates.len() + 1,
             name: template_name,
-            players: self.game.players.clone()
+            players: self.game.players.clone(),
         });
 
         self.save_templates();
@@ -167,7 +167,7 @@ impl Model {
             Ok(json_state) => match serde_json::from_value::<Vec<Template>>(json_state) {
                 Ok(saved_templates) => {
                     log!(format!("Loaded: {:#?}", saved_templates));
-                    self.templates = saved_templates.clone();
+                    self.templates = saved_templates;
                     log!(format!("Live is: {:#?}", self.templates));
                 }
                 Err(_) => log!("Could not parse templates."),

@@ -5,8 +5,8 @@ mod game;
 mod game_end;
 mod menu;
 mod player_select;
-mod templates;
 mod settings;
+mod templates;
 
 use crate::prelude::*;
 use dioxus::prelude::*;

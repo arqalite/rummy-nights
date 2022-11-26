@@ -1,27 +1,26 @@
 use dioxus::events::FormEvent;
-use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
-use dioxus::web::use_eval;
+use dioxus_web::use_eval;
 use std::cmp::Ordering;
 use std::ops::Not;
 
 use crate::prelude::*;
 
-pub fn screen(cx: Scope) -> Element {
+pub fn Screen(cx: Scope) -> Element {
     log!("Rendering game screen.");
 
     cx.render(rsx! (
-        nav_bar(),
-        banner()
-        player_table()
-        game_menu(),
+        NavBar {},
+        Banner {}
+        PlayerTable {}
+        GameMenu {},
     ))
 }
 
-fn player_table(cx: Scope) -> Element {
+fn PlayerTable(cx: Scope) -> Element {
     log!("Rendering player table.");
 
-    let state = use_atom_ref(&cx, STATE);
+    let state = use_context::<Model>(&cx)?;
     let mut game_count = 0;
 
     let edit_score = move |evt: FormEvent| {
@@ -73,7 +72,7 @@ fn player_table(cx: Scope) -> Element {
                                     state.write().game.grant_bonus(player_id);
                                 }
                             },
-                            self::dealer_pin {
+                            self::DealerPin {
                                 player_id: player_id
                             },
                             p {
@@ -143,7 +142,7 @@ fn player_table(cx: Scope) -> Element {
                         ))
                         div {
                             class: "flex flex-col gap-2 w-full",
-                            self::score_input {
+                            self::ScoreInput {
                                 id: player_id
                             },
                             div {
@@ -164,8 +163,8 @@ fn player_table(cx: Scope) -> Element {
 }
 
 #[inline_props]
-fn score_input(cx: Scope, id: usize) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn ScoreInput(cx: Scope, id: usize) -> Element {
+    let state = use_context::<Model>(&cx)?;
     let mut color_index = 0;
 
     if state.read().game.status != GameStatus::Ongoing {
@@ -213,8 +212,8 @@ fn score_input(cx: Scope, id: usize) -> Element {
     ))
 }
 
-fn game_menu(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn GameMenu(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
 
     if !state.read().settings.use_tile_bonus {
         return None;
@@ -271,8 +270,8 @@ fn game_menu(cx: Scope) -> Element {
     ))
 }
 
-fn nav_bar(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn NavBar(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
 
     let button_position = if state.read().game.status == GameStatus::Ongoing {
         "col-start-3 justify-self-end"
@@ -287,7 +286,7 @@ fn nav_bar(cx: Scope) -> Element {
             (state.read().game.status == GameStatus::Ongoing).then(|| rsx!(
                 button {
                     class: "col-start-1 justify-self-start",
-                    onclick: |_| state.write().screen = Screen::PlayerSelect,
+                    onclick: move |_| state.write().screen = Screen::PlayerSelect,
                     img {
                         class: "h-10 scale-x-[-1]",
                         src: "img/back.svg",
@@ -296,7 +295,7 @@ fn nav_bar(cx: Scope) -> Element {
             )),
             button {
                 class: "{button_position}",
-                onclick: |_| state.write().screen = Screen::Menu,
+                onclick: move |_| state.write().screen = Screen::Menu,
                 img {
                     class: "h-10",
                     src: "img/home.svg",
@@ -305,7 +304,7 @@ fn nav_bar(cx: Scope) -> Element {
             (state.read().game.status == GameStatus::Ongoing).not().then(|| rsx!(
                 button {
                     class: "col-start-3 justify-self-end",
-                    onclick: |_| state.write().screen = Screen::EndGame,
+                    onclick: move |_| state.write().screen = Screen::EndGame,
                     img {
                         class: "h-10",
                         src: "img/back.svg",
@@ -316,10 +315,10 @@ fn nav_bar(cx: Scope) -> Element {
     ))
 }
 
-fn banner(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn Banner(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
 
-    let (banner_text, banner_color) = match &state.read().game.status {
+    let (Banner_text, Banner_color) = match &state.read().game.status {
         GameStatus::Finished => (
             format!("{} won!", state.read().game.get_winner()),
             String::from("border-red-600"),
@@ -339,18 +338,18 @@ fn banner(cx: Scope) -> Element {
         }
     };
 
-    log!("Render banner.");
+    log!("Render Banner.");
     cx.render(rsx!(
         span {
-            class: "mb-8 w-max mx-auto font-semibold text-lg border-b-2 {banner_color}",
-            "{banner_text}",
+            class: "mb-8 w-max mx-auto font-semibold text-lg border-b-2 {Banner_color}",
+            "{Banner_text}",
         }
     ))
 }
 
 #[inline_props]
-fn dealer_pin(cx: Scope, player_id: usize) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn DealerPin(cx: Scope, player_id: usize) -> Element {
+    let state = use_context::<Model>(&cx)?;
 
     if !state.read().settings.enable_dealer_tracking {
         return None;

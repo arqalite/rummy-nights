@@ -1,17 +1,22 @@
 use crate::prelude::*;
 use dioxus::events::FormEvent;
 use dioxus::prelude::*;
-use dioxus::web::use_eval;
+use dioxus_web::use_eval;
+
 use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
-pub fn screen(cx: Scope) -> Element {
+pub fn Screen(cx: Scope) -> Element {
     log!("Rendering settings menu.");
 
-    cx.render(rsx!(top_bar(), settings_menu(), reset_restart_buttons()))
+    cx.render(rsx!(
+        NavBar {},
+        SettingsMenu {},
+        ResetRestartMenu {}
+    ))
 }
 
-fn reset_restart_buttons(cx: Scope) -> Element {
+fn ResetRestartMenu(cx: Scope) -> Element {
     let restart_app = move |_| {
         SessionStorage::clear();
         use_eval(&cx)("location.reload()");
@@ -53,7 +58,7 @@ fn reset_restart_buttons(cx: Scope) -> Element {
     ))
 }
 
-fn settings_menu(cx: Scope) -> Element {
+fn SettingsMenu(cx: Scope) -> Element {
     cx.render(rsx!(
         div {
             class: "flex flex-col grow justify-evenly",
@@ -61,28 +66,28 @@ fn settings_menu(cx: Scope) -> Element {
                 class: "flex flex-col divide-y divide-slate-200 justify-evenly border-y border-slate-200",
                 div {
                     class: "flex flex-col gap-4",
-                    edit_enable(),
+                    EditEnable {},
                 },
                 div {
                     class: "flex flex-col gap-4",
-                    dealer_enable(),
+                    DealerEnable {},
                 },
                 div {
                     class: "flex flex-col gap-4",
-                    tile_bonus_enable(),
-                    tile_bonus_value_setting(),
+                    TileBonusEnable {},
+                    TileBonusValue {},
                 },
                 div {
                     class: "flex flex-col gap-4",
-                    max_score_enable(),
-                    max_score_setting(),
+                    MaxScoreEnable {},
+                    MaxScoreValue {},
                 }
             }
         }
     ))
 }
-fn edit_enable(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn EditEnable(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
     let enabled = use_state(&cx, || state.read().settings.enable_score_editing);
 
     cx.render(rsx!(
@@ -113,8 +118,8 @@ fn edit_enable(cx: Scope) -> Element {
     ))
 }
 
-fn dealer_enable(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn DealerEnable(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
     let enabled = use_state(&cx, || state.read().settings.enable_dealer_tracking);
 
     cx.render(rsx!(
@@ -145,8 +150,8 @@ fn dealer_enable(cx: Scope) -> Element {
     ))
 }
 
-fn max_score_setting(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn MaxScoreValue(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
 
     if !state.read().settings.end_game_at_score {
         return None;
@@ -222,8 +227,8 @@ fn max_score_setting(cx: Scope) -> Element {
     ))
 }
 
-fn tile_bonus_value_setting(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn TileBonusValue(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
 
     if !state.read().settings.use_tile_bonus {
         return None;
@@ -299,8 +304,8 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
     ))
 }
 
-fn tile_bonus_enable(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn TileBonusEnable(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
     let enabled = use_state(&cx, || state.read().settings.use_tile_bonus);
 
     cx.render(rsx!(
@@ -331,8 +336,8 @@ fn tile_bonus_enable(cx: Scope) -> Element {
     ))
 }
 
-fn max_score_enable(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn MaxScoreEnable(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
     let enabled = use_state(&cx, || state.read().settings.end_game_at_score);
 
     cx.render(rsx!(
@@ -363,13 +368,14 @@ fn max_score_enable(cx: Scope) -> Element {
     ))
 }
 
-fn top_bar(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn NavBar(cx: Scope) -> Element {
 
+    let state = use_context::<Model>(&cx)?;
+    log!("Load top bar.");
     cx.render(rsx!(
         button {
             class: "absolute top-4 left-4",
-            onclick: |_| {
+            onclick: move |_| {
                 state.write().settings.save();
                 state.write().screen = Screen::Menu;
             },
@@ -380,7 +386,7 @@ fn top_bar(cx: Scope) -> Element {
         },
         button {
             class: "absolute top-4 right-4",
-            onclick: |_| {
+            onclick: move |_| {
                 state.write().settings.save();
                 state.write().screen = Screen::Credits;
             },

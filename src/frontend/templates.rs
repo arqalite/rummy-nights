@@ -1,12 +1,13 @@
 use crate::prelude::*;
 use dioxus::prelude::*;
 
-pub fn screen(cx: Scope) -> Element {
-    cx.render(rsx!(top_bar(), template_list(),))
+
+pub fn Screen(cx: Scope) -> Element {
+    cx.render(rsx!(NavBar {}, TemplateList {},))
 }
 
-fn template_list(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn TemplateList(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
 
     cx.render(rsx!(
         div {
@@ -73,7 +74,7 @@ fn template_list(cx: Scope) -> Element {
             (state.read().game.players.len() >= 2).then(|| rsx!(
                 button {
                     class: "flex flex-row gap-2 h-14 w-max p-2 rounded-full justify-end",
-                    onclick: |_| state.write().add_template(),
+                    onclick: move |_| state.write().add_template(),
                     span {
                         class: "font-semibold text-lg self-center",
                         "Add a template"
@@ -88,17 +89,17 @@ fn template_list(cx: Scope) -> Element {
     ))
 }
 
-fn top_bar(cx: Scope) -> Element {
+fn NavBar(cx: Scope) -> Element {
     log!("Rendering top bar.");
 
-    let state = use_atom_ref(&cx, STATE);
+    let state = use_context::<Model>(&cx)?;
 
     cx.render(rsx!(
         div {
             class: "h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: |_| {
+                onclick: move |_| {
                     state.write().screen = Screen::PlayerSelect;
                 },
                 img {

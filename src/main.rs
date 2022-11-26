@@ -4,17 +4,19 @@ use rummy_nights::prelude::*;
 pub fn main() {
     log!("Initializing app.");
 
-    dioxus::web::launch(|cx| {
-        let state = use_atom_ref(&cx, STATE);
+    dioxus_web::launch(|cx| {
+        use_context_provider(&cx, Model::new);
+        let model = use_context::<Model>(&cx)?;
+
         log!("Loaded new state.");
 
-        if !state.read().checked_storage {
-            state.write().load_existing_game();
-            state.write().settings.load();
-            state.write().load_saved_templates();
+        if !model.read().checked_storage {
+            model.write().load_existing_game();
+            model.write().settings.load();
+            model.write().load_saved_templates();
             log!("Finish loading data.");
         };
 
-        render_screen(cx)
+        cx.render(rsx!(RenderScreen {}))
     });
 }

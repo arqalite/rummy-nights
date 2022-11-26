@@ -2,6 +2,7 @@
 target = "index.html"
 dist = "dist"
 filehash = false
+release = false
 public_url = "/"
 
 [serve]

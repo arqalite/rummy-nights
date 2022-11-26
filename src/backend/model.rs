@@ -1,12 +1,9 @@
-use dioxus::fermi::AtomRef;
 use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};
 
 use crate::backend::prelude::*;
 use crate::backend::templates::Template;
-
-pub static STATE: AtomRef<Model> = |_| Model::new();
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Model {

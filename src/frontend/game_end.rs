@@ -1,11 +1,10 @@
-use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
 use crate::prelude::*;
 
-pub fn screen(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+pub fn Screen(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
     let mut player_count = 0;
 
     if !state.read().game.is_sorted {
@@ -14,7 +13,7 @@ pub fn screen(cx: Scope) -> Element {
 
     log!("Rendering end screen.");
     cx.render(rsx!(
-        nav_bar(),
+        NavBar {},
         div {
             class: "flex flex-col absolute w-screen px-8 sm:max-w-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 gap-6 justify-evenly",
             img {
@@ -71,17 +70,17 @@ pub fn screen(cx: Scope) -> Element {
     ))
 }
 
-fn nav_bar(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn NavBar(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
 
-    let delete_and_exit_game = |_| {
+    let delete_and_exit_game = move |_| {
         log!("Deleting game and returning to main menu.");
         LocalStorage::delete("state");
         SessionStorage::delete("session");
         *state.write() = Model::new();
     };
 
-    let restart_game = |_| {
+    let restart_game = move |_| {
         log!("Restarting game.");
         state.write().reset_game();
     };
@@ -92,7 +91,7 @@ fn nav_bar(cx: Scope) -> Element {
             class: "h-16 grid grid-cols-3",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: |_| {
+                onclick: move |_| {
                     state.write().screen = Screen::Game;
                 },
                 img {

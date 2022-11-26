@@ -1,11 +1,11 @@
-use crate::backend::print_version_number;
+use crate::backend::VersionNumber;
 use crate::prelude::*;
 use dioxus::prelude::*;
 
-pub fn screen(cx: Scope) -> Element {
+pub fn Screen(cx: Scope) -> Element {
     log!("Rendering credits.");
     cx.render(rsx!(
-        top_bar(),
+        NavBar {},
         div {
             class: "flex flex-col gap-8 h-screen justify-center items-center",
             div {
@@ -17,7 +17,7 @@ pub fn screen(cx: Scope) -> Element {
                 p {
                     class: "text-white font-semibold text-lg text-center w-max max-w-1/2 px-2 rounded-full",
                     background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    print_version_number(),
+                    VersionNumber {},
                 }
             },
             div {
@@ -101,14 +101,14 @@ pub fn screen(cx: Scope) -> Element {
     ))
 }
 
-fn top_bar(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn NavBar(cx: Scope) -> Element {
+    let state = use_context::<Model>(&cx)?;
 
     log!("Rendering nav bar.");
     cx.render(rsx!(
         button {
             class: "absolute top-4 left-4",
-            onclick: |_| {
+            onclick: move |_| {
                 state.write().screen = Screen::Settings;
             },
             img {

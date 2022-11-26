@@ -1,33 +1,35 @@
 use dioxus::events::FormEvent;
-use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
-use dioxus::web::use_eval;
+use dioxus_web::use_eval;
+
 use gloo_storage::{SessionStorage, Storage};
 
 use crate::prelude::*;
 
-pub fn screen(cx: Scope) -> Element {
+pub fn Screen(cx: Scope) -> Element {
     log!("Rendering player select.");
 
     cx.render(rsx!(
-        top_bar()
+        NavBar {},
         span {
             class: "font-semibold text-lg border-b-2 border-emerald-300 w-max mx-auto mb-8",
             "Add up to 4 players"
-        }
-        player_list()
-        start_game_button()
+        },
+        PlayerList {},
+        StartGameButton {},
     ))
 }
 
-fn player_list(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn PlayerList(cx: Scope) -> Element {
+    log!("test 3");
+    let state = use_context::<Model>(&cx)?;
     log!("Rendering player list.");
 
     cx.render(rsx!(
         div {
             class: "flex flex-col gap-6",
             state.read().game.players.iter().map(|player| {
+                log!("Got to state player iter.");
                 let background_color = BG_COLORS[player.color_index];
                 let id = player.id;
 
@@ -93,13 +95,15 @@ fn player_list(cx: Scope) -> Element {
                     }
                 )
             }),
-            player_input(),
+            PlayerInput {},
         }
     ))
 }
 
-fn player_input(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn PlayerInput(cx: Scope) -> Element {
+    log!("test 2");
+
+    let state = use_context::<Model>(&cx)?;
     let hide_color_bar = use_state(&cx, || true);
     let color_index = use_state(&cx, || 0);
     let selected_color = BG_COLORS[**color_index];
@@ -171,8 +175,9 @@ fn player_input(cx: Scope) -> Element {
     ))
 }
 
-fn start_game_button(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn StartGameButton(cx: Scope) -> Element {
+    log!("test");
+    let state = use_context::<Model>(&cx)?;
 
     if state.read().game.players.len() < 2 {
         return None;
@@ -182,7 +187,7 @@ fn start_game_button(cx: Scope) -> Element {
     cx.render(rsx!(
         button {
             class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-8 bottom-[30vw]",
-            onclick: |_| state.write().start_game(),
+            onclick: move |_| state.write().start_game(),
             span {
                 class: "flex self-center text-xl font-bold",
                 "Start game"
@@ -195,17 +200,17 @@ fn start_game_button(cx: Scope) -> Element {
     ))
 }
 
-fn top_bar(cx: Scope) -> Element {
+fn NavBar(cx: Scope) -> Element {
     log!("Rendering top bar.");
 
-    let state = use_atom_ref(&cx, STATE);
+    let state = use_context::<Model>(&cx)?;
 
     cx.render(rsx!(
         div {
             class: "h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: |_| {
+                onclick: move |_| {
                     state.write().screen = Screen::Menu;
                     state.write().checked_storage = false;
                     SessionStorage::delete("session");
@@ -217,7 +222,7 @@ fn top_bar(cx: Scope) -> Element {
             }
             button {
                 class: "col-start-3 justify-self-end",
-                onclick: |_| state.write().screen = Screen::Templates,
+                onclick: move |_| state.write().screen = Screen::Templates,
                 img {
                     class: "h-10",
                     src: "img/save.svg",

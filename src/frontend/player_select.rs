@@ -86,7 +86,10 @@ fn player_list(cx: Scope) -> Element {
                                 button {
                                     id: "{color_id}",
                                     class: "h-6 w-6 rounded-full {color} place-self-center",
-                                    onclick: move |_| state.write().game.change_player_color(id, color_id),
+                                    onclick: move |_| {
+                                        state.write().game.change_player_color(id, color_id);
+                                        hide_color_bar.set(!hide_color_bar);
+                                    }
                                 }
                             )
                         })

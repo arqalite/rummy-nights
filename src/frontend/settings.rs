@@ -195,7 +195,7 @@ fn max_score_setting(cx: Scope) -> Element {
                 prevent_default: "onsubmit",
                 input {
                     name: "max_score",
-                    class: "text-lg appearance-none font-light bg-transparent h-10 w-3/4 text-center rounded focus:border-b-[8px] border-b-4 border-green-400",
+                    class: "text-lg appearance-none font-light bg-transparent h-10 w-3/4 text-center rounded focus:border-b-[8px] border-b-4 border-[#ee609c]",
                     id: "max_score",
                     style: "-moz-appearance:textfield",
                     outline: "none",
@@ -269,7 +269,7 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
                 prevent_default: "onsubmit",
                 input {
                     name: "tile_bonus",
-                    class: "text-lg appearance-none font-light bg-transparent h-10 w-3/4 text-center rounded focus:border-b-[8px] border-b-4 border-rose-400",
+                    class: "text-lg appearance-none font-light bg-transparent h-10 w-3/4 text-center rounded focus:border-b-[8px] border-b-4 border-[#ee609c]",
                     id: "tile_bonus",
                     style: "-moz-appearance:textfield",
                     outline: "none",

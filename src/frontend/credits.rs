@@ -3,6 +3,7 @@ use crate::prelude::*;
 use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
+
     log!("Rendering credits.");
     cx.render(rsx!(
         top_bar(),
@@ -12,7 +13,7 @@ pub fn screen(cx: Scope) -> Element {
                 class: "flex flex-col items-center gap-8",
                 img {
                     class: "w-2/3",
-                    src: "img/intro.gif",
+                    src: "img/intro_logo.gif",
                 }
                 p {
                     class: "text-white font-semibold text-lg text-center w-max max-w-1/2 px-2 rounded-full",

@@ -5,8 +5,7 @@ use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    let intro_gif = assets::INTRO_GIF;
-
+    
     log!("Rendering main menu.");
     cx.render(rsx!(
         button {
@@ -21,7 +20,7 @@ pub fn screen(cx: Scope) -> Element {
             class : "flex flex-col grow gap-16 justify-center",
             img {
                 class: "w-full max-w-lg",
-                src: "{intro_gif}",
+                src: "img/intro_logo.gif",
             }
             div {
                 class: "flex flex-col gap-8",

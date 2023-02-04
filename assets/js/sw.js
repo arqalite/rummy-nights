@@ -19,7 +19,8 @@ var offlineFundamentals = [
   '/rummy-nights_bg.wasm',
   '/style.css',
   '/sw.js',
-  '/snippets/dioxus-interpreter-js-459fb15b86d869f7/src/interpreter.js'
+  '/snippets/dioxus-interpreter-js-459fb15b86d869f7/src/interpreter.js',
+  '/img/intro_logo.gif'
 ];
 
 /* The install event fires when the service worker is first installed.

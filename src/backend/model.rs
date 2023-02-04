@@ -128,7 +128,7 @@ impl Model {
             return;
         }
 
-        let mut template_name = String::from("Template ");
+        let mut template_name = String::new();
         template_name.push_str(&(self.templates.len() + 1).to_string());
 
         self.templates.push(Template {

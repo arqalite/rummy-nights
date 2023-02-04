@@ -1,6 +1,6 @@
 [package]
 name = "rummy-nights"
-version = "0.2.0"
+version = "0.3.0"
 description = "A rummy score counter web app written with Rust/Dioxus and Tailwind CSS."
 repository = "https://github.com/arqalite/rummy-nights"
 readme = "README.md"

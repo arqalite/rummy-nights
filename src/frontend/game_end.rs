@@ -12,6 +12,9 @@ pub fn screen(cx: Scope) -> Element {
         state.write().game.sort_players();
     }
 
+    let winner_label = get_text(state.read().settings.language, "winner_label").unwrap();
+
+
     log!("Rendering end screen.");
     cx.render(rsx!(
         nav_bar(),
@@ -24,7 +27,7 @@ pub fn screen(cx: Scope) -> Element {
             }
             p {
                 class: "text-center font-bold text-4xl",
-                "THE WINNER IS"
+                "{winner_label}"
             }
             state.read().game.sorted_players.iter().map(|player| {
                 log!("Rendering players.");

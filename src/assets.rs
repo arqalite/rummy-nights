@@ -1,5 +1,65 @@
 use dioxus::prelude::*;
 
+pub fn gb_flag_icon(cx: Scope) -> Element {
+    cx.render(rsx!(
+        svg {
+            id: "flag-icons-gb",
+            xmlns: "http://www.w3.org/2000/svg",
+            view_box: "0 0 640 480",
+            height: "100%",
+            width: "100%",
+            path {
+                fill: "#012169",
+                d: "M0 0h640v480H0z",
+            }
+            path {
+                fill: "#FFF",
+                d: "m75 0 244 181L562 0h78v62L400 241l240 178v61h-80L320 301 81 480H0v-60l239-178L0 64V0h75z",
+            }
+            path {
+                d: "m424 281 216 159v40L369 281h55zm-184 20 6 35L54 480H0l240-179zM640 0v3L391 191l2-44L590 0h50zM0 0l239 176h-60L0 42V0z",
+                fill: "#C8102E",
+            }
+            path {
+                fill: "#FFF",
+                d: "M241 0v480h160V0H241zM0 160v160h640V160H0z",
+            }
+            path {
+                d: "M0 193v96h640v-96H0zM273 0v480h96V0h-96z",
+                fill: "#C8102E",
+            }
+        }
+    ))
+}
+
+pub fn romanian_flag_icon(cx: Scope) -> Element {
+    cx.render(rsx!(
+        svg {
+            id: "flag-icons-ro",
+            xmlns: "http://www.w3.org/2000/svg",
+            view_box: "0 0 640 480",
+            height: "100%",
+            width: "100%",
+            g {
+                fill_rule: "evenodd",
+                stroke_width: "1pt",
+                path {
+                    d: "M0 0h213.3v480H0z",
+                    fill: "#00319c",
+                }
+                path {
+                    d: "M213.3 0h213.4v480H213.3z",
+                    fill: "#ffde00",
+                }
+                path {
+                    d: "M426.7 0H640v480H426.7z",
+                    fill: "#de2110",
+                }
+            }
+        }
+    ))
+}
+
 pub fn add_button(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {

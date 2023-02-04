@@ -11,6 +11,7 @@ pub struct Settings {
     pub enable_dealer_tracking: bool,
     pub enable_score_editing: bool,
     pub checked_storage: bool,
+    pub language: i32,
 }
 
 impl Settings {
@@ -24,6 +25,7 @@ impl Settings {
             enable_dealer_tracking: true,
             enable_score_editing: true,
             checked_storage: false,
+            language: 1
         }
     }
 

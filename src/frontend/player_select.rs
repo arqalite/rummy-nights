@@ -9,11 +9,16 @@ use crate::prelude::*;
 pub fn screen(cx: Scope) -> Element {
     log!("Rendering player select.");
 
+    let state = use_atom_ref(&cx, STATE);
+
+    let add_players = get_text(state.read().settings.language, "add_players").unwrap();
+
+
     cx.render(rsx!(
         top_bar()
         span {
             class: "font-semibold text-lg border-b-2 border-emerald-300 w-max mx-auto mb-8",
-            "Add up to 4 players"
+            "{add_players}"
         }
         player_list()
         start_game_button()
@@ -112,6 +117,9 @@ fn player_input(cx: Scope) -> Element {
         return None;
     }
 
+    let insert_player = get_text(state.read().settings.language, "insert_player").unwrap();
+
+
     let hidden = if **hide_color_bar { "hidden" } else { "" };
 
     let onsubmit = move |evt: FormEvent| {
@@ -139,7 +147,7 @@ fn player_input(cx: Scope) -> Element {
             input {
                 name: "player-name",
                 class: "rounded-full w-3/5 h-8 ring-1 ring-grey text-center self-center",
-                placeholder: "Insert player name",
+                placeholder: "{insert_player}",
             }
             button {
                 r#type: "submit",
@@ -174,6 +182,7 @@ fn player_input(cx: Scope) -> Element {
 
 fn start_game_button(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let start_button_label = get_text(state.read().settings.language, "start_game_button").unwrap();
 
     if state.read().game.players.len() < 2 {
         return None;
@@ -186,7 +195,7 @@ fn start_game_button(cx: Scope) -> Element {
             onclick: |_| state.write().start_game(),
             span {
                 class: "text-xl font-bold leading-[3rem]",
-                "Start game"
+                "{start_button_label}"
             }
             div {
                 class: "h-12",

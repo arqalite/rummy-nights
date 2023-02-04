@@ -3,6 +3,14 @@ use crate::prelude::*;
 use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+
+    let programmer = get_text(state.read().settings.language, "programmer").unwrap();
+    let design = get_text(state.read().settings.language, "design").unwrap();
+    let icons = get_text(state.read().settings.language, "icons").unwrap();
+    let tech = get_text(state.read().settings.language, "tech").unwrap();
+    let love = get_text(state.read().settings.language, "love").unwrap();
+
 
     log!("Rendering credits.");
     cx.render(rsx!(
@@ -27,20 +35,20 @@ pub fn screen(cx: Scope) -> Element {
                     class: "w-3/4 text-center",
                     p {
                         class: "font-semibold",
-                        "Programming:"
+                        "{programmer}:"
                     }
                     p {
-                        "Antonio Curavalea",
+                        "Antonio Curăvalea",
                     }
                 }
                 p {
                     class: "w-3/4 text-center",
                     p {
                         class: "font-semibold",
-                        "UX/UI Design:"
+                        "{design}:"
                     }
                     p {
-                        "Vlad Tantarean",
+                        "Vlad Țânțărean",
                     }
                 },
                 div {
@@ -49,7 +57,7 @@ pub fn screen(cx: Scope) -> Element {
                         class: "w-full text-center col-span-1",
                         p {
                             class: "font-semibold",
-                            "Icons:"
+                            "{icons}:"
                         }
                         p {
                             "Freepik/Flaticon",
@@ -65,7 +73,7 @@ pub fn screen(cx: Scope) -> Element {
                         class: "w-full text-center col-span-1",
                         p {
                             class: "font-semibold",
-                            "Tech:"
+                            "{tech}:"
                         }
                         p {
                             "Rust",
@@ -83,7 +91,7 @@ pub fn screen(cx: Scope) -> Element {
                 class: "flex flex-col justify-center items-center gap-2 w-full",
                 p {
                     class: "w-3/4 text-center",
-                    "Made with ❤️ in Romania."
+                    "{love}"
                 }
             }
             div {

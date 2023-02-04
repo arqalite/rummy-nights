@@ -7,6 +7,8 @@ pub fn screen(cx: Scope) -> Element {
 
 fn template_list(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let no_templates_yet = get_text(state.read().settings.language, "no_templates_yet").unwrap();
+    let template_add = get_text(state.read().settings.language, "template_add").unwrap();
 
     cx.render(rsx!(
         div {
@@ -14,7 +16,7 @@ fn template_list(cx: Scope) -> Element {
             (state.read().templates.is_empty()).then(|| rsx!(
                 span {
                     class: "font-semibold text-lg border-b-2 border-indigo-500 w-max mx-auto mb-8",
-                    "No templates saved yet - add some!"
+                    "{no_templates_yet}!"
                 }
             )),
             state.read().templates.iter().map(|template| {
@@ -57,7 +59,7 @@ fn template_list(cx: Scope) -> Element {
                     onclick: |_| state.write().add_template(),
                     span {
                         class: "font-semibold text-lg self-center",
-                        "Add a template"
+                        "{template_add}"
                     }
                     div {
                         class: "h-10 w-10 self-center",

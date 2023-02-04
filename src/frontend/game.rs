@@ -219,6 +219,9 @@ fn game_menu(cx: Scope) -> Element {
         return None;
     };
 
+    let tile_bonus_text = get_text(state.read().settings.language, "tile_bonus").unwrap();
+
+
     log!("Rendering tile bonus menu.");
 
     let hidden = if state.read().game.status == GameStatus::Ongoing {
@@ -261,8 +264,8 @@ fn game_menu(cx: Scope) -> Element {
                     assets::bonus(),
                 }
                 span {
-                    class: "font-semibold text-lg self-center",
-                    "Tile bonus"
+                    class: "font-semibold text-lg self-center pr-2",
+                    "{tile_bonus_text}"
                 }
             }
         }
@@ -317,20 +320,25 @@ fn nav_bar(cx: Scope) -> Element {
 fn banner(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
+    let banner_win = get_text(state.read().settings.language, "banner_win").unwrap();
+    let banner_bonus = get_text(state.read().settings.language, "banner_bonus").unwrap();
+    let banner_play = get_text(state.read().settings.language, "banner_play").unwrap();
+
+
     let (banner_text, banner_color) = match &state.read().game.status {
         GameStatus::Finished => (
-            format!("{} won!", state.read().game.get_winner()),
+            format!("{} {}!", state.read().game.get_winner(), banner_win),
             String::from("border-red-600"),
         ),
         _ => {
             if state.read().game.tile_bonus_toggle {
                 (
-                    String::from("Who gets the bonus?"),
+                    String::from(format!("{}?", banner_bonus)),
                     String::from("border-cyan-500"),
                 )
             } else {
                 (
-                    String::from("Good luck and have fun!"),
+                    String::from(format!("{}!", banner_play)),
                     String::from("border-green-500"),
                 )
             }

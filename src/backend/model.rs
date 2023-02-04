@@ -1,4 +1,4 @@
-use dioxus::fermi::AtomRef;
+use dioxus::fermi::{AtomRef};
 use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};

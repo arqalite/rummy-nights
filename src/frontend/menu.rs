@@ -38,6 +38,7 @@ pub fn screen(cx: Scope) -> Element {
 
 fn start_game_button(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let start_game_text = get_text(state.read().settings.language, "start_game").unwrap();
 
     log!("Rendering start game button.");
     cx.render(rsx!(
@@ -46,7 +47,7 @@ fn start_game_button(cx: Scope) -> Element {
             onclick: |_| state.write().create_game(),
             p {
                 class: "w-max font-semibold text-center text-2xl col-span-2 col-start-2 justify-self-end",
-                "Start Game"
+                "{start_game_text}"
             }
             div {
                 class: "h-20 w-20 col-start-5 col-span-2 rounded-full",
@@ -65,6 +66,8 @@ fn resume_game_button(cx: Scope) -> Element {
         return None;
     }
 
+    let resume_game_text = get_text(state.read().settings.language, "resume_game").unwrap();
+
     log!("Rendering resume game button.");
     cx.render(rsx!(
         button {
@@ -72,7 +75,7 @@ fn resume_game_button(cx: Scope) -> Element {
             onclick: |_| state.write().screen = Screen::Game,
             p {
                 class: "w-max font-semibold text-center text-2xl col-span-3 col-start-1 justify-self-end",
-                "Resume Game"
+                "{resume_game_text}"
             }
             div {
                 class: "h-20 w-20 col-start-5 col-span-2 rounded-full",

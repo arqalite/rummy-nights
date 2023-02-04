@@ -12,6 +12,8 @@ pub fn screen(cx: Scope) -> Element {
 }
 
 fn reset_restart_buttons(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+
     let restart_app = move |_| {
         SessionStorage::clear();
         use_eval(&cx)("location.reload()");
@@ -21,6 +23,9 @@ fn reset_restart_buttons(cx: Scope) -> Element {
         SessionStorage::clear();
         use_eval(&cx)("location.reload()");
     };
+
+    let restart_label = get_text(state.read().settings.language, "restart").unwrap();
+    let clear_data_label = get_text(state.read().settings.language, "clear_data").unwrap();
 
     cx.render(rsx!(
         div {
@@ -34,7 +39,7 @@ fn reset_restart_buttons(cx: Scope) -> Element {
                 }
                 span {
                     class: "font-semibold text-lg leading-8 h-8",
-                    "Restart app"
+                    "{restart_label}"
                 }
             }
             button {
@@ -46,7 +51,7 @@ fn reset_restart_buttons(cx: Scope) -> Element {
                 }
                 span {
                     class: "font-semibold text-lg leading-8 h-8",
-                    "Clear data"
+                    "{clear_data_label}"
                 }
             }
         }
@@ -76,21 +81,68 @@ fn settings_menu(cx: Scope) -> Element {
                     class: "flex flex-col gap-4",
                     max_score_enable(),
                     max_score_setting(),
-                }
+                },
+                div {
+                    class: "flex flex-col gap-4",
+                    language_select(),
+                },
             }
         }
     ))
 }
+
+fn language_select(cx: Scope) -> Element {
+    let state = use_atom_ref(&cx, STATE);
+
+    let language_label = get_text(state.read().settings.language, "language").unwrap();
+
+    let mut ro_enabled = "";
+    let mut en_enabled = "";
+
+    match state.read().settings.language {
+        2 => {
+            ro_enabled = "outline";
+        },
+        _ => {
+            en_enabled = "outline";
+        }
+    }
+
+    cx.render(rsx!(
+        div {
+            class: "grid grid-cols-6 gap-4 h-16 pt-4",
+            span {
+                class: "col-span-4 justify-self-start font-semibold text-lg",
+                "{language_label}"
+            },
+            button {
+                class: "h-8 w-max {ro_enabled} outline-2 outline-offset-4 outline-[#ee609c]",
+                onclick: |_| state.write().settings.language = 2,
+                assets::romanian_flag_icon(),
+            },
+            button {
+                class: "h-8 w-max {en_enabled} outline-2 outline-offset-4 outline-[#ee609c]",
+                onclick: |_| state.write().settings.language = 1,
+                assets::gb_flag_icon(),
+            }
+
+        }
+    ))
+}
+
+
 fn edit_enable(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let enabled = use_state(&cx, || state.read().settings.enable_score_editing);
+
+    let score_edit_label = get_text(state.read().settings.language, "score_editing").unwrap();
 
     cx.render(rsx!(
         div {
             class: "grid grid-cols-6 gap-4 h-16 pt-4",
             span {
                 class: "col-span-5 justify-self-start font-semibold text-lg",
-                "Allow score editing"
+                "{score_edit_label}"
             }
             label {
                 class: "inline-flex relative cursor-pointer justify-self-end",
@@ -117,12 +169,14 @@ fn dealer_enable(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let enabled = use_state(&cx, || state.read().settings.enable_dealer_tracking);
 
+    let dealer_label = get_text(state.read().settings.language, "dealer_tracking").unwrap();
+
     cx.render(rsx!(
         div {
             class: "grid grid-cols-6 gap-4 h-16 pt-4",
             span {
                 class: "col-span-5 justify-self-start font-semibold text-lg",
-                "Dealer tracking"
+                "{dealer_label}"
             }
             label {
                 class: "inline-flex relative cursor-pointer justify-self-end",
@@ -153,6 +207,8 @@ fn max_score_setting(cx: Scope) -> Element {
     }
 
     let max_score = use_state(&cx, || state.read().settings.max_score);
+    let max_score_label = get_text(state.read().settings.language, "max_score").unwrap();
+
     let changed = use_state(&cx, || false);
 
     let is_button_hidden = if **changed {
@@ -187,7 +243,7 @@ fn max_score_setting(cx: Scope) -> Element {
             class: "grid grid-cols-2 gap-4 h-16",
             span {
                 class: "col-span-1 justify-self-end font-semibold text-lg",
-                "Maximum score:"
+                "{max_score_label}:"
             }
             form {
                 class: "flex flex-row w-full justify-evenly",
@@ -227,6 +283,8 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
     }
 
     let tile_bonus = use_state(&cx, || state.read().settings.tile_bonus_value);
+    let tile_bonus_label = get_text(state.read().settings.language, "tile_bonus_value").unwrap();
+
     let changed = use_state(&cx, || false);
 
     let is_button_hidden = if **changed {
@@ -261,7 +319,7 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
             class: "grid grid-cols-2 gap-4 h-16",
             span {
                 class: "col-span-1 justify-self-end font-semibold text-lg",
-                "Tile bonus value:"
+                "{tile_bonus_label}:"
             }
             form {
                 class: "flex flex-row w-full justify-evenly",
@@ -297,12 +355,14 @@ fn tile_bonus_enable(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let enabled = use_state(&cx, || state.read().settings.use_tile_bonus);
 
+    let tile_bonus_text = get_text(state.read().settings.language, "tile_bonus").unwrap();
+
     cx.render(rsx!(
         div {
             class: "grid grid-cols-2 gap-4 h-16 pt-4",
             span {
                 class: "col-span-1 justify-self-start font-semibold text-lg",
-                "Tile bonus"
+                "{tile_bonus_text}"
             }
             label {
                 class: "inline-flex relative cursor-pointer justify-self-end",
@@ -329,12 +389,14 @@ fn max_score_enable(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
     let enabled = use_state(&cx, || state.read().settings.end_game_at_score);
 
+    let max_score_label = get_text(state.read().settings.language, "end_at_max_score").unwrap();
+
     cx.render(rsx!(
         div {
             class: "grid grid-cols-6 gap-4 h-16 pt-4",
             span {
                 class: "col-span-5 justify-self-start font-semibold text-lg",
-                "End game at maximum score"
+                "{max_score_label}"
             }
             label {
                 class: "inline-flex relative cursor-pointer justify-self-end",

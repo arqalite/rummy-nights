@@ -10,6 +10,7 @@ mod templates;
 
 use crate::prelude::*;
 use dioxus::prelude::*;
+use phf::phf_map;
 
 pub fn render_screen(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
@@ -140,3 +141,66 @@ pub static CARET_COLORS: [&str; 7] = [
     "caret-violet-600",
     "caret-pink-500",
 ];
+
+pub static ENGLISH: phf::Map<&'static str, &'static str> = phf_map! {
+    "start_game" => "Start game",
+    "resume_game" => "Resume game",
+    "tile_bonus" => "Tile bonus",
+    "restart" => "Restart app",
+    "clear_data" => "Clear data",
+    "language" => "Language",
+    "score_editing" => "Allow score editing",
+    "dealer_tracking" => "Dealer tracking",
+    "max_score" => "Maximum score",
+    "end_at_max_score" => "End game at maximum score",
+    "tile_bonus_value" => "Tile bonus value",
+    "programmer" => "Programming",
+    "design" => "UI/UX Design",
+    "icons" => "Icons",
+    "tech" => "Tech",
+    "love" => "Made with ❤️ in Romania.",
+    "start_game_button" => "Start game",
+    "insert_player" => "Insert player name",
+    "add_players" => "Add up to 4 players",
+    "banner_win" => "won",
+    "banner_bonus" => "Who gets the bonus",
+    "banner_play" => "Good luck and have fun",
+    "winner_label" => "THE WINNER IS",
+    "no_templates_yet" => "No templates saved yet - add some",
+    "template_add" => "Add a template"
+};
+
+pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
+    "start_game" => "Joc nou",
+    "resume_game" => "Reluați jocul",
+    "tile_bonus" => "Atu",
+    "restart" => "Reporniți",
+    "clear_data" => "Ștergeți datele",
+    "language" => "Limbă",
+    "score_editing" => "Permiteți editarea scorurilor",
+    "dealer_tracking" => "Urmărire dealer (cine face cărțile/jocul)",
+    "max_score" => "Scorul maxim",
+    "end_at_max_score" => "Încheie jocul când se atinge scorul maxim",
+    "tile_bonus_value" => "Valoarea atuului",
+    "programmer" => "Programator",
+    "design" => "Design UI/UX",
+    "icons" => "Pictograme",
+    "tech" => "Tehnologii",
+    "love" => "Creat cu ❤️ în România.",
+    "start_game_button" => "Începe jocul",
+    "insert_player" => "Introdu numele jucătorului",
+    "add_players" => "Adaugă până la 4 jucători",
+    "banner_win" => "a câștigat",
+    "banner_bonus" => "Cine primește atuuul",
+    "banner_play" => "Cel mai bun să câștige",
+    "winner_label" => "CÂȘTIGĂTORUL ESTE",
+    "no_templates_yet" => "Niciun șablon salvat încă - adaugă câteva",
+    "template_add" => "Adaugă un șablon"
+};
+
+pub fn get_text(lang_code: i32, text_key: &str) -> Option<&str> {
+    match lang_code {
+        2 => ROMANIAN.get(text_key).cloned(),
+        _ => ENGLISH.get(text_key).cloned(),
+    }
+}

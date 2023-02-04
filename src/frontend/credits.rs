@@ -68,6 +68,9 @@ pub fn screen(cx: Scope) -> Element {
                         p {
                             "Charm Icons",
                         }
+                        p {
+                            "Lipis's flag-icons"
+                        }
                     }
                     p {
                         class: "w-full text-center col-span-1",
@@ -83,6 +86,9 @@ pub fn screen(cx: Scope) -> Element {
                         }
                         p {
                             "Tailwind CSS",
+                        }
+                        p {
+                            "Trunk"
                         }
                     }
                 }

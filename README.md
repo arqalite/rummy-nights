@@ -41,6 +41,8 @@ Favicon derived from [this icon, created by Freepik at Flaticon].
 
 All other icons are made by [Ikonate] and [Charm Icons].
 
+Language flags from [Lipis's flag-icons].
+
 ## License
 This project is licensed under the [MIT license](https://github.com/arqalite/rummy-nights/blob/main/LICENSE).
 
@@ -54,4 +56,5 @@ terms or conditions. We reserve the right to reject contributions that will not 
 [this icon, created by Freepik at Flaticon]: https://www.flaticon.com/free-icon/poker_8304852?term=gambling&page=1&position=20&page=1&position=20&related_id=8304852&origin=style
 [Ikonate]: https://ikonate.com/
 [Charm Icons]: https://github.com/jaynewey/charm-icons
+[Lipis's flag-icons]: https://github.com/lipis/flag-icons
 [rules here]: https://www.pagat.com/rummy/romtile.html

@@ -28,24 +28,24 @@ fn reset_restart_buttons(cx: Scope) -> Element {
             button {
                 class: "flex flex-row gap-2 h-10 items-center w-full place-self-center justify-center",
                 onclick: restart_app,
-                img {
+                div {
                     class: "h-8",
-                    src: "img/restart_app.svg",
+                    assets::replay_icon()
                 }
                 span {
-                    class: "font-semibold text-lg h-8",
+                    class: "font-semibold text-lg leading-8 h-8",
                     "Restart app"
                 }
             }
             button {
-                class: "flex flex-row gap-2 h-10 items-center w-full place-self-center justify-center",
+                class: "flex flex-row gap-2 h-8  items-center w-full place-self-center justify-center",
                 onclick: clear_data,
-                img {
+                div {
                     class: "h-8",
-                    src: "img/bin.svg",
+                    assets::bin()
                 }
                 span {
-                    class: "font-semibold text-lg h-8",
+                    class: "font-semibold text-lg leading-8 h-8",
                     "Clear data"
                 }
             }
@@ -106,7 +106,7 @@ fn edit_enable(cx: Scope) -> Element {
                     }
                 }
                 div {
-                    class: "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[url('/img/purple_gradient.svg')]"
+                    class: "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ee609c]"
                 }
             }
         }
@@ -138,7 +138,7 @@ fn dealer_enable(cx: Scope) -> Element {
                     }
                 }
                 div {
-                    class: "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[url('/img/purple_gradient.svg')]"
+                    class: "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ee609c]"
                 }
             }
         }
@@ -209,12 +209,9 @@ fn max_score_setting(cx: Scope) -> Element {
                 div {
                     class: "w-10 h-10 flex justify-center items-center",
                     button {
-                        class: "{is_button_hidden}",
+                        class: "h-6 {is_button_hidden}",
                         r#type: "submit",
-                        img {
-                            class: "h-6",
-                            src: "img/add.svg",
-                        }
+                        assets::add_button(),
                     }
                 }
             }
@@ -286,12 +283,9 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
                 div {
                     class: "w-10 h-10 flex justify-center items-center",
                     button {
-                        class: "{is_button_hidden}",
+                        class: "h-6 {is_button_hidden}",
                         r#type: "submit",
-                        img {
-                            class: "h-6",
-                            src: "img/add.svg",
-                        }
+                        assets::add_button(),
                     }
                 }
             }
@@ -324,7 +318,7 @@ fn tile_bonus_enable(cx: Scope) -> Element {
                     }
                 }
                 div {
-                    class: "w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[url('/img/purple_gradient.svg')]"
+                    class: "w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ee609c]"
                 }
             }
         }
@@ -356,7 +350,7 @@ fn max_score_enable(cx: Scope) -> Element {
                     }
                 }
                 div {
-                    class: "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[url('/img/purple_gradient.svg')]"
+                    class: "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ee609c]"
                 }
             }
         }
@@ -373,9 +367,9 @@ fn top_bar(cx: Scope) -> Element {
                 state.write().settings.save();
                 state.write().screen = Screen::Menu;
             },
-            img {
+            div {
                 class: "h-12 scale-x-[-1]",
-                src: "img/back.svg",
+                assets::back()
             }
         },
         button {
@@ -384,9 +378,9 @@ fn top_bar(cx: Scope) -> Element {
                 state.write().settings.save();
                 state.write().screen = Screen::Credits;
             },
-            img {
+            div {
                 class: "h-12",
-                src: "img/info.svg",
+                assets::info(),
             }
         }
     ))

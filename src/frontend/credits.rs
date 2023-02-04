@@ -91,9 +91,9 @@ pub fn screen(cx: Scope) -> Element {
                     class: "flex flex-row gap-2 h-10 items-center w-1/2 place-self-center justify-center",
                     href: "https://github.com/arqalite/rummy-nights",
                     target: "_blank",
-                    img {
+                    div {
                         class: "h-8",
-                        src: "img/github.svg",
+                        assets::github()
                     }
                 }
             }
@@ -111,9 +111,9 @@ fn top_bar(cx: Scope) -> Element {
             onclick: |_| {
                 state.write().screen = Screen::Settings;
             },
-            img {
+            div {
                 class: "h-12 scale-x-[-1]",
-                src: "img/back.svg",
+                assets::back()
             }
         },
     ))

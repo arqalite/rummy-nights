@@ -5,22 +5,23 @@ use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let intro_gif = assets::INTRO_GIF;
 
     log!("Rendering main menu.");
     cx.render(rsx!(
         button {
             class: "absolute right-4 top-4",
             onclick: |_| state.write().screen = Screen::Settings,
-            img {
+            div {
                 class: "h-12",
-                src: "img/settings.svg"
+                assets::settings_icon()
             }
         }
         div {
             class : "flex flex-col grow gap-16 justify-center",
             img {
                 class: "w-full max-w-lg",
-                src: "img/intro.gif",
+                src: "{intro_gif}",
             }
             div {
                 class: "flex flex-col gap-8",
@@ -48,10 +49,10 @@ fn start_game_button(cx: Scope) -> Element {
                 class: "w-max font-semibold text-center text-2xl col-span-2 col-start-2 justify-self-end",
                 "Start Game"
             }
-            img {
+            div {
                 class: "h-20 w-20 col-start-5 col-span-2 rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                src: "img/new_game.svg",
+                assets::new_game()
             }
         }
     ))
@@ -74,10 +75,10 @@ fn resume_game_button(cx: Scope) -> Element {
                 class: "w-max font-semibold text-center text-2xl col-span-3 col-start-1 justify-self-end",
                 "Resume Game"
             }
-            img {
+            div {
                 class: "h-20 w-20 col-start-5 col-span-2 rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                src: "img/resume_game.svg",
+                assets::resume_icon()
             }
         }
     ))

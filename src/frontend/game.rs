@@ -107,7 +107,7 @@ fn player_table(cx: Scope) -> Element {
                                                     input {
                                                         name: "score",
                                                         onsubmit: edit_score,
-                                                        class: "text-lg appearance-none font-light bg-transparent h-10 w-full text-center",
+                                                        class: "text-lg appearance-none leading-6 font-light bg-transparent h-10 w-full text-center",
                                                         style: "-moz-appearance:textfield",
                                                         value: "{score}",
                                                         outline: "none",
@@ -127,14 +127,13 @@ fn player_table(cx: Scope) -> Element {
                                             )),
                                             (!state.read().settings.enable_score_editing).then(|| rsx!(
                                                 p {
-                                                    class: "text-lg text-center self-center",
+                                                    class: "text-lg text-center self-center leading-6",
                                                     "{score}"
                                                 }
                                             ))
-                                            img {
-                                                class: "absolute right-0 self-center h-5 {bonus_visibility} rounded-full",
-                                                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                                                src: "img/bonus.svg",
+                                            div {
+                                                class: "absolute right-0 self-center h-6 {bonus_visibility} rounded-full",
+                                                assets::bonus()
                                             }
                                         }
                                     )
@@ -257,10 +256,9 @@ fn game_menu(cx: Scope) -> Element {
                 class: "flex flex-row gap-2 h-14 w-max p-2 border border-slate-100 rounded-full {grayscale}",
                 onclick: tile_bonus,
                 box_shadow: "{shadow}",
-                img {
+                div {
                     class: "h-10 w-10 self-center rounded-full",
-                    background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    src: "img/bonus.svg"
+                    assets::bonus(),
                 }
                 span {
                     class: "font-semibold text-lg self-center",
@@ -288,27 +286,27 @@ fn nav_bar(cx: Scope) -> Element {
                 button {
                     class: "col-start-1 justify-self-start",
                     onclick: |_| state.write().screen = Screen::PlayerSelect,
-                    img {
+                    div {
                         class: "h-10 scale-x-[-1]",
-                        src: "img/back.svg",
+                        assets::back()
                     }
                 }
             )),
             button {
                 class: "{button_position}",
                 onclick: |_| state.write().screen = Screen::Menu,
-                img {
+                div {
                     class: "h-10",
-                    src: "img/home.svg",
+                    assets::home(),
                 }
             }
             (state.read().game.status == GameStatus::Ongoing).not().then(|| rsx!(
                 button {
                     class: "col-start-3 justify-self-end",
                     onclick: |_| state.write().screen = Screen::EndGame,
-                    img {
+                    div {
                         class: "h-10",
-                        src: "img/back.svg",
+                        assets::back()
                     }
                 }
             ))
@@ -366,8 +364,8 @@ fn dealer_pin(cx: Scope, player_id: usize) -> Element {
     }
 
     log!("Render dealer pin.");
-    cx.render(rsx!(img {
+    cx.render(rsx!(div {
         class: "h-7 absolute -top-4 -right-4 scale-x-[-1]",
-        src: "img/pushpin.svg"
+        assets::pushpin()
     },))
 }

@@ -33,37 +33,18 @@ fn template_list(cx: Scope) -> Element {
                         }
                         button {
                             onclick: move |_| state.write().load_template(id),
-                            img {
+                            div {
                                 class: "h-10",
-                                src: "img/video.svg",
+                                assets::play_icon()
                             }
                         }
                         button {
                             onclick: move |_| state.write().delete_template(id),
-                            img {
+                            div {
                                 class: "h-10",
-                                src: "img/remove.svg",
+                                assets::remove()
                             }
                         }
-                        // div {
-                        //     class: "flex flex-col justify-center self-center h-16 w-8",
-                        //     button {
-                        //         class: "place-self-center",
-                        //         //onclick: move |_| state.write().game.move_up(id),
-                        //         img {
-                        //             class: "h-6",
-                        //             src: "img/up.svg"
-                        //         },
-                        //     }
-                        //     button {
-                        //         class: "place-self-center",
-                        //         //onclick: move |_| state.write().game.move_down(id),
-                        //         img {
-                        //             class: "h-6	rotate-180",
-                        //             src: "img/up.svg"
-                        //         },
-                        //     }
-                        // }
                     },
                 )
             })
@@ -78,9 +59,9 @@ fn template_list(cx: Scope) -> Element {
                         class: "font-semibold text-lg self-center",
                         "Add a template"
                     }
-                    img {
+                    div {
                         class: "h-10 w-10 self-center",
-                        src: "img/save.svg"
+                        assets::save_icon()
                     }
                 }
             ))
@@ -101,9 +82,9 @@ fn top_bar(cx: Scope) -> Element {
                 onclick: |_| {
                     state.write().screen = Screen::PlayerSelect;
                 },
-                img {
+                div {
                     class: "h-10 scale-x-[-1]",
-                    src: "img/back.svg",
+                    assets::back()
                 }
             }
         }

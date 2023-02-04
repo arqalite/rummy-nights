@@ -17,10 +17,10 @@ pub fn screen(cx: Scope) -> Element {
         nav_bar(),
         div {
             class: "flex flex-col absolute w-screen px-8 sm:max-w-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 gap-6 justify-evenly",
-            img {
-                src: "img/trophy.svg",
+            div {
                 class: "h-24 w-24 mx-auto rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+                assets::trophy_icon()
             }
             p {
                 class: "text-center font-bold text-4xl",
@@ -95,25 +95,25 @@ fn nav_bar(cx: Scope) -> Element {
                 onclick: |_| {
                     state.write().screen = Screen::Game;
                 },
-                img {
+                div {
                     class: "h-10 scale-x-[-1]",
-                    src: "img/back.svg",
+                    assets::back()
                 }
             }
             button {
                 class: "col-start-2 justify-self-center",
                 onclick: delete_and_exit_game,
-                img {
+                div {
                     class: "h-10",
-                    src: "img/home.svg",
+                    assets::home(),
                 }
             }
             button {
                 class: "col-start-3 justify-self-end",
                 onclick: restart_game,
-                img {
+                div {
                     class: "h-10",
-                    src: "img/replay.svg",
+                    assets::replay_icon()
                 }
             }
         }

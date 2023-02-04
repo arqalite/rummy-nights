@@ -53,27 +53,27 @@ fn player_list(cx: Scope) -> Element {
                         }
                         button {
                             onclick: move |_| state.write().game.remove_player(id),
-                            img {
+                            div {
                                 class: "h-10",
-                                src: "img/remove.svg",
+                                assets::remove()
                             }
                         }
                         div {
-                            class: "flex flex-col justify-center self-center h-16 w-8",
+                            class: "flex flex-col justify-center self-center h-12 w-8",
                             button {
                                 class: "place-self-center",
                                 onclick: move |_| state.write().game.move_up(id),
-                                img {
-                                    class: "h-6",
-                                    src: "img/up.svg"
+                                div {
+                                    class: "h-8",
+                                    assets::up_icon()
                                 },
                             }
                             button {
                                 class: "place-self-center",
                                 onclick: move |_| state.write().game.move_down(id),
-                                img {
-                                    class: "h-6	rotate-180",
-                                    src: "img/up.svg"
+                                div {
+                                    class: "h-8 rotate-180",
+                                    assets::up_icon()
                                 },
                             }
                         }
@@ -133,7 +133,7 @@ fn player_input(cx: Scope) -> Element {
     div {
         form {
             id: "name_input",
-            class: "flex flex-row w-full justify-evenly h-16 rounded-full bg-slate-200",
+            class: "flex flex-row w-full justify-evenly items-center h-16 rounded-full bg-slate-200",
             prevent_default: "onsubmit",
             onsubmit: onsubmit,
             input {
@@ -143,10 +143,8 @@ fn player_input(cx: Scope) -> Element {
             }
             button {
                 r#type: "submit",
-                img {
-                    class: "h-10",
-                    src: "img/add.svg",
-                }
+                class: "h-10",
+                assets::add_button(),
             }
             button {
                 class: "flex flex-col justify-center h-16 w-8",
@@ -187,13 +185,14 @@ fn start_game_button(cx: Scope) -> Element {
             class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-8 bottom-[30vw]",
             onclick: |_| state.write().start_game(),
             span {
-                class: "flex self-center text-xl font-bold",
+                class: "text-xl font-bold leading-[3rem]",
                 "Start game"
             }
-            img {
-                class: "h-12 self-center",
-                src: "img/arrow.svg"
+            div {
+                class: "h-12",
+                assets::arrow_right()
             }
+            
         }
     ))
 }
@@ -213,17 +212,17 @@ fn top_bar(cx: Scope) -> Element {
                     state.write().checked_storage = false;
                     SessionStorage::delete("session");
                 },
-                img {
+                div {
                     class: "h-10 scale-x-[-1]",
-                    src: "img/back.svg",
+                    assets::back()
                 }
             }
             button {
                 class: "col-start-3 justify-self-end",
                 onclick: |_| state.write().screen = Screen::Templates,
-                img {
+                div {
                     class: "h-10",
-                    src: "img/save.svg",
+                    assets::save_icon()
                 }
             }
         }

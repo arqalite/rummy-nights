@@ -226,14 +226,14 @@ fn top_bar(cx: Scope) -> Element {
                     assets::back()
                 }
             }
-            // button {
-            //     class: "col-start-3 justify-self-end",
-            //     onclick: |_| state.write().screen = Screen::Templates,
-            //     div {
-            //         class: "h-10",
-            //         assets::save_icon()
-            //     }
-            // }
+            button {
+                class: "col-start-3 justify-self-end",
+                onclick: |_| state.write().screen = Screen::Templates,
+                div {
+                    class: "h-10",
+                    assets::save_icon()
+                }
+            }
         }
     ))
 }

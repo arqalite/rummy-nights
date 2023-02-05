@@ -167,7 +167,10 @@ pub static ENGLISH: phf::Map<&'static str, &'static str> = phf_map! {
     "banner_play" => "Good luck and have fun",
     "winner_label" => "THE WINNER IS",
     "no_templates_yet" => "No templates saved yet - add some",
-    "template_add" => "Add a template"
+    "template_add" => "Save current players",
+    "name_template" => "Name this template",
+    "template_not_enough" => "Add some players first!",
+    "template_too_many" => "Only 6 templates allowed!"
 };
 
 pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
@@ -195,7 +198,11 @@ pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
     "banner_play" => "Cel mai bun să câștige",
     "winner_label" => "CÂȘTIGĂTORUL ESTE",
     "no_templates_yet" => "Niciun șablon salvat încă - adaugă câteva",
-    "template_add" => "Adaugă un șablon"
+    "template_add" => "Salvați jucătorii actuali",
+    "name_template" => "Numește acest șablon",
+    "template_not_enough" => "Adaugă mai întâi niște jucători!",
+    "template_too_many" => "Poți avea doar 6 șabloane!"
+
 };
 
 pub fn get_text(lang_code: i32, text_key: &str) -> Option<&str> {

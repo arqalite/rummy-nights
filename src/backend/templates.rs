@@ -6,4 +6,5 @@ pub struct Template {
     pub id: usize,
     pub name: String,
     pub players: Vec<Player>,
+    pub color: usize,
 }

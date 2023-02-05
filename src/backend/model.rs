@@ -135,11 +135,21 @@ impl Model {
             id: self.templates.len() + 1,
             name: template_name,
             players: self.game.players.clone(),
+            color: 1
         });
 
         self.save_templates();
 
         log!(format!("Saved templates: {:#?}", self.templates));
+    }
+
+    pub fn edit_template(&mut self, id: usize, name: String, color_index: usize) {
+        for template in &mut self.templates {
+            if template.id == id {
+                template.name = name.clone();
+                template.color = color_index;
+            }
+        }
     }
 
     pub fn load_template(&mut self, id: usize) {

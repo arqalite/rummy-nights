@@ -4,9 +4,8 @@ Rummy Nights is a rummy score counter PWA (progressive web app) written with [Ru
 It aims to be a helpful tool for players of Romanian Tile Rummy ([rules here]), helping them keep track of scores, bonuses and dealers, all in a lightweight package that runs on both desktop and mobile.
 
 ## Project status
-Currently the app is undergoing heavy development. Expect things to change wildly and quickly.
-
-There are rough edges, bugs and unfinished features, but versioned releases should be usable and relatively stable.
+The project is still in development - but as of v0.3, the core functionality is complete.
+The app is fairly stable, but bugs can still crop up.
 
 ## Try the app
 The latest stable release is automatically built and uploaded to Vercel at https://rummy-nights.vercel.app/.

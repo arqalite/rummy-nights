@@ -34,6 +34,7 @@ fn template_list(cx: Scope) -> Element {
                 let color = template.color;
                 let background_color = BG_COLORS[color];
                 let show_template_edit = use_state(&cx, || false);
+                let buffer = use_state(&cx, || template.name.clone());
 
                 let onsubmit = move |evt: FormEvent| {
                     let name = evt.values.get("template-name").unwrap().to_string();
@@ -44,6 +45,10 @@ fn template_list(cx: Scope) -> Element {
                             show_template_edit.set(!show_template_edit);
                         }
                     };
+                };
+
+                let oninput = move |evt: FormEvent| {
+                    buffer.set(evt.value.clone())
                 };
 
                 rsx!(
@@ -84,7 +89,8 @@ fn template_list(cx: Scope) -> Element {
                                 name: "template-name",
                                 class: "rounded-full w-3/5 h-8 ring-1 ring-grey text-center self-center",
                                 placeholder: "{name_this_template}",
-                                value: "{template.name}"
+                                oninput: oninput,
+                                value: "{buffer}"
                             }
                             input {
                                 name: "template_id",

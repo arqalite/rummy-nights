@@ -13,6 +13,8 @@ The latest stable release is automatically built and uploaded to Vercel at https
 
 The latest commits are built and uploaded at https://rummy-nights-arqalite.vercel.app/
 
+The app is available in English and Romanian (the language can be changed in the settings).
+
 ## Building from source
 In order to build the app, you need:
 - [Rust](https://www.rust-lang.org/)

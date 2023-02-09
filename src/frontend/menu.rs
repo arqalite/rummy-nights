@@ -5,7 +5,7 @@ use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
-    
+
     log!("Rendering main menu.");
     cx.render(rsx!(
         button {

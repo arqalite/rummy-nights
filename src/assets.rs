@@ -515,7 +515,7 @@ pub fn trophy_icon(cx: Scope) -> Element {
 
 pub fn up_icon(cx: Scope) -> Element {
     cx.render(rsx!(
-        svg { 
+        svg {
             view_box: "0 0 16 12",
             fill: "none",
             xmlns: "http://www.w3.org/2000/svg",
@@ -532,9 +532,6 @@ pub fn up_icon(cx: Scope) -> Element {
         }
     ))
 }
-
-
-
 
 pub fn play_icon(cx: Scope) -> Element {
     cx.render(rsx!(

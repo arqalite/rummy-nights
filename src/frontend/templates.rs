@@ -1,6 +1,6 @@
 use crate::prelude::*;
-use dioxus::prelude::*;
 use dioxus::events::FormEvent;
+use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(top_bar(), template_list(),))
@@ -11,7 +11,8 @@ fn template_list(cx: Scope) -> Element {
     let no_templates_yet = get_text(state.read().settings.language, "no_templates_yet").unwrap();
     let template_add = get_text(state.read().settings.language, "template_add").unwrap();
     let name_this_template = get_text(state.read().settings.language, "name_template").unwrap();
-    let template_not_enough = get_text(state.read().settings.language, "template_not_enough").unwrap();
+    let template_not_enough =
+        get_text(state.read().settings.language, "template_not_enough").unwrap();
     let template_too_many = get_text(state.read().settings.language, "template_too_many").unwrap();
 
     let hide_color_bar = use_state(&cx, || true);
@@ -28,7 +29,7 @@ fn template_list(cx: Scope) -> Element {
                     class: "font-semibold text-lg border-b-2 border-indigo-500 w-max mx-auto mb-8",
                     "{no_templates_yet}!"
                 }
-            )), 
+            )),
             state.read().templates.iter().map(|template| {
                 let id = template.id;
                 let color = template.color;
@@ -38,7 +39,6 @@ fn template_list(cx: Scope) -> Element {
 
                 let onsubmit = move |evt: FormEvent| {
                     let name = evt.values.get("template-name").unwrap().to_string();
-            
                     if !name.is_empty() {
                         if let Ok(template_id) = evt.values.get("template_id").unwrap().parse::<usize>() {
                             state.write().edit_template(template_id, name, **color_index);
@@ -57,7 +57,7 @@ fn template_list(cx: Scope) -> Element {
                             class: "flex justify-evenly h-16 rounded-full bg-slate-200",
                             button {
                                 class: "flex justify-center h-8 w-3/5 self-center rounded-full {background_color}",
-                                onclick: move |_| show_template_edit.set(!show_template_edit), 
+                                onclick: move |_| show_template_edit.set(!show_template_edit),
                                 p {
                                     class: "flex self-center text-white font-semibold",
                                     "{template.name}"
@@ -146,7 +146,7 @@ fn template_list(cx: Scope) -> Element {
                             }
                         }
                     )),
-                    (!(state.read().game.players.len() >= 2)).then(|| rsx!(
+                    (state.read().game.players.len() < 2).then(|| rsx!(
                         div {
                             class: "flex flex-row gap-2 h-14 w-max p-2 rounded-full justify-end",
                             span {

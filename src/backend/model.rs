@@ -1,4 +1,4 @@
-use dioxus::fermi::{AtomRef};
+use dioxus::fermi::AtomRef;
 use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};
@@ -36,7 +36,7 @@ impl Model {
 
         let settings = self.settings.clone();
         let templates = self.templates.clone();
-        log!(format!("Backed up settings are {:?}", settings));
+        log!(format!("Backed up settings are {settings:?}"));
 
         *self = Model::new();
         self.settings = settings;
@@ -135,7 +135,7 @@ impl Model {
             id: self.templates.len() + 1,
             name: template_name,
             players: self.game.players.clone(),
-            color: 1
+            color: 1,
         });
 
         self.save_templates();
@@ -176,7 +176,7 @@ impl Model {
         match LocalStorage::get::<serde_json::Value>("templates") {
             Ok(json_state) => match serde_json::from_value::<Vec<Template>>(json_state) {
                 Ok(saved_templates) => {
-                    log!(format!("Loaded: {:#?}", saved_templates));
+                    log!(format!("Loaded: {saved_templates:#?}"));
                     self.templates = saved_templates;
                     log!(format!("Live is: {:#?}", self.templates));
                 }

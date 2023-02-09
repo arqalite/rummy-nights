@@ -191,8 +191,8 @@ fn score_input(cx: Scope, id: usize) -> Element {
             Ordering::Equal => 1,
             Ordering::Less => id + 1,
         };
-        use_eval(&cx)(format!("document.getElementById('{}').value = '';", id));
-        use_eval(&cx)(format!("document.getElementById('{}').focus();", focus_id));
+        use_eval(&cx)(format!("document.getElementById('{id}').value = '';"));
+        use_eval(&cx)(format!("document.getElementById('{focus_id}').focus();"));
     };
 
     log!("Rendering score input.");
@@ -220,7 +220,6 @@ fn game_menu(cx: Scope) -> Element {
     };
 
     let tile_bonus_text = get_text(state.read().settings.language, "tile_bonus").unwrap();
-
 
     log!("Rendering tile bonus menu.");
 
@@ -324,7 +323,6 @@ fn banner(cx: Scope) -> Element {
     let banner_bonus = get_text(state.read().settings.language, "banner_bonus").unwrap();
     let banner_play = get_text(state.read().settings.language, "banner_play").unwrap();
 
-
     let (banner_text, banner_color) = match &state.read().game.status {
         GameStatus::Finished => (
             format!("{} {}!", state.read().game.get_winner(), banner_win),
@@ -332,15 +330,9 @@ fn banner(cx: Scope) -> Element {
         ),
         _ => {
             if state.read().game.tile_bonus_toggle {
-                (
-                    String::from(format!("{}?", banner_bonus)),
-                    String::from("border-cyan-500"),
-                )
+                (format!("{banner_bonus}?"), String::from("border-cyan-500"))
             } else {
-                (
-                    String::from(format!("{}!", banner_play)),
-                    String::from("border-green-500"),
-                )
+                (format!("{banner_play}!"), String::from("border-green-500"))
             }
         }
     };

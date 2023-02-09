@@ -1,14 +1,15 @@
-<img src="https://raw.githubusercontent.com/arqalite/rummy-nights/main/assets/img/logo_192.png" />
+<p align=center><img src="https://raw.githubusercontent.com/arqalite/rummy-nights/main/assets/img/logo_192.png"/></p>
 
-# Rummy Nights
+# <p align=center>Rummy Nights</p> 
+
 Rummy Nights is a rummy score counter PWA (progressive web app) written with [Rust], [Dioxus] and [Tailwind CSS].
 
-It aims to be a helpful tool for players of Romanian Tile Rummy ([rules here]), helping them keep track of scores, bonuses and dealers, all in a lightweight package that runs on both desktop and mobile.
+It aims to be a helpful tool for players of Romanian Tile Rummy ([rules here]), helping them keep track of scores, bonuses and dealers.
 
 ## Project status
 The project is still in development - but as of v0.3, the core functionality is complete.
 
-The app is fairly stable, but bugs can still crop up.
+The app is fairly stable, but bugs can still crop up and features might be unpolished.
 
 The interface is mobile-first, with the desktop experience being left to the side at the moment. 
 It works fine, but UI elements might look wonky on HIDPI displays.
@@ -17,6 +18,8 @@ It works fine, but UI elements might look wonky on HIDPI displays.
 The latest stable release is automatically built and uploaded to Vercel at https://rummy-nights.vercel.app/.
 
 The latest commits are built and uploaded at https://rummy-nights-arqalite.vercel.app/
+
+The Android version is currently in review with Google Play - coming soon!
 
 The app is available in English and Romanian (the language can be changed in the settings).
 
@@ -30,14 +33,14 @@ In order to build the app, you need:
 Once set-up, run `trunk serve --open` and it should be good to go!
 
 ## Contributing
-Pull requests are accepted and encouraged.
-Before contributing, please read [CONTRIBUTING.md](./CONTRIBUTING.md) for more details and instructions.
+Pull requests are accepted and encouraged - just go for it!
 
-Our contributors:
+### Our contributors (so far!):
+<br>
 
-<a href="https://github.com/arqalite/rummy-nights/graphs/contributors">
+<p align=center><a href="https://github.com/arqalite/rummy-nights/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=arqalite/rummy-nights" />
-</a>
+</a></p>
 
 <sub>Made with [contrib.rocks](https://contrib.rocks)</sub>
 

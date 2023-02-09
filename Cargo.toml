@@ -1,6 +1,6 @@
 [package]
 name = "rummy-nights"
-version = "0.4.0"
+version = "1.0.0"
 description = "A rummy score counter web app written with Rust/Dioxus and Tailwind CSS."
 repository = "https://github.com/arqalite/rummy-nights"
 readme = "README.md"
@@ -8,7 +8,7 @@ license = "MIT"
 edition = "2021"
 categories = ["games"]
 keywords = ["rummy", "game", "counter", "score"]
-publish = false
+publish = true
 build = "src/build.rs"
 
 [dependencies]

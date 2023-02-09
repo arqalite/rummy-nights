@@ -11,6 +11,13 @@ keywords = ["rummy", "game", "counter", "score"]
 publish = true
 build = "src/build.rs"
 
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
+
 [dependencies]
 dioxus = {version = "0.2", features = ["web", "fermi"]}
 gloo-storage = "0.2"

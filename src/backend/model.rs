@@ -150,6 +150,7 @@ impl Model {
                 template.color = color_index;
             }
         }
+        self.save_templates();
     }
 
     pub fn load_template(&mut self, id: usize) {

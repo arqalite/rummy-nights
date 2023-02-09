@@ -12,7 +12,6 @@ publish = true
 build = "src/build.rs"
 
 [profile.release]
-strip = true
 opt-level = "z"
 lto = true
 codegen-units = 1

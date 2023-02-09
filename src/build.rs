@@ -15,5 +15,5 @@ fn main() {
         }
     }
 
-    println!("cargo:rustc-env=BUILD_VERSION={}", version);
+    println!("cargo:rustc-env=BUILD_VERSION={version}");
 }

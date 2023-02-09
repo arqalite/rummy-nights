@@ -25,7 +25,7 @@ impl Settings {
             enable_dealer_tracking: true,
             enable_score_editing: true,
             checked_storage: false,
-            language: 1
+            language: 1,
         }
     }
 
@@ -35,7 +35,7 @@ impl Settings {
             Ok(json_settings) => match serde_json::from_value::<Self>(json_settings) {
                 Ok(new_settings) => {
                     *self = new_settings;
-                    log!(format!("Loaded settings: {:?}", self));
+                    log!(format!("Loaded settings: {self:?}"));
                 }
                 Err(_) => log!("Could not parse settings from local storage."),
             },

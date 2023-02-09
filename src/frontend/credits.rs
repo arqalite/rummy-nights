@@ -11,7 +11,6 @@ pub fn screen(cx: Scope) -> Element {
     let tech = get_text(state.read().settings.language, "tech").unwrap();
     let love = get_text(state.read().settings.language, "love").unwrap();
 
-
     log!("Rendering credits.");
     cx.render(rsx!(
         top_bar(),

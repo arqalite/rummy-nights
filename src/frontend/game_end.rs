@@ -14,7 +14,6 @@ pub fn screen(cx: Scope) -> Element {
 
     let winner_label = get_text(state.read().settings.language, "winner_label").unwrap();
 
-
     log!("Rendering end screen.");
     cx.render(rsx!(
         nav_bar(),

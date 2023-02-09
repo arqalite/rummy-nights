@@ -13,7 +13,6 @@ pub fn screen(cx: Scope) -> Element {
 
     let add_players = get_text(state.read().settings.language, "add_players").unwrap();
 
-
     cx.render(rsx!(
         top_bar()
         span {
@@ -119,7 +118,6 @@ fn player_input(cx: Scope) -> Element {
 
     let insert_player = get_text(state.read().settings.language, "insert_player").unwrap();
 
-
     let hidden = if **hide_color_bar { "hidden" } else { "" };
 
     let onsubmit = move |evt: FormEvent| {
@@ -201,7 +199,6 @@ fn start_game_button(cx: Scope) -> Element {
                 class: "h-12",
                 assets::arrow_right()
             }
-            
         }
     ))
 }

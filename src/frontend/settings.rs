@@ -102,7 +102,7 @@ fn language_select(cx: Scope) -> Element {
     match state.read().settings.language {
         2 => {
             ro_enabled = "outline";
-        },
+        }
         _ => {
             en_enabled = "outline";
         }
@@ -129,7 +129,6 @@ fn language_select(cx: Scope) -> Element {
         }
     ))
 }
-
 
 fn edit_enable(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
@@ -225,15 +224,14 @@ fn max_score_setting(cx: Scope) -> Element {
             .parse::<i32>()
             .unwrap_or(1000);
 
-        log!(format!("Input value is {}", max_score));
+        log!(format!("Input value is {max_score}"));
 
         if max_score > 0 {
-            log!(format!("setting score to {}", max_score));
+            log!(format!("setting score to {max_score}"));
             state.write().settings.set_max_score(max_score);
             changed.set(false);
             use_eval(&cx)(format!(
-                "document.getElementById('max_score').value = '{}';",
-                max_score
+                "document.getElementById('max_score').value = '{max_score}';"
             ));
         };
     };
@@ -301,15 +299,14 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
             .parse::<i32>()
             .unwrap_or(50);
 
-        log!(format!("Input tile bonus value is {}", tile_bonus));
+        log!(format!("Input tile bonus value is {tile_bonus}"));
 
         if tile_bonus > 0 {
-            log!(format!("setting tile bonus to {}", tile_bonus));
+            log!(format!("setting tile bonus to {tile_bonus}"));
             state.write().settings.set_tile_bonus(tile_bonus);
             changed.set(false);
             use_eval(&cx)(format!(
-                "document.getElementById('max_score').value = '{}';",
-                tile_bonus
+                "document.getElementById('max_score').value = '{tile_bonus}';"
             ));
         };
     };

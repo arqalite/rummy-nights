@@ -37,7 +37,7 @@ Pull requests are accepted and encouraged - just go for it!
 <sub>Made with [contrib.rocks](https://contrib.rocks)</sub>
 
 ## Credits
-Made with [Rust], [Dioxus] and [Tailwind CSS].
+Made with [Rust], [Dioxus], [Trunk](https://trunkrs.dev/) and [Tailwind CSS].
 
 Favicon derived from [this icon, created by Freepik at Flaticon].
 

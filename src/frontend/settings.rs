@@ -8,10 +8,6 @@ use gloo_storage::{LocalStorage, SessionStorage, Storage};
 pub fn screen(cx: Scope) -> Element {
     log!("Rendering settings menu.");
 
-    cx.render(rsx!(top_bar(), settings_menu(), reset_restart_buttons()))
-}
-
-fn reset_restart_buttons(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
 
     let restart_app = move |_| {
@@ -27,31 +23,61 @@ fn reset_restart_buttons(cx: Scope) -> Element {
     let restart_label = get_text(state.read().settings.language, "restart").unwrap();
     let clear_data_label = get_text(state.read().settings.language, "clear_data").unwrap();
 
+
     cx.render(rsx!(
-        div {
-            class: "flex flex-col absolute bottom-4 w-2/3 gap-4 h-max justify-center place-content-center place-self-center",
-            button {
-                class: "flex flex-row gap-2 h-10 items-center w-full place-self-center justify-center",
-                onclick: restart_app,
-                div {
-                    class: "h-8",
-                    assets::replay_icon()
-                }
-                span {
-                    class: "font-semibold text-lg leading-8 h-8",
-                    "{restart_label}"
-                }
+        section {
+            class: "flex flex-col grow justify-between",
+            div {
+                class: "flex flex-row my-4 px-4 justify-between",
+                button {
+                    class: "",
+                    onclick: |_| {
+                        state.write().settings.save();
+                        state.write().screen = Screen::Menu;
+                    },
+                    div {
+                        class: "h-12 scale-x-[-1]",
+                        assets::back()
+                    }
+                },
+                button {
+                    class: "",
+                    onclick: |_| {
+                        state.write().settings.save();
+                        state.write().screen = Screen::Credits;
+                    },
+                    div {
+                        class: "h-12",
+                        assets::info(),
+                    }
+                },
             }
-            button {
-                class: "flex flex-row gap-2 h-8  items-center w-full place-self-center justify-center",
-                onclick: clear_data,
-                div {
-                    class: "h-8",
-                    assets::bin()
+            settings_menu(),
+            div {
+                class: "flex flex-col gap-2 mb-4",
+                button {
+                    class: "flex flex-row gap-2 items-center w-full place-self-center justify-center",
+                    onclick: restart_app,
+                    div {
+                        class: "h-8",
+                        assets::replay_icon()
+                    }
+                    span {
+                        class: "font-semibold text-lg leading-8 h-8",
+                        "{restart_label}"
+                    }
                 }
-                span {
-                    class: "font-semibold text-lg leading-8 h-8",
-                    "{clear_data_label}"
+                button {
+                    class: "flex flex-row gap-2 items-center w-full place-self-center justify-center",
+                    onclick: clear_data,
+                    div {
+                        class: "h-8",
+                        assets::bin()
+                    }
+                    span {
+                        class: "font-semibold text-lg leading-8 h-8",
+                        "{clear_data_label}"
+                    }
                 }
             }
         }
@@ -61,32 +87,29 @@ fn reset_restart_buttons(cx: Scope) -> Element {
 fn settings_menu(cx: Scope) -> Element {
     cx.render(rsx!(
         div {
-            class: "flex flex-col grow justify-evenly",
+            class: "flex flex-col divide-y divide-slate-200 justify-evenly px-8",
             div {
-                class: "flex flex-col divide-y divide-slate-200 justify-evenly border-y border-slate-200",
-                div {
-                    class: "flex flex-col gap-4",
-                    edit_enable(),
-                },
-                div {
-                    class: "flex flex-col gap-4",
-                    dealer_enable(),
-                },
-                div {
-                    class: "flex flex-col gap-4",
-                    tile_bonus_enable(),
-                    tile_bonus_value_setting(),
-                },
-                div {
-                    class: "flex flex-col gap-4",
-                    max_score_enable(),
-                    max_score_setting(),
-                },
-                div {
-                    class: "flex flex-col gap-4",
-                    language_select(),
-                },
-            }
+                class: "flex flex-col gap-4",
+                edit_enable(),
+            },
+            div {
+                class: "flex flex-col gap-4",
+                dealer_enable(),
+            },
+            div {
+                class: "flex flex-col gap-4",
+                tile_bonus_enable(),
+                tile_bonus_value_setting(),
+            },
+            div {
+                class: "flex flex-col gap-4",
+                max_score_enable(),
+                max_score_setting(),
+            },
+            div {
+                class: "flex flex-col gap-4",
+                language_select(),
+            },
         }
     ))
 }
@@ -416,31 +439,3 @@ fn max_score_enable(cx: Scope) -> Element {
     ))
 }
 
-fn top_bar(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
-
-    cx.render(rsx!(
-        button {
-            class: "absolute top-4 left-4",
-            onclick: |_| {
-                state.write().settings.save();
-                state.write().screen = Screen::Menu;
-            },
-            div {
-                class: "h-12 scale-x-[-1]",
-                assets::back()
-            }
-        },
-        button {
-            class: "absolute top-4 right-4",
-            onclick: |_| {
-                state.write().settings.save();
-                state.write().screen = Screen::Credits;
-            },
-            div {
-                class: "h-12",
-                assets::info(),
-            }
-        }
-    ))
-}

@@ -23,7 +23,7 @@ fn template_list(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "flex flex-col grow justify-center gap-4",
+            class: "flex flex-col grow justify-center gap-4 px-8",
             (state.read().templates.is_empty()).then(|| rsx!(
                 span {
                     class: "font-semibold text-lg border-b-2 border-indigo-500 w-max mx-auto mb-8",
@@ -178,7 +178,7 @@ fn top_bar(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "absolute top-0 h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg",
+            class: "absolute top-0 h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg px-8",
             button {
                 class: "col-start-1 justify-self-start",
                 onclick: |_| {

@@ -17,7 +17,7 @@ pub fn screen(cx: Scope) -> Element {
             }
         }
         div {
-            class : "flex flex-col grow gap-16 justify-center",
+            class : "flex flex-col grow gap-16 justify-center px-8",
             img {
                 class: "w-full max-w-lg",
                 src: "img/intro_logo.gif",

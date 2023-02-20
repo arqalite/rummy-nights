@@ -3,7 +3,7 @@ target = "index.html"
 dist = "dist"
 filehash = false
 public_url = "/"
-release = true
+release = false
 
 [serve]
 # The address to serve on.

@@ -38,7 +38,7 @@ fn player_table(cx: Scope) -> Element {
     cx.render(rsx!(
         div {
             //Main table
-            class: "z-10 flex justify-evenly gap-x-4 h-[65%]",
+            class: "z-10 flex justify-evenly gap-x-4 h-[65%] px-8",
             state.read().game.players.iter().map(|player| {
                 log!("Rendering player column.");
                 let player_id = player.id;
@@ -283,7 +283,7 @@ fn nav_bar(cx: Scope) -> Element {
     log!("Render nav bar.");
     cx.render(rsx!(
         div {
-            class: "z-10 h-16 grid grid-cols-3 sm:max-w-lg",
+            class: "z-10 h-16 grid grid-cols-3 sm:max-w-lg px-8",
             (state.read().game.status == GameStatus::Ongoing).then(|| rsx!(
                 button {
                     class: "col-start-1 justify-self-start",

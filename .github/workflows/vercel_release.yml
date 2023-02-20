@@ -50,7 +50,7 @@ jobs:
         run: trunk build --release
 
       - name: Deploy to Vercel (prod)
-        uses: amondnet/vercel-action@v20
+        uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
           vercel-args: '--prod'

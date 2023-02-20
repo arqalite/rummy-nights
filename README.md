@@ -11,7 +11,7 @@ The latest stable release is automatically built and uploaded to Vercel at https
 
 The latest commits are built and uploaded at https://rummy-nights-arqalite.vercel.app/
 
-The Android version is currently in review with Google Play - coming soon!
+The Android version is available [on Google Play](https://play.google.com/store/apps/details?id=com.arqalite.rummynights).
 
 The app is available in English and Romanian (the language can be changed in the settings).
 

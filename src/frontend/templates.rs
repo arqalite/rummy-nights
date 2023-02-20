@@ -25,8 +25,8 @@ fn template_list(cx: Scope) -> Element {
         div {
             class: "flex flex-col grow justify-center gap-4 px-8",
             (state.read().templates.is_empty()).then(|| rsx!(
-                span {
-                    class: "font-semibold text-lg border-b-2 border-indigo-500 w-max mx-auto mb-8",
+                p {
+                    class: "font-semibold text-lg border-b-2 border-indigo-500 mx-auto",
                     "{no_templates_yet}!"
                 }
             )),

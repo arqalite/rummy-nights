@@ -171,10 +171,10 @@ pub fn bonus(cx: Scope) -> Element {
             xmlns: "http://www.w3.org/2000/svg",
             width: "100%",
             height: "100%",
-            view_box: "0 0 24 24",
+            view_box: "0 0 18 18",
             fill: "#ee609c",
             path {
-                d: "M5 14l8-11v7h5l-8 11v-7z"
+                d: "M2.7 11l8-11v7h5l-8 11v-7z"
             },
         }
     ))

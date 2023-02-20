@@ -132,7 +132,7 @@ fn player_table(cx: Scope) -> Element {
                                                 }
                                             ))
                                             div {
-                                                class: "absolute right-0 self-center h-6 {bonus_visibility} rounded-full",
+                                                class: "absolute right-0 self-center h-4 {bonus_visibility} rounded-full",
                                                 assets::bonus()
                                             }
                                         }

@@ -15,7 +15,7 @@ pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(
         top_bar(),
         div {
-            class: "flex flex-col gap-8 h-screen justify-center items-center",
+            class: "flex flex-col gap-8 h-screen justify-center items-center px-8",
             div {
                 class: "flex flex-col items-center gap-8",
                 img {

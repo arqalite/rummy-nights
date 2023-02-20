@@ -30,7 +30,7 @@ fn player_list(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "flex flex-col gap-6",
+            class: "flex flex-col gap-6 px-8",
             state.read().game.players.iter().map(|player| {
                 let background_color = BG_COLORS[player.color_index];
                 let id = player.id;
@@ -210,7 +210,7 @@ fn top_bar(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg",
+            class: "h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg px-8",
             button {
                 class: "col-start-1 justify-self-start",
                 onclick: |_| {

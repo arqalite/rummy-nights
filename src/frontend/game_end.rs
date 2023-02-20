@@ -18,7 +18,7 @@ pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(
         nav_bar(),
         div {
-            class: "flex flex-col absolute w-screen px-8 sm:max-w-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 gap-6 justify-evenly",
+            class: "px-8 flex flex-col absolute w-screen px-8 sm:max-w-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 gap-6 justify-evenly",
             div {
                 class: "h-24 w-24 mx-auto rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
@@ -91,7 +91,7 @@ fn nav_bar(cx: Scope) -> Element {
     log!("Rendering nav bar.");
     cx.render(rsx!(
         div {
-            class: "h-16 grid grid-cols-3",
+            class: "h-16 grid grid-cols-3 px-8",
             button {
                 class: "col-start-1 justify-self-start",
                 onclick: |_| {

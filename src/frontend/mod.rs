@@ -20,7 +20,7 @@ pub fn render_screen(cx: Scope) -> Element {
         div {
             class: "flex flex-col bg-white h-screen w-screen relative overflow-hidden",
             div {
-                class: "z-10 flex flex-col h-screen px-8 mx-auto w-full sm:max-w-lg",
+                class: "z-10 flex flex-col h-screen mx-auto w-full sm:max-w-lg",
                 match state.read().screen {
                     Screen::Menu => rsx!(menu::screen()),
                     Screen::PlayerSelect => rsx!(player_select::screen()),

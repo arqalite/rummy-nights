@@ -8,7 +8,7 @@ license = "MIT"
 edition = "2021"
 categories = ["games"]
 keywords = ["rummy", "game", "counter", "score"]
-publish = true
+publish = false
 build = "src/build.rs"
 
 [profile.release]

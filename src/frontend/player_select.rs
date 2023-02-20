@@ -15,12 +15,18 @@ pub fn screen(cx: Scope) -> Element {
 
     cx.render(rsx!(
         top_bar()
-        span {
-            class: "font-semibold text-lg border-b-2 border-emerald-300 w-max mx-auto mb-8",
-            "{add_players}"
+        div {
+            class: "flex flex-col justify-center grow pb-8",
+            div {
+                class: "flex flex-col grow",
+                span {
+                    class: "font-semibold text-lg border-b-2 border-emerald-300 w-max mx-auto mb-4",
+                    "{add_players}"
+                }
+                player_list()
+            }
+            start_game_button()
         }
-        player_list()
-        start_game_button()
     ))
 }
 
@@ -30,7 +36,7 @@ fn player_list(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "flex flex-col gap-6 px-8",
+            class: "flex flex-col px-8 justify-center grow gap-2",
             state.read().game.players.iter().map(|player| {
                 let background_color = BG_COLORS[player.color_index];
                 let id = player.id;
@@ -46,7 +52,7 @@ fn player_list(cx: Scope) -> Element {
                 log!("Rendering player.");
                 rsx!(
                     div {
-                        class: "flex justify-evenly h-16 rounded-full bg-slate-200",
+                        class: "flex justify-evenly h-14 rounded-full bg-slate-200",
                         button {
                             class: "flex justify-center h-8 w-3/5 self-center rounded-full {background_color}",
                             onclick: move |_| hide_color_bar.set(!hide_color_bar),
@@ -83,7 +89,7 @@ fn player_list(cx: Scope) -> Element {
                         }
                     },
                     div {
-                        class: "{hidden} flex flex-row w-full justify-evenly h-10 mt-2 rounded-full bg-slate-200",
+                        class: "{hidden} flex flex-row w-full justify-evenly h-10 rounded-full bg-slate-200",
                         BG_COLORS.iter().map(|color| {
                             color_id += 1;
                             rsx!(
@@ -189,7 +195,7 @@ fn start_game_button(cx: Scope) -> Element {
     log!("Rendering begin game button.");
     cx.render(rsx!(
         button {
-            class: "z-10 flex absolute self-end w-max gap-2 border-b-[6px] border-emerald-300 right-8 bottom-[30vw]",
+            class: "z-10 flex self-center w-max gap-2 border-b-[6px] border-emerald-300",
             onclick: |_| state.write().start_game(),
             span {
                 class: "text-xl font-bold leading-[3rem]",

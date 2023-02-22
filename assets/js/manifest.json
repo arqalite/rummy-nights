@@ -19,9 +19,27 @@
       "purpose": "any"
     }
   ],
+  "screenshots": [
+    {
+      "src": "https://lh3.googleusercontent.com/5qtoBgBJCQoNhoNyd-U3k-MdhsWlec-M8XsI9L3_s9hYZYhZw1KmAbhMCDRc9xka4nM",
+      "sizes": "288x512",
+      "type": "image/png"
+    },
+    {
+      "src": "https://lh3.googleusercontent.com/Vv7mN1vnYuTlFpttRPkVjJumX6kdi0g-JHttxSIvjLXBrA07kCcDTrrH-lGOXPguci8",
+      "sizes": "288x512",
+      "type": "image/png"
+    },
+    {
+      "src": "https://lh3.googleusercontent.com/4yPkHbq2hW2Km7eEBrgsiE78N9mtaGdBEmF_aY_b3dH4HCnSIbtE7wfg8zVhxkRN3VQ",
+      "sizes": "288x512",
+      "type": "image/png"
+    }
+  ],
   "start_url": "/",
   "id": "/",
   "display": "standalone",
+  "display_override": "window-control-overlay",
   "scope": "/",
   "theme_color": "#000000",
   "background_color": "#ffffff",
@@ -30,10 +48,7 @@
   "dir": "ltr",
   "lang": "en",
   "orientation": "portrait",
-  "display_override": [
-    "fullscreen",
-    "standalone"
-  ],
+  "iarc_rating_id": "0fc5874a-76f5-4487-85b9-87908f33b700",
   "categories": [
     "entertainment",
     "games",

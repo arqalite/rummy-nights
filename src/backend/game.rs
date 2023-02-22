@@ -56,6 +56,14 @@ impl Game {
         };
     }
 
+    pub fn edit_player_name(&mut self, id: usize, name: String) {
+        log!("Adding player.");
+
+        if !name.is_empty() {
+            self.players[id].name = name.clone();
+        };
+    }
+
     pub fn move_up(&mut self, id: usize) {
         log!("Moving player up.");
 

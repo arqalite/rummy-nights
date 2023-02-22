@@ -32,6 +32,8 @@ pub fn screen(cx: Scope) -> Element {
 
 fn player_list(cx: Scope) -> Element {
     let state = use_atom_ref(&cx, STATE);
+    let insert_player = get_text(state.read().settings.language, "insert_player").unwrap();
+
     log!("Rendering player list.");
 
     cx.render(rsx!(
@@ -41,69 +43,122 @@ fn player_list(cx: Scope) -> Element {
                 let background_color = BG_COLORS[player.color_index];
                 let id = player.id;
 
+                let show_player_edit = use_state(&cx, || false);
                 let hide_color_bar = use_state(&cx, || true);
+
                 let hidden = if **hide_color_bar {
                     "hidden"
                 } else {
                     ""
                 };
+
                 let mut color_id = 0;
+
+                let buffer = use_state(&cx, || player.name.clone());
+
+                let onsubmit = move |evt: FormEvent| {
+                    let name = evt.values.get("player-name").unwrap().to_string();
+                    if !name.is_empty() {
+                        state.write().game.edit_player_name(id - 1, name);
+                        show_player_edit.set(!show_player_edit);
+                    };
+                };
+
+                let oninput = move |evt: FormEvent| {
+                    buffer.set(evt.value.clone())
+                };
 
                 log!("Rendering player.");
                 rsx!(
-                    div {
-                        class: "flex justify-evenly h-14 rounded-full bg-slate-200",
-                        button {
-                            class: "flex justify-center h-8 w-3/5 self-center rounded-full {background_color}",
-                            onclick: move |_| hide_color_bar.set(!hide_color_bar),
-                            p {
-                                class: "flex self-center text-white font-semibold",
-                                "{player.name}"
+                    (!show_player_edit).then(|| rsx!(
+                        div {
+                            class: "flex justify-evenly h-14 rounded-full bg-slate-200",
+                            button {
+                                class: "flex justify-center h-8 w-3/5 self-center rounded-full {background_color}",
+                                onclick: move |_| {
+                                    show_player_edit.set(!show_player_edit)
+                                },
+                                p {
+                                    class: "flex self-center text-white font-semibold",
+                                    "{player.name}"
+                                }
+                            }
+                            button {
+                                onclick: move |_| state.write().game.remove_player(id),
+                                div {
+                                    class: "h-10",
+                                    assets::remove()
+                                }
+                            }
+                            div {
+                                class: "flex flex-col justify-center self-center h-12 w-8",
+                                button {
+                                    class: "place-self-center",
+                                    onclick: move |_| state.write().game.move_up(id),
+                                    div {
+                                        class: "h-8",
+                                        assets::up_icon()
+                                    },
+                                }
+                                button {
+                                    class: "place-self-center",
+                                    onclick: move |_| state.write().game.move_down(id),
+                                    div {
+                                        class: "h-8 rotate-180",
+                                        assets::up_icon()
+                                    },
+                                }
                             }
                         }
-                        button {
-                            onclick: move |_| state.write().game.remove_player(id),
-                            div {
+                    )),
+                    show_player_edit.then(|| rsx!(
+                        form {
+                            id: "player_name_input",
+                            class: "flex flex-row w-full justify-evenly items-center h-14 rounded-full bg-slate-200",
+                            prevent_default: "onsubmit",
+                            onsubmit: onsubmit,
+                            input {
+                                name: "player-name",
+                                class: "rounded-full w-3/5 h-8 ring-1 ring-grey text-center self-center",
+                                placeholder: "{insert_player}",
+                                oninput: oninput,
+                                value: "{buffer}"
+                            }
+                            input {
+                                name: "template_id",
+                                r#type: "hidden",
+                                value: "{id}",
+                            }
+                            button {
+                                r#type: "submit",
                                 class: "h-10",
-                                assets::remove()
+                                assets::okay_button(),
+                            }
+                            button {
+                                class: "flex flex-col justify-center h-16 w-8",
+                                prevent_default: "onclick",
+                                onclick: move |_| hide_color_bar.set(!hide_color_bar),
+                                div {
+                                    class: "h-6 w-6 rounded-full {background_color} place-self-center"
+                                }
                             }
                         }
                         div {
-                            class: "flex flex-col justify-center self-center h-12 w-8",
-                            button {
-                                class: "place-self-center",
-                                onclick: move |_| state.write().game.move_up(id),
-                                div {
-                                    class: "h-8",
-                                    assets::up_icon()
-                                },
-                            }
-                            button {
-                                class: "place-self-center",
-                                onclick: move |_| state.write().game.move_down(id),
-                                div {
-                                    class: "h-8 rotate-180",
-                                    assets::up_icon()
-                                },
-                            }
-                        }
-                    },
-                    div {
-                        class: "{hidden} flex flex-row w-full justify-evenly h-10 rounded-full bg-slate-200",
-                        BG_COLORS.iter().map(|color| {
-                            color_id += 1;
-                            rsx!(
-                                button {
-                                    id: "{color_id}",
-                                    class: "h-6 w-6 rounded-full {color} place-self-center",
-                                    onclick: move |_| {
-                                        state.write().game.change_player_color(id, color_id);
-                                        hide_color_bar.set(!hide_color_bar);
+                            class: "{hidden} flex flex-row w-full justify-evenly h-10 rounded-full bg-slate-200",
+                            BG_COLORS.iter().map(|color| {
+                                color_id += 1;
+                                rsx!(
+                                    button {
+                                        id: "{color_id}",
+                                        class: "h-6 w-6 rounded-full {color} place-self-center",
+                                        onclick: move |_| {
+                                            state.write().game.change_player_color(id, color_id);
+                                        }
                                     }
-                                }
-                            )
-                        })
-                    }
+                                )
+                            })
+                        }
+                    ))
                 )
             }),
             player_input(),

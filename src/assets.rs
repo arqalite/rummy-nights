@@ -1,5 +1,31 @@
 use dioxus::prelude::*;
 
+pub fn okay_button(cx: Scope) -> Element {
+    cx.render(rsx!(
+        svg {
+            role: "img",
+            xmlns: "http://www.w3.org/2000/svg",
+            width: "100%",
+            height: "100%",
+            view_box: "0 0 24 24",
+            stroke: "#000000",
+            stroke_width: "1.5",
+            stroke_linecap: "round",
+            stroke_linejoin: "round",
+            fill: "none",
+            color: "#000000",
+            polyline {
+                points: "7 13 10 16 17 9"
+            }
+            circle {
+                cx: "12",
+                cy: "12",
+                r: "10"
+            }
+        }
+    ))
+}
+
 pub fn gb_flag_icon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {

@@ -16,7 +16,7 @@ pub fn screen(cx: Scope) -> Element {
     cx.render(rsx!(
         top_bar()
         div {
-            class: "flex flex-col justify-center grow pb-8",
+            class: "flex flex-col grow pb-8",
             div {
                 class: "flex flex-col grow",
                 span {
@@ -36,7 +36,7 @@ fn player_list(cx: Scope) -> Element {
 
     cx.render(rsx!(
         div {
-            class: "flex flex-col px-8 justify-center grow gap-2",
+            class: "flex flex-col px-8 grow gap-2",
             state.read().game.players.iter().map(|player| {
                 let background_color = BG_COLORS[player.color_index];
                 let id = player.id;

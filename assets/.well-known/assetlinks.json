@@ -1,0 +1,6 @@
+[{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target" : { "namespace": "android_app", "package_name": "com.arqalite.rummynights",
+                     "sha256_cert_fingerprints": ["73:FD:0E:19:02:09:16:64:4A:63:C5:A9:2E:4D:F0:4E:DD:29:DE:A1:6D:5E:78:21:25:A7:42:9E:7D:74:77:86"] }
+      }
+]

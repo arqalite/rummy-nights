@@ -62,7 +62,7 @@ fn player_list(cx: Scope) -> Element {
                         state.write().game.edit_player_name(id - 1, name);
                         show_player_edit.set(!show_player_edit);
                     };
-                    hide_color_bar.set(false);
+                    hide_color_bar.set(true);
                 };
 
                 let oninput = move |evt: FormEvent| {

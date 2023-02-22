@@ -143,7 +143,7 @@ pub static CARET_COLORS: [&str; 7] = [
 ];
 
 pub static ENGLISH: phf::Map<&'static str, &'static str> = phf_map! {
-    "start_game" => "Start game",
+    "start_game" => "New game",
     "resume_game" => "Resume game",
     "tile_bonus" => "Tile bonus",
     "restart" => "Restart app",

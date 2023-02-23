@@ -1,7 +1,6 @@
 use dioxus::events::FormEvent;
-use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
-use dioxus::web::use_eval;
+use dioxus_web::use_eval;
 use gloo_storage::{SessionStorage, Storage};
 
 use crate::prelude::*;
@@ -9,12 +8,11 @@ use crate::prelude::*;
 pub fn screen(cx: Scope) -> Element {
     log!("Rendering player select.");
 
-    let state = use_atom_ref(&cx, STATE);
-
+    let state = fermi::use_atom_ref(cx, STATE);
     let add_players = get_text(state.read().settings.language, "add_players").unwrap();
 
     cx.render(rsx!(
-        top_bar()
+        TopBar {}
         div {
             class: "flex flex-col grow pb-8",
             div {
@@ -23,15 +21,15 @@ pub fn screen(cx: Scope) -> Element {
                     class: "font-semibold text-lg border-b-2 border-emerald-300 w-max mx-auto mb-4",
                     "{add_players}"
                 }
-                player_list()
+                PlayerList {}
             }
-            start_game_button()
+            BeginGameButton {}
         }
     ))
 }
 
-fn player_list(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn PlayerList(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
     let insert_player = get_text(state.read().settings.language, "insert_player").unwrap();
 
     log!("Rendering player list.");
@@ -88,7 +86,7 @@ fn player_list(cx: Scope) -> Element {
                                 onclick: move |_| state.write().game.remove_player(id),
                                 div {
                                     class: "h-10",
-                                    assets::remove()
+                                    assets::RemoveIcon {}
                                 }
                             }
                             div {
@@ -98,7 +96,7 @@ fn player_list(cx: Scope) -> Element {
                                     onclick: move |_| state.write().game.move_up(id),
                                     div {
                                         class: "h-8",
-                                        assets::up_icon()
+                                        assets::up_icon {}
                                     },
                                 }
                                 button {
@@ -106,7 +104,7 @@ fn player_list(cx: Scope) -> Element {
                                     onclick: move |_| state.write().game.move_down(id),
                                     div {
                                         class: "h-8 rotate-180",
-                                        assets::up_icon()
+                                        assets::up_icon {}
                                     },
                                 }
                             }
@@ -133,7 +131,7 @@ fn player_list(cx: Scope) -> Element {
                             button {
                                 r#type: "submit",
                                 class: "h-10",
-                                assets::okay_button(),
+                                assets::okay_button {},
                             }
                             button {
                                 class: "flex flex-col justify-center h-16 w-8",
@@ -162,13 +160,13 @@ fn player_list(cx: Scope) -> Element {
                     ))
                 )
             }),
-            player_input(),
+            PlayerInput {},
         }
     ))
 }
 
-fn player_input(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn PlayerInput(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
     let hide_color_bar = use_state(&cx, || true);
     let color_index = use_state(&cx, || 0);
     let selected_color = BG_COLORS[**color_index];
@@ -212,7 +210,7 @@ fn player_input(cx: Scope) -> Element {
             button {
                 r#type: "submit",
                 class: "h-10",
-                assets::add_button(),
+                assets::AddIcon {},
             }
             button {
                 class: "flex flex-col justify-center h-16 w-8",
@@ -240,8 +238,8 @@ fn player_input(cx: Scope) -> Element {
     ))
 }
 
-fn start_game_button(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn BeginGameButton(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
     let start_button_label = get_text(state.read().settings.language, "start_game_button").unwrap();
 
     if state.read().game.players.len() < 2 {
@@ -252,45 +250,45 @@ fn start_game_button(cx: Scope) -> Element {
     cx.render(rsx!(
         button {
             class: "z-10 flex self-center w-max gap-2 border-b-[6px] border-emerald-300",
-            onclick: |_| state.write().start_game(),
+            onclick: move |_| state.write().start_game(),
             span {
                 class: "text-xl font-bold leading-[3rem]",
                 "{start_button_label}"
             }
             div {
                 class: "h-12",
-                assets::arrow_right()
+                assets::arrow_right {}
             }
         }
     ))
 }
 
-fn top_bar(cx: Scope) -> Element {
+fn TopBar(cx: Scope) -> Element {
     log!("Rendering top bar.");
 
-    let state = use_atom_ref(&cx, STATE);
+    let state = fermi::use_atom_ref(cx, STATE);
 
     cx.render(rsx!(
         div {
             class: "h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg px-8",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: |_| {
+                onclick: move |_| {
                     state.write().screen = Screen::Menu;
                     state.write().checked_storage = false;
                     SessionStorage::delete("session");
                 },
                 div {
                     class: "h-10 scale-x-[-1]",
-                    assets::back()
+                    assets::BackIcon {}
                 }
             }
             button {
                 class: "col-start-3 justify-self-end",
-                onclick: |_| state.write().screen = Screen::Templates,
+                onclick: move |_| state.write().screen = Screen::Templates,
                 div {
                     class: "h-10",
-                    assets::save_icon()
+                    assets::SaveIcon {}
                 }
             }
         }

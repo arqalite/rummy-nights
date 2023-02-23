@@ -40,7 +40,7 @@ pub enum Screen {
 /// (for dev builds).
 ///
 /// It uses the `BUILD_VERSION` environment variable created in build.rs.
-pub fn print_version_number(cx: Scope) -> Element {
+pub fn VersionNumber(cx: Scope) -> Element {
     log!("Calculating version number.");
     let version = env!("BUILD_VERSION");
     cx.render(rsx!("{version}"))

@@ -1,3 +1,4 @@
+#![allow(non_snake_case)]
 pub mod assets;
 pub mod backend;
 pub mod frontend;

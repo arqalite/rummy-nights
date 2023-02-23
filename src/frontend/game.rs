@@ -1,7 +1,6 @@
 use dioxus::events::FormEvent;
-use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
-use dioxus::web::use_eval;
+use dioxus_web::use_eval;
 use std::cmp::Ordering;
 use std::ops::Not;
 
@@ -11,17 +10,17 @@ pub fn screen(cx: Scope) -> Element {
     log!("Rendering game screen.");
 
     cx.render(rsx! (
-        nav_bar(),
-        banner()
-        player_table()
-        game_menu(),
+        NavBar {},
+        Banner {},
+        PlayerTable {}
+        GameMenu {},
     ))
 }
 
-fn player_table(cx: Scope) -> Element {
+fn PlayerTable(cx: Scope) -> Element {
     log!("Rendering player table.");
 
-    let state = use_atom_ref(&cx, STATE);
+    let state = fermi::use_atom_ref(cx, STATE);
     let mut game_count = 0;
 
     let edit_score = move |evt: FormEvent| {
@@ -133,7 +132,7 @@ fn player_table(cx: Scope) -> Element {
                                             ))
                                             div {
                                                 class: "absolute right-0 self-center h-4 {bonus_visibility} rounded-full",
-                                                assets::bonus()
+                                                assets::bonus {}
                                             }
                                         }
                                     )
@@ -164,7 +163,7 @@ fn player_table(cx: Scope) -> Element {
 
 #[inline_props]
 fn score_input(cx: Scope, id: usize) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+    let state = fermi::use_atom_ref(cx, STATE);
     let mut color_index = 0;
 
     if state.read().game.status != GameStatus::Ongoing {
@@ -212,8 +211,8 @@ fn score_input(cx: Scope, id: usize) -> Element {
     ))
 }
 
-fn game_menu(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn GameMenu(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
 
     if !state.read().settings.use_tile_bonus {
         return None;
@@ -260,7 +259,7 @@ fn game_menu(cx: Scope) -> Element {
                 box_shadow: "{shadow}",
                 div {
                     class: "h-10 w-10 self-center rounded-full",
-                    assets::bonus(),
+                    assets::bonus {},
                 }
                 span {
                     class: "font-semibold text-lg self-center pr-2",
@@ -271,8 +270,8 @@ fn game_menu(cx: Scope) -> Element {
     ))
 }
 
-fn nav_bar(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn NavBar(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
 
     let button_position = if state.read().game.status == GameStatus::Ongoing {
         "col-start-3 justify-self-end"
@@ -287,28 +286,28 @@ fn nav_bar(cx: Scope) -> Element {
             (state.read().game.status == GameStatus::Ongoing).then(|| rsx!(
                 button {
                     class: "col-start-1 justify-self-start",
-                    onclick: |_| state.write().screen = Screen::PlayerSelect,
+                    onclick: move |_| state.write().screen = Screen::PlayerSelect,
                     div {
                         class: "h-10 scale-x-[-1]",
-                        assets::back()
+                        assets::BackIcon {}
                     }
                 }
             )),
             button {
                 class: "{button_position}",
-                onclick: |_| state.write().screen = Screen::Menu,
+                onclick: move |_| state.write().screen = Screen::Menu,
                 div {
                     class: "h-10",
-                    assets::home(),
+                    assets::home {},
                 }
             }
             (state.read().game.status == GameStatus::Ongoing).not().then(|| rsx!(
                 button {
                     class: "col-start-3 justify-self-end",
-                    onclick: |_| state.write().screen = Screen::EndGame,
+                    onclick: move |_| state.write().screen = Screen::EndGame,
                     div {
                         class: "h-10",
-                        assets::back()
+                        assets::BackIcon {}
                     }
                 }
             ))
@@ -316,8 +315,8 @@ fn nav_bar(cx: Scope) -> Element {
     ))
 }
 
-fn banner(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn Banner(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
 
     let banner_win = get_text(state.read().settings.language, "banner_win").unwrap();
     let banner_bonus = get_text(state.read().settings.language, "banner_bonus").unwrap();
@@ -348,7 +347,7 @@ fn banner(cx: Scope) -> Element {
 
 #[inline_props]
 fn dealer_pin(cx: Scope, player_id: usize) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+    let state = fermi::use_atom_ref(cx, STATE);
 
     if !state.read().settings.enable_dealer_tracking {
         return None;
@@ -366,6 +365,6 @@ fn dealer_pin(cx: Scope, player_id: usize) -> Element {
     log!("Render dealer pin.");
     cx.render(rsx!(div {
         class: "h-7 absolute -top-4 -right-4 scale-x-[-1]",
-        assets::pushpin()
+        assets::pushpin {}
     },))
 }

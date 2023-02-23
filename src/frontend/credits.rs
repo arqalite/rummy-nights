@@ -1,9 +1,9 @@
-use crate::backend::print_version_number;
+use crate::backend::VersionNumber;
 use crate::prelude::*;
 use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+    let state = fermi::use_atom_ref(cx, STATE);
 
     let programmer = get_text(state.read().settings.language, "programmer").unwrap();
     let design = get_text(state.read().settings.language, "design").unwrap();
@@ -13,7 +13,7 @@ pub fn screen(cx: Scope) -> Element {
 
     log!("Rendering credits.");
     cx.render(rsx!(
-        top_bar(),
+        TopBar {},
         div {
             class: "flex flex-col gap-8 h-screen justify-center items-center px-8",
             div {
@@ -25,7 +25,7 @@ pub fn screen(cx: Scope) -> Element {
                 p {
                     class: "text-white font-semibold text-lg text-center w-max max-w-1/2 px-2 rounded-full",
                     background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    print_version_number(),
+                    VersionNumber {},
                 }
             },
             div {
@@ -107,7 +107,7 @@ pub fn screen(cx: Scope) -> Element {
                     target: "_blank",
                     div {
                         class: "h-8",
-                        assets::github()
+                        assets::GithubIcon {}
                     }
                 }
             }
@@ -115,19 +115,19 @@ pub fn screen(cx: Scope) -> Element {
     ))
 }
 
-fn top_bar(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn TopBar(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
 
     log!("Rendering nav bar.");
     cx.render(rsx!(
         button {
             class: "absolute top-4 left-4",
-            onclick: |_| {
+            onclick: move |_| {
                 state.write().screen = Screen::Settings;
             },
             div {
                 class: "h-12 scale-x-[-1]",
-                assets::back()
+                assets::BackIcon {}
             }
         },
     ))

@@ -26,7 +26,7 @@ pub fn okay_button(cx: Scope) -> Element {
     ))
 }
 
-pub fn gb_flag_icon(cx: Scope) -> Element {
+pub fn EnglishFlagIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             id: "flag-icons-gb",
@@ -58,7 +58,7 @@ pub fn gb_flag_icon(cx: Scope) -> Element {
     ))
 }
 
-pub fn romanian_flag_icon(cx: Scope) -> Element {
+pub fn RomanianFlagIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             id: "flag-icons-ro",
@@ -86,7 +86,7 @@ pub fn romanian_flag_icon(cx: Scope) -> Element {
     ))
 }
 
-pub fn add_button(cx: Scope) -> Element {
+pub fn AddIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             role: "img",
@@ -145,7 +145,7 @@ pub fn arrow_right(cx: Scope) -> Element {
     ))
 }
 
-pub fn back(cx: Scope) -> Element {
+pub fn BackIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             role: "img",
@@ -169,7 +169,7 @@ pub fn back(cx: Scope) -> Element {
     ))
 }
 
-pub fn bin(cx: Scope) -> Element {
+pub fn BinIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             role: "img",
@@ -206,7 +206,7 @@ pub fn bonus(cx: Scope) -> Element {
     ))
 }
 
-pub fn github(cx: Scope) -> Element {
+pub fn GithubIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             stroke: "currentColor",
@@ -256,7 +256,7 @@ pub fn home(cx: Scope) -> Element {
     ))
 }
 
-pub fn info(cx: Scope) -> Element {
+pub fn InfoIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             role: "img",
@@ -334,7 +334,7 @@ pub fn pushpin(cx: Scope) -> Element {
     ))
 }
 
-pub fn remove(cx: Scope) -> Element {
+pub fn RemoveIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             role: "img",
@@ -358,7 +358,7 @@ pub fn remove(cx: Scope) -> Element {
     ))
 }
 
-pub fn replay_icon(cx: Scope) -> Element {
+pub fn ReplayIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             xmlns: "http://www.w3.org/2000/svg",
@@ -449,7 +449,7 @@ pub fn resume_icon(cx: Scope) -> Element {
     ))
 }
 
-pub fn save_icon(cx: Scope) -> Element {
+pub fn SaveIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             role: "img",
@@ -508,7 +508,7 @@ pub fn settings_icon(cx: Scope) -> Element {
     ))
 }
 
-pub fn trophy_icon(cx: Scope) -> Element {
+pub fn TrophyIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             color: "#000",
@@ -559,7 +559,7 @@ pub fn up_icon(cx: Scope) -> Element {
     ))
 }
 
-pub fn play_icon(cx: Scope) -> Element {
+pub fn PlayIcon(cx: Scope) -> Element {
     cx.render(rsx!(
         svg {
             role: "img",

@@ -1,11 +1,10 @@
-use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
 use crate::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+    let state = fermi::use_atom_ref(cx, STATE);
     let mut player_count = 0;
 
     if !state.read().game.is_sorted {
@@ -16,13 +15,13 @@ pub fn screen(cx: Scope) -> Element {
 
     log!("Rendering end screen.");
     cx.render(rsx!(
-        nav_bar(),
+        NavBar {},
         div {
             class: "px-8 flex flex-col absolute w-screen px-8 sm:max-w-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 gap-6 justify-evenly",
             div {
                 class: "h-24 w-24 mx-auto rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                assets::trophy_icon()
+                assets::TrophyIcon {}
             }
             p {
                 class: "text-center font-bold text-4xl",
@@ -73,17 +72,17 @@ pub fn screen(cx: Scope) -> Element {
     ))
 }
 
-fn nav_bar(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn NavBar(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
 
-    let delete_and_exit_game = |_| {
+    let delete_and_exit_game = move |_| {
         log!("Deleting game and returning to main menu.");
         LocalStorage::delete("state");
         SessionStorage::delete("session");
         *state.write() = Model::new();
     };
 
-    let restart_game = |_| {
+    let restart_game = move |_| {
         log!("Restarting game.");
         state.write().reset_game();
     };
@@ -94,12 +93,12 @@ fn nav_bar(cx: Scope) -> Element {
             class: "h-16 grid grid-cols-3 px-8",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: |_| {
+                onclick: move |_| {
                     state.write().screen = Screen::Game;
                 },
                 div {
                     class: "h-10 scale-x-[-1]",
-                    assets::back()
+                    assets::BackIcon {}
                 }
             }
             button {
@@ -107,7 +106,7 @@ fn nav_bar(cx: Scope) -> Element {
                 onclick: delete_and_exit_game,
                 div {
                     class: "h-10",
-                    assets::home(),
+                    assets::home {}
                 }
             }
             button {
@@ -115,7 +114,7 @@ fn nav_bar(cx: Scope) -> Element {
                 onclick: restart_game,
                 div {
                     class: "h-10",
-                    assets::replay_icon()
+                    assets::ReplayIcon {}
                 }
             }
         }

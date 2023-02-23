@@ -13,7 +13,7 @@ use dioxus::prelude::*;
 use phf::phf_map;
 
 pub fn render_screen(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+    let state = fermi::use_atom_ref(cx, STATE);
 
     log!("Start render.");
     cx.render(rsx!(
@@ -22,22 +22,22 @@ pub fn render_screen(cx: Scope) -> Element {
             div {
                 class: "z-10 flex flex-col h-screen mx-auto w-full sm:max-w-lg",
                 match state.read().screen {
-                    Screen::Menu => rsx!(menu::screen()),
-                    Screen::PlayerSelect => rsx!(player_select::screen()),
-                    Screen::Templates => rsx!(templates::screen()),
-                    Screen::Game => rsx!(game::screen()),
-                    Screen::EndGame => rsx!(game_end::screen()),
-                    Screen::Settings => rsx!(settings::screen()),
-                    Screen::Credits => rsx!(credits::screen()),
+                    Screen::Menu => rsx!(menu::screen {}),
+                    Screen::PlayerSelect => rsx!(player_select::screen {}),
+                    Screen::Templates => rsx!(templates::screen {}),
+                    Screen::Game => rsx!(game::screen {}),
+                    Screen::EndGame => rsx!(game_end::screen {}),
+                    Screen::Settings => rsx!(settings::screen {}),
+                    Screen::Credits => rsx!(credits::screen {}),
                 },
             }
-            decorative_spheres()
+            DecorativeSpheres {}
         }
     ))
 }
 
-fn decorative_spheres(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn DecorativeSpheres(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
     log!("Rendering decorations.");
     cx.render(rsx!(
         div {

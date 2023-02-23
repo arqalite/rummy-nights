@@ -1,14 +1,14 @@
 use crate::prelude::*;
 use dioxus::events::FormEvent;
 use dioxus::prelude::*;
-use dioxus::web::use_eval;
+use dioxus_web::use_eval;
 use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
 pub fn screen(cx: Scope) -> Element {
     log!("Rendering settings menu.");
 
-    let state = use_atom_ref(&cx, STATE);
+    let state = fermi::use_atom_ref(cx, STATE);
 
     let restart_app = move |_| {
         SessionStorage::clear();
@@ -31,28 +31,28 @@ pub fn screen(cx: Scope) -> Element {
                 class: "flex flex-row my-4 px-4 justify-between",
                 button {
                     class: "",
-                    onclick: |_| {
+                    onclick: move |_| {
                         state.write().settings.save();
                         state.write().screen = Screen::Menu;
                     },
                     div {
                         class: "h-12 scale-x-[-1]",
-                        assets::back()
+                        assets::BackIcon {}
                     }
                 },
                 button {
                     class: "",
-                    onclick: |_| {
+                    onclick: move |_| {
                         state.write().settings.save();
                         state.write().screen = Screen::Credits;
                     },
                     div {
                         class: "h-12",
-                        assets::info(),
+                        assets::InfoIcon {},
                     }
                 },
             }
-            settings_menu(),
+            SettingsMenu {},
             div {
                 class: "flex flex-col gap-2 mb-4",
                 button {
@@ -60,7 +60,7 @@ pub fn screen(cx: Scope) -> Element {
                     onclick: restart_app,
                     div {
                         class: "h-8",
-                        assets::replay_icon()
+                        assets::ReplayIcon {}
                     }
                     span {
                         class: "font-semibold text-lg leading-8 h-8",
@@ -72,7 +72,7 @@ pub fn screen(cx: Scope) -> Element {
                     onclick: clear_data,
                     div {
                         class: "h-8",
-                        assets::bin()
+                        assets::BinIcon {}
                     }
                     span {
                         class: "font-semibold text-lg leading-8 h-8",
@@ -84,38 +84,38 @@ pub fn screen(cx: Scope) -> Element {
     ))
 }
 
-fn settings_menu(cx: Scope) -> Element {
+fn SettingsMenu(cx: Scope) -> Element {
     cx.render(rsx!(
         div {
             class: "flex flex-col divide-y divide-slate-200 justify-evenly px-8",
             div {
                 class: "flex flex-col gap-4",
-                edit_enable(),
+                EditEnable {},
             },
             div {
                 class: "flex flex-col gap-4",
-                dealer_enable(),
+                DealerEnable {},
             },
             div {
                 class: "flex flex-col gap-4",
-                tile_bonus_enable(),
-                tile_bonus_value_setting(),
+                TileBonusEnable {},
+                TileBonusValueSetting {},
             },
             div {
                 class: "flex flex-col gap-4",
-                max_score_enable(),
-                max_score_setting(),
+                MaxScoreEnable {},
+                MaxScoreSetting {},
             },
             div {
                 class: "flex flex-col gap-4",
-                language_select(),
+                LanguageSelect  {},
             },
         }
     ))
 }
 
-fn language_select(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn LanguageSelect(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
 
     let language_label = get_text(state.read().settings.language, "language").unwrap();
 
@@ -140,21 +140,21 @@ fn language_select(cx: Scope) -> Element {
             },
             button {
                 class: "h-8 w-max {ro_enabled} outline-2 outline-offset-4 outline-[#ee609c]",
-                onclick: |_| state.write().settings.language = 2,
-                assets::romanian_flag_icon(),
+                onclick: move |_| state.write().settings.language = 2,
+                assets::RomanianFlagIcon {},
             },
             button {
                 class: "h-8 w-max {en_enabled} outline-2 outline-offset-4 outline-[#ee609c]",
-                onclick: |_| state.write().settings.language = 1,
-                assets::gb_flag_icon(),
+                onclick: move |_| state.write().settings.language = 1,
+                assets::EnglishFlagIcon {},
             }
 
         }
     ))
 }
 
-fn edit_enable(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn EditEnable(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
     let enabled = use_state(&cx, || state.read().settings.enable_score_editing);
 
     let score_edit_label = get_text(state.read().settings.language, "score_editing").unwrap();
@@ -187,8 +187,8 @@ fn edit_enable(cx: Scope) -> Element {
     ))
 }
 
-fn dealer_enable(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn DealerEnable(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
     let enabled = use_state(&cx, || state.read().settings.enable_dealer_tracking);
 
     let dealer_label = get_text(state.read().settings.language, "dealer_tracking").unwrap();
@@ -221,8 +221,8 @@ fn dealer_enable(cx: Scope) -> Element {
     ))
 }
 
-fn max_score_setting(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn MaxScoreSetting(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
 
     if !state.read().settings.end_game_at_score {
         return None;
@@ -288,7 +288,7 @@ fn max_score_setting(cx: Scope) -> Element {
                     button {
                         class: "h-6 {is_button_hidden}",
                         r#type: "submit",
-                        assets::add_button(),
+                        assets::AddIcon {},
                     }
                 }
             }
@@ -296,8 +296,8 @@ fn max_score_setting(cx: Scope) -> Element {
     ))
 }
 
-fn tile_bonus_value_setting(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn TileBonusValueSetting(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
 
     if !state.read().settings.use_tile_bonus {
         return None;
@@ -363,7 +363,7 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
                     button {
                         class: "h-6 {is_button_hidden}",
                         r#type: "submit",
-                        assets::add_button(),
+                        assets::AddIcon {},
                     }
                 }
             }
@@ -371,8 +371,8 @@ fn tile_bonus_value_setting(cx: Scope) -> Element {
     ))
 }
 
-fn tile_bonus_enable(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn TileBonusEnable(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
     let enabled = use_state(&cx, || state.read().settings.use_tile_bonus);
 
     let tile_bonus_text = get_text(state.read().settings.language, "tile_bonus").unwrap();
@@ -405,8 +405,8 @@ fn tile_bonus_enable(cx: Scope) -> Element {
     ))
 }
 
-fn max_score_enable(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn MaxScoreEnable(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
     let enabled = use_state(&cx, || state.read().settings.end_game_at_score);
 
     let max_score_label = get_text(state.read().settings.language, "end_at_max_score").unwrap();

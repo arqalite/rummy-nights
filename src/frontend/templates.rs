@@ -3,11 +3,11 @@ use dioxus::events::FormEvent;
 use dioxus::prelude::*;
 
 pub fn screen(cx: Scope) -> Element {
-    cx.render(rsx!(top_bar(), template_list(),))
+    cx.render(rsx!(TopBar {}, TemplateList {},))
 }
 
-fn template_list(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn TemplateList(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
     let no_templates_yet = get_text(state.read().settings.language, "no_templates_yet").unwrap();
     let template_add = get_text(state.read().settings.language, "template_add").unwrap();
     let name_this_template = get_text(state.read().settings.language, "name_template").unwrap();
@@ -67,14 +67,14 @@ fn template_list(cx: Scope) -> Element {
                                 onclick: move |_| state.write().load_template(id),
                                 div {
                                     class: "h-10",
-                                    assets::play_icon()
+                                    assets::PlayIcon {}
                                 }
                             }
                             button {
                                 onclick: move |_| state.write().delete_template(id),
                                 div {
                                     class: "h-10",
-                                    assets::remove()
+                                    assets::RemoveIcon {}
                                 }
                             }
                         }
@@ -100,7 +100,7 @@ fn template_list(cx: Scope) -> Element {
                             button {
                                 r#type: "submit",
                                 class: "h-10",
-                                assets::add_button(),
+                                assets::AddIcon {},
                             }
                             button {
                                 class: "flex flex-col justify-center h-16 w-8",
@@ -135,14 +135,14 @@ fn template_list(cx: Scope) -> Element {
                     (state.read().game.players.len() >= 2).then(|| rsx!(
                         button {
                             class: "flex flex-row gap-2 h-14 w-max p-2 rounded-full justify-end",
-                            onclick: |_| state.write().add_template(),
+                            onclick: move |_| state.write().add_template(),
                             span {
                                 class: "font-semibold text-lg self-center",
                                 "{template_add}"
                             },
                             div {
                                 class: "h-10 w-10 self-center",
-                                assets::save_icon()
+                                assets::SaveIcon {}
                             }
                         }
                     )),
@@ -171,22 +171,22 @@ fn template_list(cx: Scope) -> Element {
     ))
 }
 
-fn top_bar(cx: Scope) -> Element {
+fn TopBar(cx: Scope) -> Element {
     log!("Rendering top bar.");
 
-    let state = use_atom_ref(&cx, STATE);
+    let state = fermi::use_atom_ref(cx, STATE);
 
     cx.render(rsx!(
         div {
             class: "absolute top-0 h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg px-8",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: |_| {
+                onclick: move |_| {
                     state.write().screen = Screen::PlayerSelect;
                 },
                 div {
                     class: "h-10 scale-x-[-1]",
-                    assets::back()
+                    assets::BackIcon {}
                 }
             }
         }

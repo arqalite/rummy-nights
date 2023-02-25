@@ -2,25 +2,30 @@ use crate::backend::VersionNumber;
 use crate::prelude::*;
 use dioxus::prelude::*;
 
-pub fn screen(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
-
-    let programmer = get_text(state.read().settings.language, "programmer").unwrap();
-    let design = get_text(state.read().settings.language, "design").unwrap();
-    let icons = get_text(state.read().settings.language, "icons").unwrap();
-    let tech = get_text(state.read().settings.language, "tech").unwrap();
-    let love = get_text(state.read().settings.language, "love").unwrap();
-
+#[inline_props]
+pub fn CreditsScreen<'a>(
+    cx: Scope<'a>,
+    on_click: EventHandler<'a, MouseEvent>,
+    lang_code: usize,
+) -> Element<'a> {
     log!("Rendering credits.");
-    cx.render(rsx!(
-        TopBar {},
+
+    render!(
+        button {
+            class: "absolute top-4 left-4",
+            onclick: move |event| on_click.call(event),
+            div {
+                class: "h-12 scale-x-[-1]",
+                assets::BackIcon {}
+            }
+        },
         div {
             class: "flex flex-col gap-8 h-screen justify-center items-center px-8",
             div {
                 class: "flex flex-col items-center gap-8",
                 img {
                     class: "w-2/3",
-                    src: "img/intro_logo.gif",
+                    src: "intro_logo.gif",
                 }
                 p {
                     class: "text-white font-semibold text-lg text-center w-max max-w-1/2 px-2 rounded-full",
@@ -34,7 +39,7 @@ pub fn screen(cx: Scope) -> Element {
                     class: "w-3/4 text-center",
                     p {
                         class: "font-semibold",
-                        "{programmer}:"
+                        get_text(*lang_code,"programmer")
                     }
                     p {
                         "Antonio Curăvalea",
@@ -44,7 +49,7 @@ pub fn screen(cx: Scope) -> Element {
                     class: "w-3/4 text-center",
                     p {
                         class: "font-semibold",
-                        "{design}:"
+                        get_text(*lang_code,"design")
                     }
                     p {
                         "Vlad Țânțărean",
@@ -56,7 +61,7 @@ pub fn screen(cx: Scope) -> Element {
                         class: "w-full text-center col-span-1",
                         p {
                             class: "font-semibold",
-                            "{icons}:"
+                            get_text(*lang_code,"icons")
                         }
                         p {
                             "Freepik/Flaticon",
@@ -75,7 +80,7 @@ pub fn screen(cx: Scope) -> Element {
                         class: "w-full text-center col-span-1",
                         p {
                             class: "font-semibold",
-                            "{tech}:"
+                            get_text(*lang_code,"tech")
                         }
                         p {
                             "Rust",
@@ -96,7 +101,7 @@ pub fn screen(cx: Scope) -> Element {
                 class: "flex flex-col justify-center items-center gap-2 w-full",
                 p {
                     class: "w-3/4 text-center",
-                    "{love}"
+                    get_text(*lang_code,"love")
                 }
             }
             div {
@@ -112,23 +117,5 @@ pub fn screen(cx: Scope) -> Element {
                 }
             }
         }
-    ))
-}
-
-fn TopBar(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
-
-    log!("Rendering nav bar.");
-    cx.render(rsx!(
-        button {
-            class: "absolute top-4 left-4",
-            onclick: move |_| {
-                state.write().screen = Screen::Settings;
-            },
-            div {
-                class: "h-12 scale-x-[-1]",
-                assets::BackIcon {}
-            }
-        },
-    ))
+    )
 }

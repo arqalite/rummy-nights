@@ -5,7 +5,7 @@
 /* A version number is useful when updating the worker logic,
    allowing you to remove outdated cache entries during the update.
 */
-var version = 'v1.0.3::';
+var version = 'v1.0.4::';
 
 /* These resources will be downloaded and cached by the service worker
    during the installation process. If any resource fails to be downloaded,
@@ -20,7 +20,7 @@ var offlineFundamentals = [
   '/style.css',
   '/sw.js',
   '/snippets/dioxus-interpreter-js-459fb15b86d869f7/src/interpreter.js',
-  '/img/intro_logo.gif'
+  '/intro_logo.gif'
 ];
 
 /* The install event fires when the service worker is first installed.

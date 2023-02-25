@@ -1,51 +1,68 @@
+use crate::backend::templates::Template;
 use crate::prelude::*;
 use dioxus::events::FormEvent;
 use dioxus::prelude::*;
 
-pub fn screen(cx: Scope) -> Element {
-    cx.render(rsx!(TopBar {}, TemplateList {},))
+#[inline_props]
+pub fn TemplateScreen<'a>(
+    cx: Scope,
+    lang_code: usize,
+    game: Game,
+    templates: Vec<Template>,
+    on_add_template: EventHandler<'a, MouseEvent>,
+    on_edit_template: EventHandler<'a, (FormEvent, usize)>,
+    on_delete_template: EventHandler<'a, (MouseEvent, usize)>,
+    on_load_template: EventHandler<'a, (MouseEvent, usize)>,
+    on_return_to_select: EventHandler<'a, MouseEvent>,
+) -> Element {
+    render!(
+        TopBar {
+            on_return_to_select: |evt| on_return_to_select.call(evt)
+        },
+        TemplateList {
+            lang_code: *lang_code,
+            game: game.clone(),
+            templates: templates.clone(),
+            on_add_template: |evt| on_add_template.call(evt),
+            on_edit_template: |evt| on_edit_template.call(evt),
+            on_delete_template: |evt| on_delete_template.call(evt),
+            on_load_template: |evt| on_load_template.call(evt),
+        }
+    )
 }
 
-fn TemplateList(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
-    let no_templates_yet = get_text(state.read().settings.language, "no_templates_yet").unwrap();
-    let template_add = get_text(state.read().settings.language, "template_add").unwrap();
-    let name_this_template = get_text(state.read().settings.language, "name_template").unwrap();
-    let template_not_enough =
-        get_text(state.read().settings.language, "template_not_enough").unwrap();
-    let template_too_many = get_text(state.read().settings.language, "template_too_many").unwrap();
-
-    let hide_color_bar = use_state(&cx, || true);
-    let color_index = use_state(&cx, || 0);
+#[inline_props]
+fn TemplateList<'a>(
+    cx: Scope,
+    lang_code: usize,
+    game: Game,
+    templates: Vec<Template>,
+    on_add_template: EventHandler<'a, MouseEvent>,
+    on_edit_template: EventHandler<'a, (FormEvent, usize)>,
+    on_delete_template: EventHandler<'a, (MouseEvent, usize)>,
+    on_load_template: EventHandler<'a, (MouseEvent, usize)>,
+) -> Element {
+    let hide_color_bar = use_state(cx, || true);
+    let color_index = use_state(cx, || 0);
     let selected_color = BG_COLORS[**color_index];
     let mut color_id = 0;
     let hidden = if **hide_color_bar { "hidden" } else { "" };
 
-    cx.render(rsx!(
+    render!(
         div {
             class: "flex flex-col grow justify-center gap-4 px-8",
-            (state.read().templates.is_empty()).then(|| rsx!(
+            (templates.is_empty()).then(|| rsx!(
                 p {
                     class: "font-semibold text-lg border-b-2 border-indigo-500 mx-auto",
-                    "{no_templates_yet}!"
+                    get_text(*lang_code, "no_templates_yet")
                 }
             )),
-            state.read().templates.iter().map(|template| {
+            templates.iter().map(|template| {
                 let id = template.id;
                 let color = template.color;
                 let background_color = BG_COLORS[color];
-                let show_template_edit = use_state(&cx, || false);
-                let buffer = use_state(&cx, || template.name.clone());
-
-                let onsubmit = move |evt: FormEvent| {
-                    let name = evt.values.get("template-name").unwrap().to_string();
-                    if !name.is_empty() {
-                        if let Ok(template_id) = evt.values.get("template_id").unwrap().parse::<usize>() {
-                            state.write().edit_template(template_id, name, **color_index);
-                            show_template_edit.set(!show_template_edit);
-                        }
-                    };
-                };
+                let show_template_edit = use_state(cx, || false);
+                let buffer = use_state(cx, || template.name.clone());
 
                 let oninput = move |evt: FormEvent| {
                     buffer.set(evt.value.clone())
@@ -64,14 +81,14 @@ fn TemplateList(cx: Scope) -> Element {
                                 }
                             }
                             button {
-                                onclick: move |_| state.write().load_template(id),
+                                onclick: move |evt| on_load_template.call((evt, id)),
                                 div {
                                     class: "h-10",
                                     assets::PlayIcon {}
                                 }
                             }
                             button {
-                                onclick: move |_| state.write().delete_template(id),
+                                onclick: move |evt| on_delete_template.call((evt, id)),
                                 div {
                                     class: "h-10",
                                     assets::RemoveIcon {}
@@ -84,11 +101,17 @@ fn TemplateList(cx: Scope) -> Element {
                             id: "template_name_input",
                             class: "flex flex-row w-full justify-evenly items-center h-16 rounded-full bg-slate-200",
                             prevent_default: "onsubmit",
-                            onsubmit: onsubmit,
+                            onsubmit: move |evt| {
+                                let name = evt.values.get("template-name").unwrap().to_string();
+                                if !name.is_empty() {
+                                    on_edit_template.call((evt, **color_index));
+                                    show_template_edit.set(!show_template_edit);
+                                }
+                            },
                             input {
                                 name: "template-name",
                                 class: "rounded-full w-3/5 h-8 ring-1 ring-grey text-center self-center",
-                                placeholder: "{name_this_template}",
+                                placeholder: get_text(*lang_code, "name_template"),
                                 oninput: oninput,
                                 value: "{buffer}"
                             }
@@ -130,15 +153,16 @@ fn TemplateList(cx: Scope) -> Element {
         }
         div {
             class: "z-20 absolute bottom-4 right-4",
-            if state.read().templates.len() < 6 {
+            if templates.len() < 6 {
                 rsx!(
-                    (state.read().game.players.len() >= 2).then(|| rsx!(
+                    (game.players.len() >= 2).then(|| rsx!(
                         button {
                             class: "flex flex-row gap-2 h-14 w-max p-2 rounded-full justify-end",
-                            onclick: move |_| state.write().add_template(),
+                            onclick: |evt| on_add_template.call(evt),
                             span {
                                 class: "font-semibold text-lg self-center",
-                                "{template_add}"
+                                get_text(*lang_code, "template_add")
+
                             },
                             div {
                                 class: "h-10 w-10 self-center",
@@ -146,12 +170,12 @@ fn TemplateList(cx: Scope) -> Element {
                             }
                         }
                     )),
-                    (state.read().game.players.len() < 2).then(|| rsx!(
+                    (game.players.len() < 2).then(|| rsx!(
                         div {
                             class: "flex flex-row gap-2 h-14 w-max p-2 rounded-full justify-end",
                             span {
                                 class: "font-semibold text-lg self-center",
-                                "{template_not_enough}"
+                                get_text(*lang_code, "template_not_enough")
                             }
                         }
                     ))
@@ -162,33 +186,30 @@ fn TemplateList(cx: Scope) -> Element {
                         class: "flex flex-row gap-2 h-14 w-max p-2 rounded-full justify-end",
                         span {
                             class: "font-semibold text-lg self-center",
-                            "{template_too_many}"
+                            get_text(*lang_code, "template_too_many")
                         }
                     }
                 )
             }
         }
-    ))
+    )
 }
 
-fn TopBar(cx: Scope) -> Element {
+#[inline_props]
+fn TopBar<'a>(cx: Scope, on_return_to_select: EventHandler<'a, MouseEvent>) -> Element {
     log!("Rendering top bar.");
 
-    let state = fermi::use_atom_ref(cx, STATE);
-
-    cx.render(rsx!(
+    render!(
         div {
             class: "absolute top-0 h-16 grid grid-cols-3 z-10 mx-auto w-full sm:max-w-lg px-8",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: move |_| {
-                    state.write().screen = Screen::PlayerSelect;
-                },
+                onclick: |evt| on_return_to_select.call(evt),
                 div {
                     class: "h-10 scale-x-[-1]",
                     assets::BackIcon {}
                 }
             }
         }
-    ))
+    )
 }

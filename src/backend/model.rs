@@ -33,7 +33,7 @@ impl Model {
     pub fn create_game(&mut self) {
         log!("Creating new game.");
 
-        let settings = self.settings.clone();
+        let settings = self.settings;
         let templates = self.templates.clone();
         log!(format!("Backed up settings are {settings:?}"));
 

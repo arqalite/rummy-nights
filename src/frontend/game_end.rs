@@ -1,21 +1,22 @@
-use dioxus::prelude::*;
-use gloo_storage::{LocalStorage, SessionStorage, Storage};
-
 use crate::prelude::*;
+use dioxus::prelude::*;
 
-pub fn screen(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
-    let mut player_count = 0;
-
-    if !state.read().game.is_sorted {
-        state.write().game.sort_players();
-    }
-
-    let winner_label = get_text(state.read().settings.language, "winner_label").unwrap();
-
+#[inline_props]
+pub fn EndScreen<'a>(
+    cx: Scope,
+    players: Vec<Player>,
+    lang_code: usize,
+    on_click_home: EventHandler<'a, MouseEvent>,
+    on_click_back: EventHandler<'a, MouseEvent>,
+    on_click_restart: EventHandler<'a, MouseEvent>,
+) -> Element {
     log!("Rendering end screen.");
-    cx.render(rsx!(
-        NavBar {},
+    render!(
+        NavBar {
+            on_click_home: |evt| on_click_home.call(evt),
+            on_click_restart: |evt| on_click_restart.call(evt),
+            on_click_back: |evt| on_click_back.call(evt),
+        },
         div {
             class: "px-8 flex flex-col absolute w-screen px-8 sm:max-w-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 gap-6 justify-evenly",
             div {
@@ -25,77 +26,74 @@ pub fn screen(cx: Scope) -> Element {
             }
             p {
                 class: "text-center font-bold text-4xl",
-                "{winner_label}"
+                get_text(*lang_code,"winner_label")
             }
-            state.read().game.sorted_players.iter().map(|player| {
-                log!("Rendering players.");
-
-                let background = BG_COLORS[player.color_index];
-                let border = BORDER_COLORS[player.color_index];
-                let score = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
-                let mut style;
-                let style2;
-
-                if player_count == 0 {
-                    style = "h-20 w-20 rounded-full text-white font-bold text-lg ".to_string();
-                    style.push_str(background);
-                    style2 = "relative top-[50%] -translate-y-1/2".to_string();
-                } else {
-                    style = "border-b-[7px] rounded-md my-auto w-20 ".to_string();
-                    style.push_str(border);
-                    style2 = String::new();
-                };
-
-                player_count += 1;
-
-                rsx! (
-                div {
-                    class: "flex flex-row basis-1/2 justify-evenly items-center",
-                    div {
-                        class: "{style}",
-                        p {
-                            class: "text-center mb-2 {style2}",
-                            "{score}"
-                        }
+            players.iter().map(|player| {
+                rsx!(
+                    PlayerItem {
+                        player: player.clone(),
                     }
-                    div {
-                        class: "h-12 basis-1/3 {background} rounded-full",
-                        p {
-                            class: "text-center relative top-[50%] -translate-y-1/2 text-white font-semibold",
-                            "{player.name}"
-                        }
-                    }
-                }
                 )
             })
         }
-    ))
+    )
 }
 
-fn NavBar(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
+#[inline_props]
+fn PlayerItem(cx: Scope, player: Player) -> Element {
+    log!("Rendering player: ");
 
-    let delete_and_exit_game = move |_| {
-        log!("Deleting game and returning to main menu.");
-        LocalStorage::delete("state");
-        SessionStorage::delete("session");
-        *state.write() = Model::new();
+    let background = BG_COLORS[player.color_index];
+    let border = BORDER_COLORS[player.color_index];
+    let score = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
+    let mut style;
+    let style2;
+
+    if player.winner {
+        style = "h-20 w-20 rounded-full text-white font-bold text-lg ".to_string();
+        style.push_str(background);
+        style2 = "relative top-[50%] -translate-y-1/2".to_string();
+    } else {
+        style = "border-b-[7px] rounded-md my-auto w-20 ".to_string();
+        style.push_str(border);
+        style2 = String::new();
     };
 
-    let restart_game = move |_| {
-        log!("Restarting game.");
-        state.write().reset_game();
-    };
+    render!(
+        div {
+            class: "flex flex-row basis-1/2 justify-evenly items-center",
+            div {
+                class: "{style}",
+                p {
+                    class: "text-center mb-2 {style2}",
+                    "{score}"
+                }
+            }
+            div {
+                class: "h-12 basis-1/3 {background} rounded-full",
+                p {
+                    class: "text-center relative top-[50%] -translate-y-1/2 text-white font-semibold",
+                    "{player.name}"
+                }
+            }
+        }
+    )
+}
 
+#[inline_props]
+fn NavBar<'a>(
+    cx: Scope,
+    on_click_home: EventHandler<'a, MouseEvent>,
+    on_click_restart: EventHandler<'a, MouseEvent>,
+    on_click_back: EventHandler<'a, MouseEvent>,
+) -> Element {
     log!("Rendering nav bar.");
-    cx.render(rsx!(
+    render!(
         div {
             class: "h-16 grid grid-cols-3 px-8",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: move |_| {
-                    state.write().screen = Screen::Game;
-                },
+                onclick: |evt| on_click_back.call(evt),
                 div {
                     class: "h-10 scale-x-[-1]",
                     assets::BackIcon {}
@@ -103,20 +101,20 @@ fn NavBar(cx: Scope) -> Element {
             }
             button {
                 class: "col-start-2 justify-self-center",
-                onclick: delete_and_exit_game,
+                onclick: |evt| on_click_home.call(evt),
                 div {
                     class: "h-10",
-                    assets::home {}
+                    assets::HomeIcon {}
                 }
             }
             button {
                 class: "col-start-3 justify-self-end",
-                onclick: restart_game,
+                onclick: |evt| on_click_restart.call(evt),
                 div {
                     class: "h-10",
                     assets::ReplayIcon {}
                 }
             }
         }
-    ))
+    )
 }

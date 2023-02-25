@@ -6,7 +6,7 @@ mod game;
 mod model;
 mod player;
 mod settings;
-mod templates;
+pub mod templates;
 
 pub mod prelude {
     pub use crate::backend::game::Game;
@@ -18,14 +18,14 @@ pub mod prelude {
     pub use crate::backend::Screen;
 }
 
-#[derive(PartialEq, Eq, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Clone, Serialize, Deserialize, Copy)]
 pub enum GameStatus {
     NotStarted,
     Ongoing,
     Finished,
 }
 
-#[derive(PartialEq, Eq, Clone, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Clone, Serialize, Deserialize, Copy)]
 pub enum Screen {
     Menu,
     PlayerSelect,
@@ -43,5 +43,5 @@ pub enum Screen {
 pub fn VersionNumber(cx: Scope) -> Element {
     log!("Calculating version number.");
     let version = env!("BUILD_VERSION");
-    cx.render(rsx!("{version}"))
+    render!("{version}")
 }

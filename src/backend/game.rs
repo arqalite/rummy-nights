@@ -4,14 +4,14 @@ use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, PartialEq)]
 pub struct Game {
     pub players: Vec<Player>,
     pub status: GameStatus,
     pub round: usize,
     pub total_rounds: usize,
     pub new_round_started: bool,
-    pub tile_bonus_toggle: bool,
+    pub tile_bonus_button_active: bool,
     pub tile_bonus_granted: bool,
     pub sorted_players: Vec<Player>,
     pub is_sorted: bool,
@@ -29,7 +29,7 @@ impl Game {
             round: 0,
             total_rounds: 0,
             new_round_started: true,
-            tile_bonus_toggle: false,
+            tile_bonus_button_active: false,
             tile_bonus_granted: false,
             sorted_players: Vec::new(),
             is_sorted: false,
@@ -52,6 +52,7 @@ impl Game {
                 sum: 0,
                 bonus: BTreeMap::new(),
                 color_index,
+                winner: false,
             });
         };
     }
@@ -60,7 +61,7 @@ impl Game {
         log!("Adding player.");
 
         if !name.is_empty() {
-            self.players[id].name = name.clone();
+            self.players[id].name = name;
         };
     }
 
@@ -165,7 +166,7 @@ impl Game {
         }
         self.tile_bonus_granted = true;
         self.new_round_started = false;
-        self.tile_bonus_toggle = false;
+        self.tile_bonus_button_active = false;
         self.save_game();
     }
 
@@ -187,6 +188,7 @@ impl Game {
             self.sorted_players.reverse();
             log!("Reversing players worked.");
 
+            self.sorted_players[0].winner = true;
             self.is_sorted = true;
             log!("Finishing players worked.");
         };
@@ -203,7 +205,7 @@ impl Game {
         self.total_rounds += self.round;
         self.round = 0;
         self.new_round_started = true;
-        self.tile_bonus_toggle = false;
+        self.tile_bonus_button_active = false;
         self.tile_bonus_granted = false;
         self.sorted_players = Vec::new();
         self.is_sorted = false;

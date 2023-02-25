@@ -1,31 +1,35 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Rummy Nights</title>
 
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
+<head>
+  <title>Rummy Nights</title>
 
-    <link data-trunk rel="css" href="assets/css/style.css" />
-    <link data-trunk rel="copy-dir" href="assets/img">
-    <link data-trunk rel="copy-dir" href="assets/.well-known">
-    <link data-trunk rel="copy-file" href="assets/img/favicon.ico">
-    <link data-trunk rel="copy-file" href="assets/js/sw.js">
-    <link data-trunk rel="copy-file" href="assets/js/manifest.json">
-    <link rel="manifest" href="manifest.json">
-    <link data-trunk rel="rust" data-wasm-opt="z" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0">
 
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register(
-          '/sw.js'
-        );
-      }
+  <link data-trunk rel="rust" data-wasm-opt="z" />
+  <link data-trunk rel="icon" href="public/favicon.ico">
+  <link data-trunk rel="copy-file" href="public/intro_logo.gif">
+  <link data-trunk rel="icon" href="public/logo_192.png">
+  <link data-trunk rel="icon" href="public/logo_512.png">
+  <link data-trunk rel="copy-file" href="public/manifest.json">
+  <link data-trunk rel="css" href="public/style.css">
+  <link data-trunk rel="copy-file" href="public/sw.js">
+  <link data-trunk rel="copy-dir" href="public/.well-known">
+  
+  <link rel="manifest" href="manifest.json">
+  
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register(
+        '/sw.js'
+      );
+    }
 
-      var viewport = document.querySelector("meta[name=viewport]"); viewport.setAttribute("content", viewport.content + ", height=" + window.innerHeight), viewport.setAttribute("content", viewport.content + ", width=" + window.innerWidth);
-    </script>
+    var viewport = document.querySelector("meta[name=viewport]"); viewport.setAttribute("content", viewport.content + ", height=" + window.innerHeight), viewport.setAttribute("content", viewport.content + ", width=" + window.innerWidth);
+  </script>
+</head>
 
-  </head>
+<body id="main" class="relative overscroll-contain" style="-webkit-tap-highlight-color: transparent;"></body>
 
-  <body id="main" class="relative overscroll-contain" style="-webkit-tap-highlight-color: transparent;"></body>
 </html>

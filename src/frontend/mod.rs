@@ -1,115 +1,81 @@
 //! The front-end part of the app, rendering the individual app screens.
 
-mod credits;
-mod game;
-mod game_end;
-mod menu;
-mod player_select;
-mod settings;
-mod templates;
+pub mod assets;
+pub mod credits;
+pub mod game;
+pub mod game_end;
+pub mod menu;
+pub mod player_select;
+pub mod settings;
+pub mod templates;
 
 use crate::prelude::*;
 use dioxus::prelude::*;
 use phf::phf_map;
 
-pub fn render_screen(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
-
-    log!("Start render.");
-    cx.render(rsx!(
-        div {
-            class: "flex flex-col bg-white h-screen w-screen relative overflow-hidden",
-            div {
-                class: "z-10 flex flex-col h-screen mx-auto w-full sm:max-w-lg",
-                match state.read().screen {
-                    Screen::Menu => rsx!(menu::screen {}),
-                    Screen::PlayerSelect => rsx!(player_select::screen {}),
-                    Screen::Templates => rsx!(templates::screen {}),
-                    Screen::Game => rsx!(game::screen {}),
-                    Screen::EndGame => rsx!(game_end::screen {}),
-                    Screen::Settings => rsx!(settings::screen {}),
-                    Screen::Credits => rsx!(credits::screen {}),
-                },
-            }
-            DecorativeSpheres {}
-        }
-    ))
+pub fn TopLeftSphere(cx: Scope) -> Element {
+    render!(div {
+        class: "w-[50vw] h-[50vw] top-[-25vw] left-[-25vw] absolute rounded-full z-0",
+        background:
+            "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+    })
 }
 
-fn DecorativeSpheres(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
+pub fn TopRightSphere(cx: Scope) -> Element {
+    render!(div {
+        class: "w-[50vw] h-[50vw] top-[-25vw] right-[-25vw] absolute rounded-full z-0",
+        background:
+            "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+    })
+}
+
+pub fn BottomLeftSphere(cx: Scope) -> Element {
+    render!(div {
+        class: "w-[50vw] h-[50vw] bottom-[-25vw] left-[-25vw] absolute rounded-full z-0",
+        background:
+            "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+    })
+}
+
+pub fn BottomRightSphere(cx: Scope) -> Element {
+    render!(div {
+        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full z-0",
+        background:
+            "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+    })
+}
+
+#[inline_props]
+pub fn DecorativeSpheres(cx: Scope, screen: Screen) -> Element {
     log!("Rendering decorations.");
-    cx.render(rsx!(
+    render!(
         div {
             class: "z-0 absolute h-screen w-screen",
-            match state.read().screen {
-                Screen::Menu => rsx!(
-                    div {
-                        class: "w-[50vw] h-[50vw] top-[-25vw] left-[-25vw] absolute rounded-full z-0",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    }
-                    div {
-                        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full z-0",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    }
+            match screen {
+                Screen::Menu |  Screen::EndGame => rsx!(
+                    TopLeftSphere {}
+                    BottomRightSphere {}
                 ),
                 Screen::PlayerSelect => rsx!(
-                    div {
-                        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full z-0",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    }
-                    div {
-                        class: "w-[50vw] h-[50vw] bottom-[-25vw] left-[-25vw] absolute rounded-full z-0",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    }
+                    BottomRightSphere {}
+                    BottomLeftSphere {}
                 ),
                 Screen::Templates => rsx!(
-                    div {
-                        class: "w-[50vw] h-[50vw] top-[-25vw] right-[-25vw] absolute rounded-full z-0",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    }
-                    div {
-                        class: "w-[50vw] h-[50vw] bottom-[-25vw] left-[-25vw] absolute rounded-full z-0",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    }
+                    TopRightSphere {}
+                    BottomLeftSphere {}
                 ),
                 Screen::Game => rsx!(
-                    div {
-                        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full z-0",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    }
-                ),
-                Screen::EndGame => rsx!(
-                    div {
-                        class: "w-[50vw] h-[50vw] top-[-25vw] left-[-25vw] absolute rounded-full",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    },
-                    div {
-                        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    },
+                    BottomRightSphere {}
                 ),
                 Screen::Settings | Screen::Credits => rsx!(
-                    div {
-                        class: "w-[50vw] h-[50vw] top-[-25vw] left-[-25vw] absolute rounded-full",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    },
-                    div {
-                        class: "w-[50vw] h-[50vw] top-[-25vw] right-[-25vw] absolute rounded-full",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    },
-                    div {
-                        class: "w-[50vw] h-[50vw] bottom-[-25vw] left-[-25vw] absolute rounded-full",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    },
-                    div {
-                        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full",
-                        background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                    },
+                    TopLeftSphere {}
+                    TopRightSphere {}
+                    BottomLeftSphere {}
+                    BottomRightSphere {}
                 ),
             }
         }
-    ))
+    )
 }
 
 pub static BG_COLORS: [&str; 7] = [
@@ -151,22 +117,22 @@ pub static ENGLISH: phf::Map<&'static str, &'static str> = phf_map! {
     "language" => "Language",
     "score_editing" => "Allow score editing",
     "dealer_tracking" => "Dealer tracking",
-    "max_score" => "Maximum score",
+    "max_score" => "Maximum score:",
     "end_at_max_score" => "End game at maximum score",
-    "tile_bonus_value" => "Tile bonus value",
-    "programmer" => "Programming",
-    "design" => "UI/UX Design",
-    "icons" => "Icons",
-    "tech" => "Tech",
+    "tile_bonus_value" => "Tile bonus value:",
+    "programmer" => "Programming:",
+    "design" => "UI/UX Design:",
+    "icons" => "Icons:",
+    "tech" => "Tech:",
     "love" => "Made with ❤️ in Romania.",
     "start_game_button" => "Start game",
     "insert_player" => "Insert player name",
     "add_players" => "Add up to 4 players",
-    "banner_win" => "won",
-    "banner_bonus" => "Who gets the bonus",
-    "banner_play" => "Good luck and have fun",
+    "banner_win" => "won!",
+    "banner_bonus" => "Who gets the bonus?",
+    "banner_play" => "Good luck and have fun!",
     "winner_label" => "THE WINNER IS",
-    "no_templates_yet" => "No templates saved yet - add some",
+    "no_templates_yet" => "No templates saved yet - add some!",
     "template_add" => "Save current players",
     "name_template" => "Name this template",
     "template_not_enough" => "Add some players first!",
@@ -182,22 +148,22 @@ pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
     "language" => "Limbă",
     "score_editing" => "Permiteți editarea scorurilor",
     "dealer_tracking" => "Urmărire dealer",
-    "max_score" => "Scorul maxim",
+    "max_score" => "Scorul maxim:",
     "end_at_max_score" => "Limită de scor",
-    "tile_bonus_value" => "Valoarea atuului",
-    "programmer" => "Programator",
-    "design" => "Design UI/UX",
-    "icons" => "Pictograme",
-    "tech" => "Tehnologii",
+    "tile_bonus_value" => "Valoarea atuului:",
+    "programmer" => "Programator:",
+    "design" => "Design UI/UX:",
+    "icons" => "Pictograme:",
+    "tech" => "Tehnologii:",
     "love" => "Creat cu ❤️ în România.",
     "start_game_button" => "Începe jocul",
     "insert_player" => "Introdu un nume",
     "add_players" => "Adaugă până la 4 jucători",
-    "banner_win" => "a câștigat",
-    "banner_bonus" => "Cine primește atuuul",
-    "banner_play" => "Cel mai bun să câștige",
+    "banner_win" => "a câștigat!",
+    "banner_bonus" => "Cine primește atuuul?",
+    "banner_play" => "Cel mai bun să câștige!",
     "winner_label" => "CÂȘTIGĂTORUL ESTE",
-    "no_templates_yet" => "Niciun șablon salvat - adaugă câteva",
+    "no_templates_yet" => "Niciun șablon salvat - adaugă câteva!",
     "template_add" => "Salvați jucătorii actuali",
     "name_template" => "Numește acest șablon",
     "template_not_enough" => "Adaugă mai întâi niște jucători!",
@@ -205,9 +171,9 @@ pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
 
 };
 
-pub fn get_text(lang_code: i32, text_key: &str) -> Option<&str> {
+pub fn get_text(lang_code: usize, text_key: &str) -> &str {
     match lang_code {
-        2 => ROMANIAN.get(text_key).cloned(),
-        _ => ENGLISH.get(text_key).cloned(),
+        2 => ROMANIAN.get(text_key).cloned().unwrap(),
+        _ => ENGLISH.get(text_key).cloned().unwrap(),
     }
 }

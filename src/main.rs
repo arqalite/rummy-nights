@@ -1,20 +1,42 @@
+#![allow(non_snake_case)]
+
 use dioxus::prelude::*;
 use rummy_nights::prelude::*;
+
+pub fn App(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
+    let screen = state.read().screen;
+
+    if !(state.read().checked_storage) {
+        state.write().initialize_storage();
+    }
+
+    log!("Start render.");
+    render!(
+        div {
+            class: "flex flex-col bg-white h-screen w-screen relative overflow-hidden",
+            rummy_nights::frontend::DecorativeSpheres {},
+            div {
+                class: "z-10 flex flex-col h-screen mx-auto w-full sm:max-w-lg",
+                match screen {
+                    Screen::Menu => rsx!(rummy_nights::frontend::menu::MenuScreen {}),
+                    Screen::PlayerSelect => rsx!(rummy_nights::frontend::player_select::PlayerSelectScreen {}),
+                    Screen::Templates => rsx!(rummy_nights::frontend::templates::TemplateScreen {}),
+                    Screen::Game => rsx!(rummy_nights::frontend::game::GameScreen {}),
+                    Screen::EndGame => rsx!(rummy_nights::frontend::game_end::EndScreen {}),
+                    Screen::Settings => rsx!(rummy_nights::frontend::settings::SettingsScreen {}),
+                    Screen::Credits => rsx!(rummy_nights::frontend::credits::CreditsScreen {}),
+                }
+            }
+        }
+    )
+}
 
 pub fn main() {
     log!("Initializing app.");
 
-    dioxus::web::launch(|cx| {
-        let state = use_atom_ref(&cx, STATE);
-        log!("Loaded new state.");
-
-        if !state.read().checked_storage {
-            state.write().load_existing_game();
-            state.write().settings.load();
-            state.write().load_saved_templates();
-            log!("Finish loading data.");
-        };
-
-        render_screen(cx)
+    dioxus_web::launch(|cx| {
+        fermi::use_init_atom_root(cx);
+        render!(App {})
     });
 }

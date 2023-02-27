@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
-pub fn okay_button(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn OkayIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -23,11 +23,11 @@ pub fn okay_button(cx: Scope) -> Element {
                 r: "10"
             }
         }
-    ))
+    )
 }
 
-pub fn gb_flag_icon(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn EnglishFlagIcon(cx: Scope) -> Element {
+    render!(
         svg {
             id: "flag-icons-gb",
             xmlns: "http://www.w3.org/2000/svg",
@@ -55,11 +55,11 @@ pub fn gb_flag_icon(cx: Scope) -> Element {
                 fill: "#C8102E",
             }
         }
-    ))
+    )
 }
 
-pub fn romanian_flag_icon(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn RomanianFlagIcon(cx: Scope) -> Element {
+    render!(
         svg {
             id: "flag-icons-ro",
             xmlns: "http://www.w3.org/2000/svg",
@@ -83,11 +83,11 @@ pub fn romanian_flag_icon(cx: Scope) -> Element {
                 }
             }
         }
-    ))
+    )
 }
 
-pub fn add_button(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn AddIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -109,11 +109,11 @@ pub fn add_button(cx: Scope) -> Element {
                 r: "10"
             }
         }
-    ))
+    )
 }
 
-pub fn arrow_right(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn RightArrowIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -142,11 +142,11 @@ pub fn arrow_right(cx: Scope) -> Element {
                 r: "10"
             }
         }
-    ))
+    )
 }
 
-pub fn back(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn BackIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -166,11 +166,11 @@ pub fn back(cx: Scope) -> Element {
                 d: "M20 8H9.5C6.46243 8 4 10.4624 4 13.5V13.5C4 16.5376 6.46243 19 9.5 19H19"
             }
         }
-    ))
+    )
 }
 
-pub fn bin(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn BinIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -187,11 +187,11 @@ pub fn bin(cx: Scope) -> Element {
                 d: "M19 6L5 6M14 5L10 5M6 10L6 20C6 20.6666667 6.33333333 21 7 21 7.66666667 21 11 21 17 21 17.6666667 21 18 20.6666667 18 20 18 19.3333333 18 16 18 10"
             }
         }
-    ))
+    )
 }
 
-pub fn bonus(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn BonusIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -203,11 +203,11 @@ pub fn bonus(cx: Scope) -> Element {
                 d: "M2.7 11l8-11v7h5l-8 11v-7z"
             },
         }
-    ))
+    )
 }
 
-pub fn github(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn GithubIcon(cx: Scope) -> Element {
+    render!(
         svg {
             stroke: "currentColor",
             width: "100%",
@@ -226,11 +226,11 @@ pub fn github(cx: Scope) -> Element {
                 d: "m5.25 13.75c-1.5.5-3-.5-3.5-1",
             }
         }
-    ))
+    )
 }
 
-pub fn home(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn HomeIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -253,11 +253,11 @@ pub fn home(cx: Scope) -> Element {
                 y: "13",
             }
         }
-    ))
+    )
 }
 
-pub fn info(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn InfoIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -285,11 +285,11 @@ pub fn info(cx: Scope) -> Element {
                 r: "10",
             }
         }
-    ))
+    )
 }
 
-pub fn new_game(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn NewGameIcon(cx: Scope) -> Element {
+    render!(
         svg {
             stroke_linecap: "round",
             fill: "none",
@@ -311,11 +311,11 @@ pub fn new_game(cx: Scope) -> Element {
                 points: "18 12 9 16.9 9 7",
             }
         }
-    ))
+    )
 }
 
-pub fn pushpin(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn DealerIcon(cx: Scope) -> Element {
+    render!(
         svg {
             fill: "none",
             height: "100%",
@@ -331,11 +331,11 @@ pub fn pushpin(cx: Scope) -> Element {
                 d: "m10.25 10.25 4 4m-12.5-7.5 5-5s1 2 2 3 4.5 2 4.5 2l-6.5 6.5s-1-3.5-2-4.5-3-2-3-2z",
             }
         }
-    ))
+    )
 }
 
-pub fn remove(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn RemoveIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -355,11 +355,11 @@ pub fn remove(cx: Scope) -> Element {
                 d: "M4.92893219,19.0710678 C1.02368927,15.1658249 1.02368927,8.83417511 4.92893219,4.92893219 C8.83417511,1.02368927 15.1658249,1.02368927 19.0710678,4.92893219 C22.9763107,8.83417511 22.9763107,15.1658249 19.0710678,19.0710678 C15.1658249,22.9763107 8.83417511,22.9763107 4.92893219,19.0710678 Z",
             }
         }
-    ))
+    )
 }
 
-pub fn replay_icon(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn ReplayIcon(cx: Scope) -> Element {
+    render!(
         svg {
             xmlns: "http://www.w3.org/2000/svg",
             stroke_width: "1.5",
@@ -397,11 +397,11 @@ pub fn replay_icon(cx: Scope) -> Element {
                 stroke_linecap: "round",
             }
         }
-    ))
+    )
 }
 
-pub fn restart_icon(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn RestartIcon(cx: Scope) -> Element {
+    render!(
         svg {
             xmlns: "http://www.w3.org/2000/svg",
             stroke_width: "1.5",
@@ -421,10 +421,10 @@ pub fn restart_icon(cx: Scope) -> Element {
                 d: "M11,20 C6.581722,20 3,16.418278 3,12 C3,7.581722 6.581722,4 11,4 C15.418278,4 19,7.581722 19,12 L19,14",
             }
         }
-    ))
+    )
 }
-pub fn resume_icon(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn ResumeIcon(cx: Scope) -> Element {
+    render!(
         svg {
             xmlns: "http://www.w3.org/2000/svg",
             height: "100%",
@@ -446,11 +446,11 @@ pub fn resume_icon(cx: Scope) -> Element {
                 }
             }
         }
-    ))
+    )
 }
 
-pub fn save_icon(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn SaveIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -479,11 +479,11 @@ pub fn save_icon(cx: Scope) -> Element {
                 y: "3",
             }
         }
-    ))
+    )
 }
 
-pub fn settings_icon(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn SettingsIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -505,11 +505,11 @@ pub fn settings_icon(cx: Scope) -> Element {
                 cy: "12",
             }
         }
-    ))
+    )
 }
 
-pub fn trophy_icon(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn TrophyIcon(cx: Scope) -> Element {
+    render!(
         svg {
             color: "#000",
             width: "100%",
@@ -536,11 +536,11 @@ pub fn trophy_icon(cx: Scope) -> Element {
                 d: "M6 5L6 11 5 11C3.34314575 11 2 9.65685425 2 8 2 6.34314575 3.34314575 5 5 5L6 5zM18 11L18 5 19 5C20.6568542 5 22 6.34314575 22 8 22 9.65685425 20.6568542 11 19 11L18 11z",
             }
         }
-    ))
+    )
 }
 
-pub fn up_icon(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn UpIcon(cx: Scope) -> Element {
+    render!(
         svg {
             view_box: "0 0 16 12",
             fill: "none",
@@ -556,11 +556,11 @@ pub fn up_icon(cx: Scope) -> Element {
                 d: "m12.25 10.25-4.25-4.5-4.25 4.5",
             }
         }
-    ))
+    )
 }
 
-pub fn play_icon(cx: Scope) -> Element {
-    cx.render(rsx!(
+pub fn PlayIcon(cx: Scope) -> Element {
+    render!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -582,5 +582,5 @@ pub fn play_icon(cx: Scope) -> Element {
                 r: "10",
             }
         }
-    ))
+    )
 }

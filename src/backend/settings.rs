@@ -2,7 +2,7 @@ use gloo_console::log;
 use gloo_storage::{LocalStorage, Storage};
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Serialize, Deserialize, Debug)]
+#[derive(Clone, Serialize, Deserialize, Debug, Copy)]
 pub struct Settings {
     pub end_game_at_score: bool,
     pub max_score: i32,
@@ -11,7 +11,7 @@ pub struct Settings {
     pub enable_dealer_tracking: bool,
     pub enable_score_editing: bool,
     pub checked_storage: bool,
-    pub language: i32,
+    pub language: usize,
 }
 
 impl Settings {
@@ -47,7 +47,7 @@ impl Settings {
     pub fn save(&self) {
         log!("Saving settings.");
 
-        LocalStorage::set("settings", self.clone()).unwrap();
+        LocalStorage::set("settings", *self).unwrap();
     }
 
     pub fn set_max_score(&mut self, value: i32) {

@@ -1,87 +1,74 @@
-use crate::backend::print_version_number;
+use crate::backend::VersionNumber;
 use crate::prelude::*;
-use dioxus::fermi::use_atom_ref;
 use dioxus::prelude::*;
 
-pub fn screen(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
-
+pub fn MenuScreen(cx: Scope) -> Element {
     log!("Rendering main menu.");
-    cx.render(rsx!(
+    let state = fermi::use_atom_ref(cx, STATE);
+
+    render!(
         button {
             class: "absolute right-4 top-4",
-            onclick: |_| state.write().screen = Screen::Settings,
+            onclick: move |_| state.write().go_to_screen(Screen::Settings),
             div {
                 class: "h-12",
-                assets::settings_icon()
+                assets::SettingsIcon {}
             }
         }
         div {
             class : "flex flex-col grow gap-16 justify-center px-8",
             img {
                 class: "w-full max-w-lg",
-                src: "img/intro_logo.gif",
+                src: "intro_logo.gif",
             }
             div {
                 class: "flex flex-col gap-8",
-                start_game_button(),
-                resume_game_button(),
+                MenuButton {
+                    on_click: move |_| state.write().create_game(),
+                    label: "start_game",
+                    icon: render!(assets::NewGameIcon {})
+                }
+                //Hide the resume game button if there is no ongoing game.
+                (state.read().game.status == GameStatus::Ongoing).then(|| rsx!(
+                    MenuButton {
+                        on_click: move |_| state.write().go_to_screen(Screen::Game),
+                        label: "resume_game",
+                        icon: render!(assets::ResumeIcon {})
+                    }
+                ))
             }
         }
         p {
             class: "text-white font-semibold text-lg text-center w-max max-w-1/2 px-2 absolute bottom-2 left-2 rounded-full",
             background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-            print_version_number(),
+            VersionNumber {}
         }
-    ))
+    )
 }
 
-fn start_game_button(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
-    let start_game_text = get_text(state.read().settings.language, "start_game").unwrap();
+#[inline_props]
+fn MenuButton<'a>(
+    cx: Scope,
+    on_click: EventHandler<'a, MouseEvent>,
+    label: &'a str,
+    icon: Element<'a>,
+) -> Element {
+    log!(format!("Rendering main menu button: {label}"));
 
-    log!("Rendering start game button.");
-    cx.render(rsx!(
+    render!(
         button {
             class: "grid grid-cols-6 items-center",
-            onclick: |_| state.write().create_game(),
+            onclick: |evt| on_click.call(evt),
             p {
                 class: "w-max font-semibold text-center text-2xl col-span-2 col-start-2 justify-self-end",
-                "{start_game_text}"
+                get_text(cx, label)
+
             }
             div {
                 class: "h-20 w-20 col-start-5 col-span-2 rounded-full",
                 background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                assets::new_game()
+                icon,
             }
         }
-    ))
-}
-
-fn resume_game_button(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
-
-    //Hide the resume game button if there is no ongoing game.
-    if state.read().game.status != GameStatus::Ongoing {
-        return None;
-    }
-
-    let resume_game_text = get_text(state.read().settings.language, "resume_game").unwrap();
-
-    log!("Rendering resume game button.");
-    cx.render(rsx!(
-        button {
-            class: "grid grid-cols-6 items-center",
-            onclick: |_| state.write().screen = Screen::Game,
-            p {
-                class: "w-max font-semibold text-center text-2xl col-span-3 col-start-1 justify-self-end",
-                "{resume_game_text}"
-            }
-            div {
-                class: "h-20 w-20 col-start-5 col-span-2 rounded-full",
-                background: "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
-                assets::resume_icon()
-            }
-        }
-    ))
+    )
 }

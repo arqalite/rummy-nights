@@ -15,4 +15,12 @@ open = false
 [[hooks]]
 stage = "pre_build"
 command = "tailwindcss"
-command_arguments = ["-c", "assets/js/tailwind.config.js", "-i", "assets/css/input.css", "-o", "assets/css/style.css", "--minify"]
+command_arguments = [
+    "-c",
+    "src/tailwind.config.js",
+    "-i",
+    "src/input.css",
+    "-o",
+    "public/style.css",
+    "--minify",
+]

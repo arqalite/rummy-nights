@@ -1,12 +1,14 @@
-use dioxus::fermi::AtomRef;
 use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};
 
 use crate::backend::prelude::*;
-use crate::backend::templates::Template;
+use crate::backend::GameTemplate;
+use dioxus::prelude::*;
 
-pub static STATE: AtomRef<Model> = |_| Model::new();
+pub static STATE: fermi::AtomRef<Model> = |_| {
+    Model::new()
+};
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Model {
@@ -15,7 +17,7 @@ pub struct Model {
     pub show_end_once: bool,
     pub checked_storage: bool,
     pub settings: Settings,
-    pub templates: Vec<Template>,
+    pub templates: Vec<GameTemplate>,
 }
 
 impl Model {
@@ -31,10 +33,75 @@ impl Model {
         }
     }
 
+    pub fn initialize_storage(&mut self) {
+        log!("Initializing storage.");
+        if !self.checked_storage {
+            self.load_existing_game();
+            self.settings.load();
+            self.load_saved_templates();
+        } else {
+            log!("Storage already checked this session - skipping.");
+        }
+    }
+
+    pub fn get_dealer(&self) -> usize {
+        let mut position = 0;
+
+        for player in self.game.players.iter() {
+            if self.settings.enable_dealer_tracking
+                && (((self.game.round + self.game.players.len() + 1) - player.id
+                    + self.game.total_rounds)
+                    % self.game.players.len()
+                    == 0)
+                && self.game.status == GameStatus::Ongoing
+            {
+                position = player.id;
+            }
+        }
+
+        position
+    }
+
+    pub fn add_player(&mut self, name: String, color_index: usize) {
+        self.game.add_player(name, color_index);
+    }
+
+    pub fn edit_player_name(&mut self, evt: FormEvent, id: usize) {
+        let name = evt.values.get("player-name").unwrap().to_string();
+        if !name.is_empty() {
+            self.game.edit_player_name(id - 1, name);
+        };
+    }
+
+    pub fn go_to_screen(&mut self, screen: Screen) {
+        self.screen = screen
+    }
+
+    pub fn clear_and_go_to_menu(&mut self) {
+        self.go_to_screen(Screen::Menu);
+        self.checked_storage = false;
+        SessionStorage::delete("session");
+    }
+
+    pub fn toggle_tile_bonus(&mut self) {
+        if self.game.tile_bonus_button_active {
+            self.game.tile_bonus_button_active = false;
+        } else if !self.game.tile_bonus_granted && self.game.status == GameStatus::Ongoing {
+            self.game.tile_bonus_button_active = true;
+        };
+    }
+
+    pub fn finish_game(&mut self) {
+        log!("Deleting game and returning to main menu.");
+        LocalStorage::delete("state");
+        SessionStorage::delete("session");
+        *self = Model::new();
+    }
+
     pub fn create_game(&mut self) {
         log!("Creating new game.");
 
-        let settings = self.settings.clone();
+        let settings = self.settings;
         let templates = self.templates.clone();
         log!(format!("Backed up settings are {settings:?}"));
 
@@ -82,16 +149,36 @@ impl Model {
         self.checked_storage = true;
     }
 
-    pub fn add_score(&mut self, player_id: usize, value: i32) {
+    pub fn add_score(&mut self, evt: FormEvent, player_id: usize) -> bool {
         log!("Adding score.");
-        self.game.add_score(player_id, value);
-        self.check_status()
+
+        if let Ok(score) = evt.values.get("score").unwrap().parse::<i32>() {
+            self.game.add_score(player_id, score);
+            self.check_status();
+            true
+        } else {
+            false
+        }
     }
 
-    pub fn edit_score(&mut self, player_id: usize, score_id: usize, value: i32) {
-        log!("Editing score.");
-        self.game.edit_score(player_id, score_id, value);
-        self.check_status()
+    pub fn edit_score(&mut self, evt: FormEvent) {
+        log!(format!("This has {:?}", evt.values));
+        if let Ok(score) = evt.values.get("score").unwrap().parse::<i32>() {
+            if let Ok(score_id) = evt.values.get("score_id").unwrap().parse::<usize>() {
+                if let Ok(player_id) = evt.values.get("player_id").unwrap().parse::<usize>() {
+                    for player in &mut self.game.players {
+                        if player_id == player.id {
+                            *player.score.get_mut(&(score_id - 1)).unwrap() = score;
+                            player.sum = player.score.values().sum::<i32>()
+                                + player.bonus.values().sum::<i32>();
+                        }
+                    }
+                    self.game.check_round();
+                    self.game.save_game();
+                    self.check_status()
+                }
+            }
+        };
     }
 
     pub fn start_game(&mut self) {
@@ -106,6 +193,7 @@ impl Model {
         log!("Resetting game.");
         self.game.reset_game();
         self.screen = Screen::Game;
+        self.show_end_once = true;
     }
 
     pub fn check_status(&mut self) {
@@ -124,14 +212,14 @@ impl Model {
     }
 
     pub fn add_template(&mut self) {
-        if self.game.players.len() < 2 {
+        if self.game.players.len() < 2 || self.templates.len() >= 5 {
             return;
         }
 
         let mut template_name = String::new();
         template_name.push_str(&(self.templates.len() + 1).to_string());
 
-        self.templates.push(Template {
+        self.templates.push(GameTemplate {
             id: self.templates.len() + 1,
             name: template_name,
             players: self.game.players.clone(),
@@ -143,14 +231,19 @@ impl Model {
         log!(format!("Saved templates: {:#?}", self.templates));
     }
 
-    pub fn edit_template(&mut self, id: usize, name: String, color_index: usize) {
-        for template in &mut self.templates {
-            if template.id == id {
-                template.name = name.clone();
-                template.color = color_index;
+    pub fn edit_template(&mut self, evt: FormEvent, color_index: usize) {
+        let name = evt.values.get("template-name").unwrap().to_string();
+        if !name.is_empty() {
+            if let Ok(template_id) = evt.values.get("template_id").unwrap().parse::<usize>() {
+                for template in &mut self.templates {
+                    if template.id == template_id {
+                        template.name = name.clone();
+                        template.color = color_index;
+                    }
+                }
+                self.save_templates();
             }
-        }
-        self.save_templates();
+        };
     }
 
     pub fn load_template(&mut self, id: usize) {
@@ -175,7 +268,7 @@ impl Model {
         log!("Trying to load templates.");
 
         match LocalStorage::get::<serde_json::Value>("templates") {
-            Ok(json_state) => match serde_json::from_value::<Vec<Template>>(json_state) {
+            Ok(json_state) => match serde_json::from_value::<Vec<GameTemplate>>(json_state) {
                 Ok(saved_templates) => {
                     log!(format!("Loaded: {saved_templates:#?}"));
                     self.templates = saved_templates;
@@ -185,6 +278,57 @@ impl Model {
             },
             Err(_) => log!("Could not read templates."),
         }
+    }
+
+    pub fn grant_bonus(&mut self, id: usize) {
+        if !self.game.tile_bonus_granted && self.settings.use_tile_bonus {
+            log!("Granting player bonus.");
+
+            for player in &mut self.game.players {
+                if player.id == id {
+                    player
+                        .bonus
+                        .insert(self.game.round + 1, self.game.tile_bonus_value);
+                    player.sum =
+                        player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
+                }
+            }
+            self.game.tile_bonus_granted = true;
+            self.game.new_round_started = false;
+            self.game.tile_bonus_button_active = false;
+            self.game.save_game();
+        }
+    }
+
+    pub fn enable_tile_bonus(&mut self, enabled: bool) {
+        self.settings.use_tile_bonus = enabled;
+        log!(format!("Tile bonus is {:?}", self.settings.use_tile_bonus));
+    }
+
+    pub fn set_language(&mut self, language: usize) {
+        self.settings.language = language
+    }
+
+    pub fn enable_score_editing(&mut self, enabled: bool) {
+        self.settings.enable_score_editing = enabled;
+        log!(format!(
+            "Score editing enabled: {:?}",
+            self.settings.enable_score_editing
+        ));
+    }
+    pub fn enable_dealer_tracking(&mut self, enabled: bool) {
+        self.settings.enable_dealer_tracking = enabled;
+        log!(format!(
+            "Score editing enabled: {:?}",
+            self.settings.enable_dealer_tracking
+        ));
+    }
+    pub fn enable_max_score(&mut self, enabled: bool) {
+        self.settings.end_game_at_score = enabled;
+        log!(format!(
+            "Score editing enabled: {:?}",
+            self.settings.end_game_at_score
+        ));
     }
 }
 

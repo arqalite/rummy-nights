@@ -2,18 +2,18 @@
   "name": "Rummy Nights",
   "icons": [
     {
-      "src": "/img/logo_192.png",
+      "src": "logo_192.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "/img/logo_512.png",
+      "src": "logo_512.png",
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
     },
     {
-      "src": "/img/logo_512.png",
+      "src": "logo_512.png",
       "type": "image/png",
       "sizes": "any",
       "purpose": "any"

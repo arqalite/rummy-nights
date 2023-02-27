@@ -1,157 +1,69 @@
-use dioxus::events::FormEvent;
-use dioxus::fermi::use_atom_ref;
-use dioxus::prelude::*;
-use dioxus::web::use_eval;
-use std::cmp::Ordering;
-use std::ops::Not;
-
 use crate::prelude::*;
+use dioxus::prelude::*;
+use dioxus_web::use_eval;
+use std::cmp::Ordering;
 
-pub fn screen(cx: Scope) -> Element {
+pub fn GameScreen(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
+    log!(format!("game status is {:?}", state.read().game.status));
     log!("Rendering game screen.");
 
-    cx.render(rsx! (
-        nav_bar(),
-        banner()
-        player_table()
-        game_menu(),
-    ))
+    render!(
+        NavBar {},
+        Banner {},
+        PlayerTable {},
+        (state.read().settings.use_tile_bonus && state.read().game.status == GameStatus::Ongoing)
+            .then(|| rsx!(TileBonusButton {})),
+    )
 }
 
-fn player_table(cx: Scope) -> Element {
+fn PlayerTable(cx: Scope) -> Element {
     log!("Rendering player table.");
+    let state = fermi::use_atom_ref(cx, STATE);
 
-    let state = use_atom_ref(&cx, STATE);
-    let mut game_count = 0;
-
-    let edit_score = move |evt: FormEvent| {
-        log!(format!("This has {:?}", evt.values));
-        if let Ok(score) = evt.values.get("score").unwrap().parse::<i32>() {
-            if let Ok(score_id) = evt.values.get("score_id").unwrap().parse::<usize>() {
-                if let Ok(player_id) = evt.values.get("player_id").unwrap().parse::<usize>() {
-                    state.write().edit_score(player_id, score_id, score);
-                }
-            }
-        };
-    };
-
-    cx.render(rsx!(
+    render!(
         div {
             //Main table
             class: "z-10 flex justify-evenly gap-x-4 h-[65%] px-8",
             state.read().game.players.iter().map(|player| {
-                log!("Rendering player column.");
                 let player_id = player.id;
-                let border = BORDER_COLORS[player.color_index];
-                let (player_name_button_style, player_background, player_text_color, tabindex) =
-                    if state.read().game.tile_bonus_toggle {
-                        (
-                            "pointer-events-auto",
-                            "bg-white outline outline-1 outline-black",
-                            "text-black",
-                            "0",
-                        )
-                    } else {
-                        (
-                            "pointer-events-none",
-                            BG_COLORS[player.color_index],
-                            "text-white",
-                            "-1",
-                        )
-                    };
-                let mut score_id = 0;
-
                 rsx!(
                     div {
                         class: "flex flex-col gap-2 w-full",
-                        button {
-                            // Name - first cell
-                            class: "relative rounded-full h-8 {player_background} {player_name_button_style} w-full",
-                            tabindex: "{tabindex}",
-                            onclick: move |_| {
-                                if !state.read().game.tile_bonus_granted && state.read().settings.use_tile_bonus {
-                                    state.write().game.grant_bonus(player_id);
-                                }
-                            },
-                            self::dealer_pin {
-                                player_id: player_id
-                            },
-                            p {
-                                class: "text-center my-auto {player_text_color} font-semibold",
-                                "{player.name}"
-                            }
+                        NameButton {
+                            name: player.name.clone(),
+                            player_id: player_id,
+                            color_index: player.color_index
                         }
                         (!player.score.is_empty()).then(|| rsx!(
-                            div {
-                                class: "flex flex-col gap-2 w-full overflow-auto scroll-smooth",
-                                id: "score_{player_id}",
-                                style: "scrollbar-width: none;",
-                                //Scores - dynamic
-                                player.score.values().map(|score| {
-                                    let bonus_visibility = if player.bonus.contains_key(&game_count) {
-                                        String::from("")
-                                    } else {
-                                        String::from("hidden")
-                                    };
-
-                                    game_count += 1;
-                                    score_id += 1;
-
-                                    rsx!(
-                                        div {
-                                            class: "flex flex-row justify-center relative rounded border-b-4 h-10 {border}",
-                                            (state.read().settings.enable_score_editing).then(|| rsx!(
-                                                form {
-                                                    onsubmit: edit_score,
-                                                    prevent_default: "onsubmit",
-                                                    input {
-                                                        name: "score",
-                                                        onsubmit: edit_score,
-                                                        class: "text-lg appearance-none leading-6 font-light bg-transparent h-10 w-full text-center",
-                                                        style: "-moz-appearance:textfield",
-                                                        value: "{score}",
-                                                        outline: "none",
-                                                        r#type: "number",
-                                                    }
-                                                    input {
-                                                        name: "score_id",
-                                                        r#type: "hidden",
-                                                        value: "{score_id}",
-                                                    }
-                                                    input {
-                                                        name: "player_id",
-                                                        r#type: "hidden",
-                                                        value: "{player_id}",
-                                                    }
-                                                }
-                                            )),
-                                            (!state.read().settings.enable_score_editing).then(|| rsx!(
-                                                p {
-                                                    class: "text-lg text-center self-center leading-6",
-                                                    "{score}"
-                                                }
-                                            ))
-                                            div {
-                                                class: "absolute right-0 self-center h-4 {bonus_visibility} rounded-full",
-                                                assets::bonus()
-                                            }
-                                        }
-                                    )
-                                })
-                            }
+                            ScoreTable {
+                                player: player.clone()                            }
                         ))
                         div {
                             class: "flex flex-col gap-2 w-full",
-                            self::score_input {
-                                id: player_id
-                            },
-                            div {
-                                //Total box
-                                class: "rounded border-b-[7px] {border} h-10",
-                                p {
-                                    class: "text-center text-lg font-semibold",
-                                    "{player.sum}"
-                                }
+                            (state.read().game.status == GameStatus::Ongoing).then(|| rsx!(
+                                ScoreInput {
+                                    id: player_id,
+                                    on_score_input: move |evt: FormEvent| {
+
+                                        if state.write().add_score(evt, player_id) {
+                                            let focus_id = match player_id.cmp(&state.read().game.players.len()) {
+                                                Ordering::Greater => 5,
+                                                Ordering::Equal => 1,
+                                                Ordering::Less => player_id + 1,
+                                            };
+                                            use_eval(cx)(format!(
+                                                "document.getElementById('{player_id}').value = '';"
+                                            ));
+                                            use_eval(cx)(format!("document.getElementById('{focus_id}').focus();"));
+                                        }
+                                    },
+                                    color_index: player.color_index
+                                },
+                            ))
+                            ScoreTotal {
+                                color_index: player.color_index,
+                                sum: player.sum
                             }
                         }
 
@@ -159,46 +71,163 @@ fn player_table(cx: Scope) -> Element {
                 )
             })
         }
-    ))
+    )
 }
 
 #[inline_props]
-fn score_input(cx: Scope, id: usize) -> Element {
-    let state = use_atom_ref(&cx, STATE);
-    let mut color_index = 0;
+fn NameButton(cx: Scope, name: String, player_id: usize, color_index: usize) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
+    let (player_name_button_style, player_background, player_text_color, tabindex) =
+        if state.read().game.tile_bonus_button_active {
+            (
+                "pointer-events-auto",
+                "bg-white outline outline-1 outline-black",
+                "text-black",
+                "0",
+            )
+        } else {
+            (
+                "pointer-events-none",
+                BG_COLORS[*color_index],
+                "text-white",
+                "-1",
+            )
+        };
 
-    if state.read().game.status != GameStatus::Ongoing {
-        return None;
-    };
-
-    for player in &state.read().game.players {
-        if player.id == *id {
-            color_index = player.color_index;
+    render!(
+        button {
+            // Name - first cell
+            class: "relative rounded-full h-8 {player_background} {player_name_button_style} w-full",
+            tabindex: "{tabindex}",
+            onclick: move |_| state.write().grant_bonus(*player_id),
+            (state.read().get_dealer() == *player_id).then(|| rsx!(
+                DealerPin {}
+            ))
+            p {
+                class: "text-center my-auto {player_text_color} font-semibold",
+                "{name}"
+            }
         }
-    }
+    )
+}
 
-    let id = *id;
-    let caret = CARET_COLORS[color_index];
-    let border = BORDER_COLORS[color_index];
+#[inline_props]
+fn ScoreTable(cx: Scope, player: Player) -> Element {
+    let mut game_count = 0;
+    let mut score_id = 0;
 
-    let onsubmit = move |evt: FormEvent| {
-        if let Ok(score) = evt.values.get("score").unwrap().parse::<i32>() {
-            state.write().add_score(id, score);
-        };
+    let player_id = player.id;
 
-        let focus_id = match id.cmp(&state.read().game.players.len()) {
-            Ordering::Greater => 5,
-            Ordering::Equal => 1,
-            Ordering::Less => id + 1,
-        };
-        use_eval(&cx)(format!("document.getElementById('{id}').value = '';"));
-        use_eval(&cx)(format!("document.getElementById('{focus_id}').focus();"));
-    };
+    render!(
+        div {
+            class: "flex flex-col gap-2 w-full overflow-auto scroll-smooth",
+            id: "score_{player_id}",
+            style: "scrollbar-width: none;",
+            player.score.values().map(|score| {
+                game_count += 1;
+                score_id += 1;
+
+                rsx!(
+                    ScoreItem {
+                        id: score_id,
+                        player_id: player_id,
+                        score: *score,
+                        color_index: player.color_index,
+                        has_bonus: player.bonus.contains_key(&game_count),
+                    }
+                )
+            })
+        }
+    )
+}
+
+#[inline_props]
+fn ScoreItem(
+    cx: Scope,
+    id: i32,
+    player_id: usize,
+    score: i32,
+    color_index: usize,
+    has_bonus: bool,
+) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
+    let border = BORDER_COLORS[*color_index];
+    let enable_score_editing = state.read().settings.enable_score_editing;
+
+    let bonus_visibility = if *has_bonus { "" } else { "hidden" };
+
+    render!(
+        div {
+            class: "flex flex-row justify-center relative rounded border-b-4 h-10 {border}",
+            (enable_score_editing).then(|| rsx!(
+                form {
+                    onsubmit: move |evt| state.write().edit_score(evt),
+                    prevent_default: "onsubmit",
+                    input {
+                        name: "score",
+                        onsubmit: move |evt| state.write().edit_score(evt),
+                        class: "text-lg appearance-none leading-6 font-light bg-transparent h-10 w-full text-center",
+                        style: "-moz-appearance:textfield",
+                        value: "{score}",
+                        outline: "none",
+                        r#type: "number",
+                    }
+                    input {
+                        name: "score_id",
+                        r#type: "hidden",
+                        value: "{id}",
+                    }
+                    input {
+                        name: "player_id",
+                        r#type: "hidden",
+                        value: "{player_id}",
+                    }
+                }
+            )),
+            (!enable_score_editing).then(|| rsx!(
+                p {
+                    class: "text-lg text-center self-center leading-6",
+                    "{score}"
+                }
+            ))
+            div {
+                class: "absolute right-0 self-center h-4 {bonus_visibility} rounded-full",
+                assets::BonusIcon {}
+            }
+        }
+    )
+}
+
+#[inline_props]
+fn ScoreTotal(cx: Scope, color_index: usize, sum: i32) -> Element {
+    let border = BORDER_COLORS[*color_index];
+
+    render!(
+        div {
+            //Total box
+            class: "rounded border-b-[7px] {border} h-10",
+            p {
+                class: "text-center text-lg font-semibold",
+                "{sum}"
+            }
+        }
+    )
+}
+
+#[inline_props]
+fn ScoreInput<'a>(
+    cx: Scope,
+    id: usize,
+    color_index: usize,
+    on_score_input: EventHandler<'a, FormEvent>,
+) -> Element {
+    let caret = CARET_COLORS[*color_index];
+    let border = BORDER_COLORS[*color_index];
 
     log!("Rendering score input.");
-    cx.render(rsx!(
+    render!(
         form {
-            onsubmit: onsubmit,
+            onsubmit: |evt| on_score_input.call(evt),
             prevent_default: "onsubmit",
             input {
                 name: "score",
@@ -209,163 +238,128 @@ fn score_input(cx: Scope, id: usize) -> Element {
                 r#type: "number",
             }
         }
-    ))
+    )
 }
 
-fn game_menu(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
-
-    if !state.read().settings.use_tile_bonus {
-        return None;
-    };
-
-    let tile_bonus_text = get_text(state.read().settings.language, "tile_bonus").unwrap();
-
+fn TileBonusButton(cx: Scope) -> Element {
     log!("Rendering tile bonus menu.");
+    let state = fermi::use_atom_ref(cx, STATE);
 
-    let hidden = if state.read().game.status == GameStatus::Ongoing {
-        ""
-    } else {
-        "hidden"
-    };
-
-    let grayscale = if !state.read().game.tile_bonus_granted {
-        ""
-    } else {
+    let grayscale = if state.read().game.tile_bonus_granted {
         "grayscale"
-    };
-
-    let shadow = if state.read().game.tile_bonus_toggle {
-        "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
     } else {
-        "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
+        ""
     };
 
-    let tile_bonus = move |_| {
-        if state.read().game.tile_bonus_toggle {
-            state.write().game.tile_bonus_toggle = false;
-        } else if !state.read().game.tile_bonus_granted
-            && state.read().game.status == GameStatus::Ongoing
-        {
-            state.write().game.tile_bonus_toggle = true;
-        };
-    };
-
-    cx.render(rsx!(
+    render!(
         div {
-            class: "z-20 absolute bottom-4 left-4 {hidden}",
+            class: "z-20 absolute bottom-4 left-4",
             button {
                 class: "flex flex-row gap-2 h-14 w-max p-2 border border-slate-100 rounded-full {grayscale}",
-                onclick: tile_bonus,
-                box_shadow: "{shadow}",
+                onclick: move |_| state.write().toggle_tile_bonus(),
+                box_shadow: if state.read().game.tile_bonus_button_active {
+                    "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
+                } else {
+                    "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
+                },
                 div {
                     class: "h-10 w-10 self-center rounded-full",
-                    assets::bonus(),
+                    assets::BonusIcon {},
                 }
                 span {
                     class: "font-semibold text-lg self-center pr-2",
-                    "{tile_bonus_text}"
+                    get_text(cx, "tile_bonus")
                 }
             }
         }
-    ))
+    )
 }
 
-fn nav_bar(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn NavBar(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
+    let game_status = state.read().game.status;
 
-    let button_position = if state.read().game.status == GameStatus::Ongoing {
+    let button_position = if game_status == GameStatus::Ongoing {
         "col-start-3 justify-self-end"
     } else {
         "col-start-1 justify-self-start"
     };
 
     log!("Render nav bar.");
-    cx.render(rsx!(
+    render!(
         div {
             class: "z-10 h-16 grid grid-cols-3 sm:max-w-lg px-8",
-            (state.read().game.status == GameStatus::Ongoing).then(|| rsx!(
+            (game_status == GameStatus::Ongoing).then(|| rsx!(
                 button {
                     class: "col-start-1 justify-self-start",
-                    onclick: |_| state.write().screen = Screen::PlayerSelect,
+                    onclick: move |_| state.write().go_to_screen(Screen::PlayerSelect),
                     div {
                         class: "h-10 scale-x-[-1]",
-                        assets::back()
+                        assets::BackIcon {}
                     }
                 }
             )),
             button {
                 class: "{button_position}",
-                onclick: |_| state.write().screen = Screen::Menu,
+                onclick: move |_| state.write().go_to_screen(Screen::Menu),
                 div {
                     class: "h-10",
-                    assets::home(),
+                    assets::HomeIcon {},
                 }
             }
-            (state.read().game.status == GameStatus::Ongoing).not().then(|| rsx!(
+            (game_status != GameStatus::Ongoing).then(|| rsx!(
                 button {
                     class: "col-start-3 justify-self-end",
-                    onclick: |_| state.write().screen = Screen::EndGame,
+                    onclick: move |_| state.write().go_to_screen(Screen::EndGame),
                     div {
                         class: "h-10",
-                        assets::back()
+                        assets::BackIcon {}
                     }
                 }
             ))
         }
-    ))
+    )
 }
 
-fn banner(cx: Scope) -> Element {
-    let state = use_atom_ref(&cx, STATE);
+fn Banner(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
 
-    let banner_win = get_text(state.read().settings.language, "banner_win").unwrap();
-    let banner_bonus = get_text(state.read().settings.language, "banner_bonus").unwrap();
-    let banner_play = get_text(state.read().settings.language, "banner_play").unwrap();
-
-    let (banner_text, banner_color) = match &state.read().game.status {
-        GameStatus::Finished => (
-            format!("{} {}!", state.read().game.get_winner(), banner_win),
+    let (banner_text, banner_color) = if state.read().game.status == GameStatus::Finished {
+        (
+            format!(
+                "{} {}",
+                state.read().game.get_winner(),
+                get_text(cx, "banner_win")
+            ),
             String::from("border-red-600"),
-        ),
-        _ => {
-            if state.read().game.tile_bonus_toggle {
-                (format!("{banner_bonus}?"), String::from("border-cyan-500"))
-            } else {
-                (format!("{banner_play}!"), String::from("border-green-500"))
-            }
-        }
+        )
+    } else if state.read().game.tile_bonus_button_active {
+        (
+            get_text(cx, "banner_bonus").to_string(),
+            String::from("border-cyan-500"),
+        )
+    } else {
+        (
+            get_text(cx, "banner_play").to_string(),
+            String::from("border-green-500"),
+        )
     };
 
     log!("Render banner.");
-    cx.render(rsx!(
+    render!(
         span {
             class: "mb-8 w-max mx-auto font-semibold text-lg border-b-2 {banner_color}",
             "{banner_text}",
         }
-    ))
+    )
 }
 
-#[inline_props]
-fn dealer_pin(cx: Scope, player_id: usize) -> Element {
-    let state = use_atom_ref(&cx, STATE);
-
-    if !state.read().settings.enable_dealer_tracking {
-        return None;
-    }
-
-    if !((((state.read().game.round + state.read().game.players.len() + 1) - player_id
-        + state.read().game.total_rounds)
-        % state.read().game.players.len()
-        == 0)
-        && state.read().game.status == GameStatus::Ongoing)
-    {
-        return None;
-    }
-
+fn DealerPin(cx: Scope) -> Element {
     log!("Render dealer pin.");
-    cx.render(rsx!(div {
-        class: "h-7 absolute -top-4 -right-4 scale-x-[-1]",
-        assets::pushpin()
-    },))
+    render!(
+        div {
+            class: "h-7 absolute -top-4 -right-4 scale-x-[-1]",
+            assets::DealerIcon {}
+        }
+    )
 }

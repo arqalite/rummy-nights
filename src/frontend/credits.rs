@@ -2,18 +2,14 @@ use crate::backend::VersionNumber;
 use crate::prelude::*;
 use dioxus::prelude::*;
 
-#[inline_props]
-pub fn CreditsScreen<'a>(
-    cx: Scope<'a>,
-    on_click: EventHandler<'a, MouseEvent>,
-    lang_code: usize,
-) -> Element<'a> {
+pub fn CreditsScreen(cx: Scope) -> Element {
     log!("Rendering credits.");
+    let state = fermi::use_atom_ref(cx, STATE);
 
     render!(
         button {
             class: "absolute top-4 left-4",
-            onclick: move |event| on_click.call(event),
+            onclick: move |_| state.write().go_to_screen(Screen::Settings),
             div {
                 class: "h-12 scale-x-[-1]",
                 assets::BackIcon {}
@@ -39,7 +35,7 @@ pub fn CreditsScreen<'a>(
                     class: "w-3/4 text-center",
                     p {
                         class: "font-semibold",
-                        get_text(*lang_code,"programmer")
+                        get_text(cx,"programmer")
                     }
                     p {
                         "Antonio Curăvalea",
@@ -49,7 +45,7 @@ pub fn CreditsScreen<'a>(
                     class: "w-3/4 text-center",
                     p {
                         class: "font-semibold",
-                        get_text(*lang_code,"design")
+                        get_text(cx,"design")
                     }
                     p {
                         "Vlad Țânțărean",
@@ -61,7 +57,7 @@ pub fn CreditsScreen<'a>(
                         class: "w-full text-center col-span-1",
                         p {
                             class: "font-semibold",
-                            get_text(*lang_code,"icons")
+                            get_text(cx,"icons")
                         }
                         p {
                             "Freepik/Flaticon",
@@ -80,7 +76,7 @@ pub fn CreditsScreen<'a>(
                         class: "w-full text-center col-span-1",
                         p {
                             class: "font-semibold",
-                            get_text(*lang_code,"tech")
+                            get_text(cx,"tech")
                         }
                         p {
                             "Rust",
@@ -101,7 +97,7 @@ pub fn CreditsScreen<'a>(
                 class: "flex flex-col justify-center items-center gap-2 w-full",
                 p {
                     class: "w-3/4 text-center",
-                    get_text(*lang_code,"love")
+                    get_text(cx,"love")
                 }
             }
             div {

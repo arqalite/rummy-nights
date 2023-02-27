@@ -1,21 +1,16 @@
 use crate::prelude::*;
 use dioxus::prelude::*;
 
-#[inline_props]
-pub fn EndScreen<'a>(
-    cx: Scope,
-    players: Vec<Player>,
-    lang_code: usize,
-    on_click_home: EventHandler<'a, MouseEvent>,
-    on_click_back: EventHandler<'a, MouseEvent>,
-    on_click_restart: EventHandler<'a, MouseEvent>,
-) -> Element {
+pub fn EndScreen(cx: Scope) -> Element {
     log!("Rendering end screen.");
+    let state = fermi::use_atom_ref(cx, STATE);
+    if !state.read().game.is_sorted {
+        state.write().game.sort_players();
+    }
+    let sorted_players = state.read().game.sorted_players.clone();
+
     render!(
         NavBar {
-            on_click_home: |evt| on_click_home.call(evt),
-            on_click_restart: |evt| on_click_restart.call(evt),
-            on_click_back: |evt| on_click_back.call(evt),
         },
         div {
             class: "px-8 flex flex-col absolute w-screen px-8 sm:max-w-lg top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 gap-6 justify-evenly",
@@ -26,9 +21,9 @@ pub fn EndScreen<'a>(
             }
             p {
                 class: "text-center font-bold text-4xl",
-                get_text(*lang_code,"winner_label")
+                get_text(cx,"winner_label")
             }
-            players.iter().map(|player| {
+            sorted_players.iter().map(|player| {
                 rsx!(
                     PlayerItem {
                         player: player.clone(),
@@ -80,20 +75,15 @@ fn PlayerItem(cx: Scope, player: Player) -> Element {
     )
 }
 
-#[inline_props]
-fn NavBar<'a>(
-    cx: Scope,
-    on_click_home: EventHandler<'a, MouseEvent>,
-    on_click_restart: EventHandler<'a, MouseEvent>,
-    on_click_back: EventHandler<'a, MouseEvent>,
-) -> Element {
+fn NavBar(cx: Scope) -> Element {
     log!("Rendering nav bar.");
+    let state = fermi::use_atom_ref(cx, STATE);
     render!(
         div {
             class: "h-16 grid grid-cols-3 px-8",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: |evt| on_click_back.call(evt),
+                onclick: move |_| state.write().go_to_screen(Screen::Game),
                 div {
                     class: "h-10 scale-x-[-1]",
                     assets::BackIcon {}
@@ -101,7 +91,7 @@ fn NavBar<'a>(
             }
             button {
                 class: "col-start-2 justify-self-center",
-                onclick: |evt| on_click_home.call(evt),
+                onclick: move |_| state.write().finish_game(),
                 div {
                     class: "h-10",
                     assets::HomeIcon {}
@@ -109,7 +99,7 @@ fn NavBar<'a>(
             }
             button {
                 class: "col-start-3 justify-self-end",
-                onclick: |evt| on_click_restart.call(evt),
+                onclick: move |_| state.write().reset_game(),
                 div {
                     class: "h-10",
                     assets::ReplayIcon {}

@@ -95,7 +95,7 @@ impl Game {
     pub fn change_player_color(&mut self, player_id: usize, color_id: usize) {
         for player in &mut self.players {
             if player_id == player.id {
-                player.change_color(color_id);
+                player.color_index = color_id - 1;
             }
         }
     }
@@ -139,59 +139,35 @@ impl Game {
         log!("Adding score.");
         for player in &mut self.players {
             if player_id == player.id {
-                player.add_score(value)
+                player.score.insert(player.score.len(), value);
+                player.sum =
+                    player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
             }
         }
         self.check_round();
-        self.save_game();
-    }
-
-    pub fn edit_score(&mut self, player_id: usize, score_id: usize, value: i32) {
-        for player in &mut self.players {
-            if player_id == player.id {
-                player.edit_score(score_id, value);
-            }
-        }
-        self.check_round();
-        self.save_game();
-    }
-
-    pub fn grant_bonus(&mut self, id: usize) {
-        log!("Granting player bonus.");
-
-        for player in &mut self.players {
-            if player.id == id {
-                player.grant_bonus(self.round, self.tile_bonus_value)
-            }
-        }
-        self.tile_bonus_granted = true;
-        self.new_round_started = false;
-        self.tile_bonus_button_active = false;
         self.save_game();
     }
 
     pub fn sort_players(&mut self) {
-        if !self.is_sorted {
-            log!("Sorting players.");
+        log!("Sorting players.");
 
-            self.sorted_players = self.players.clone();
-            log!("Getting players worked.");
+        self.sorted_players = self.players.clone();
+        log!("Getting players worked.");
 
-            self.sorted_players.sort_by(|a, b| {
-                let temp_sum_a = a.sum;
-                let temp_sum_b = b.sum;
+        self.sorted_players.sort_by(|a, b| {
+            let temp_sum_a = a.sum;
+            let temp_sum_b = b.sum;
 
-                temp_sum_a.cmp(&temp_sum_b)
-            });
-            log!("Sorting players worked.");
+            temp_sum_a.cmp(&temp_sum_b)
+        });
+        log!("Sorting players worked.");
 
-            self.sorted_players.reverse();
-            log!("Reversing players worked.");
+        self.sorted_players.reverse();
+        log!("Reversing players worked.");
 
-            self.sorted_players[0].winner = true;
-            self.is_sorted = true;
-            log!("Finishing players worked.");
-        };
+        self.sorted_players[0].winner = true;
+        self.is_sorted = true;
+        log!("Finishing players worked.");
     }
 
     pub fn reset_game(&mut self) {

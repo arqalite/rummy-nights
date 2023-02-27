@@ -1,101 +1,31 @@
 use crate::prelude::*;
 use dioxus::prelude::*;
+use dioxus_web::use_eval;
+use std::cmp::Ordering;
 
-#[inline_props]
-pub fn GameScreen<'a>(
-    cx: Scope,
-    lang_code: usize,
-    game: Game,
-    use_tile_bonus: bool,
-    tile_bonus_button_active: bool,
-    tile_bonus_granted: bool,
-    enable_dealer_tracking: bool,
-    enable_score_editing: bool,
-    on_click_playerselect: EventHandler<'a, MouseEvent>,
-    on_click_home: EventHandler<'a, MouseEvent>,
-    on_click_end: EventHandler<'a, MouseEvent>,
-    on_score_edit: EventHandler<'a, FormEvent>,
-    on_score_input: EventHandler<'a, (FormEvent, usize, usize)>,
-    on_click_player: EventHandler<'a, (MouseEvent, usize)>,
-    on_click_tile_bonus: EventHandler<'a, MouseEvent>,
-) -> Element {
-    let banner_type = match game.status {
-        GameStatus::Finished => BannerType::Win,
-        _ => {
-            if *tile_bonus_button_active {
-                BannerType::Bonus
-            } else {
-                BannerType::Play
-            }
-        }
-    };
-
-    let mut dealer_pin_position = 0;
-    for player in game.players.iter() {
-        if *enable_dealer_tracking
-            && (((game.round + game.players.len() + 1) - player.id + game.total_rounds)
-                % game.players.len()
-                == 0)
-            && game.status == GameStatus::Ongoing
-        {
-            dealer_pin_position = player.id;
-        }
-    }
-
+pub fn GameScreen(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
+    log!(format!("game status is {:?}", state.read().game.status));
     log!("Rendering game screen.");
 
     render!(
-        NavBar {
-            game_status: game.status,
-            on_click_back: |evt| on_click_playerselect.call(evt)
-            on_click_home: |evt| on_click_home.call(evt)
-            on_click_back_to_end: |evt| on_click_end.call(evt)
-        },
-        Banner {
-            lang_code: *lang_code,
-            banner_type: banner_type,
-            winner: game.get_winner()
-        },
-        PlayerTable {
-            players: game.players.clone(),
-            game_status: game.status,
-            tile_bonus_button_active: *tile_bonus_button_active,
-            enable_score_editing: *enable_score_editing,
-            dealer_pin_position: dealer_pin_position,
-            on_score_edit: |evt| on_score_edit.call(evt),
-            on_score_input: |evt| on_score_input.call(evt),
-            on_click_player: |evt| on_click_player.call(evt)
-        },
-        use_tile_bonus.then(|| rsx!(TileBonusButton {
-            lang_code: *lang_code,
-            game_status: game.status,
-            tile_bonus_granted: *tile_bonus_granted,
-            button_pressed: *tile_bonus_button_active,
-            on_click: |evt| on_click_tile_bonus.call(evt),
-        })),
+        NavBar {},
+        Banner {},
+        PlayerTable {},
+        (state.read().settings.use_tile_bonus && state.read().game.status == GameStatus::Ongoing)
+            .then(|| rsx!(TileBonusButton {})),
     )
 }
 
-#[inline_props]
-fn PlayerTable<'a>(
-    cx: Scope,
-    players: Vec<Player>,
-    game_status: GameStatus,
-    tile_bonus_button_active: bool,
-    enable_score_editing: bool,
-    dealer_pin_position: usize,
-    on_score_edit: EventHandler<'a, FormEvent>,
-    on_score_input: EventHandler<'a, (FormEvent, usize, usize)>,
-    on_click_player: EventHandler<'a, (MouseEvent, usize)>,
-) -> Element {
+fn PlayerTable(cx: Scope) -> Element {
     log!("Rendering player table.");
-    let player_len = players.len();
+    let state = fermi::use_atom_ref(cx, STATE);
 
     render!(
         div {
             //Main table
             class: "z-10 flex justify-evenly gap-x-4 h-[65%] px-8",
-            players.iter().map(|player| {
+            state.read().game.players.iter().map(|player| {
                 let player_id = player.id;
                 rsx!(
                     div {
@@ -103,24 +33,31 @@ fn PlayerTable<'a>(
                         NameButton {
                             name: player.name.clone(),
                             player_id: player_id,
-                            color_index: player.color_index,
-                            tile_bonus_button_active: *tile_bonus_button_active,
-                            dealer_pin_position: *dealer_pin_position,
-                            on_click_player: move |evt| on_click_player.call((evt, player_id)),
+                            color_index: player.color_index
                         }
                         (!player.score.is_empty()).then(|| rsx!(
                             ScoreTable {
-                                player: player.clone(),
-                                enable_score_editing: *enable_score_editing,
-                                on_submit: |evt| on_score_edit.call(evt),
-                            }
+                                player: player.clone()                            }
                         ))
                         div {
                             class: "flex flex-col gap-2 w-full",
-                            (*game_status == GameStatus::Ongoing).then(|| rsx!(
+                            (state.read().game.status == GameStatus::Ongoing).then(|| rsx!(
                                 ScoreInput {
                                     id: player_id,
-                                    on_submit: move |evt| on_score_input.call((evt, player_id, player_len)),
+                                    on_score_input: move |evt: FormEvent| {
+
+                                        if state.write().add_score(evt, player_id) {
+                                            let focus_id = match player_id.cmp(&state.read().game.players.len()) {
+                                                Ordering::Greater => 5,
+                                                Ordering::Equal => 1,
+                                                Ordering::Less => player_id + 1,
+                                            };
+                                            use_eval(cx)(format!(
+                                                "document.getElementById('{player_id}').value = '';"
+                                            ));
+                                            use_eval(cx)(format!("document.getElementById('{focus_id}').focus();"));
+                                        }
+                                    },
                                     color_index: player.color_index
                                 },
                             ))
@@ -138,17 +75,10 @@ fn PlayerTable<'a>(
 }
 
 #[inline_props]
-fn NameButton<'a>(
-    cx: Scope,
-    name: String,
-    player_id: usize,
-    color_index: usize,
-    tile_bonus_button_active: bool,
-    dealer_pin_position: usize,
-    on_click_player: EventHandler<'a, MouseEvent>,
-) -> Element {
+fn NameButton(cx: Scope, name: String, player_id: usize, color_index: usize) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
     let (player_name_button_style, player_background, player_text_color, tabindex) =
-        if *tile_bonus_button_active {
+        if state.read().game.tile_bonus_button_active {
             (
                 "pointer-events-auto",
                 "bg-white outline outline-1 outline-black",
@@ -169,8 +99,8 @@ fn NameButton<'a>(
             // Name - first cell
             class: "relative rounded-full h-8 {player_background} {player_name_button_style} w-full",
             tabindex: "{tabindex}",
-            onclick: |evt| on_click_player.call(evt),
-            (dealer_pin_position == player_id).then(|| rsx!(
+            onclick: move |_| state.write().grant_bonus(*player_id),
+            (state.read().get_dealer() == *player_id).then(|| rsx!(
                 DealerPin {}
             ))
             p {
@@ -182,12 +112,7 @@ fn NameButton<'a>(
 }
 
 #[inline_props]
-fn ScoreTable<'a>(
-    cx: Scope,
-    player: Player,
-    enable_score_editing: bool,
-    on_submit: EventHandler<'a, FormEvent>,
-) -> Element {
+fn ScoreTable(cx: Scope, player: Player) -> Element {
     let mut game_count = 0;
     let mut score_id = 0;
 
@@ -209,8 +134,6 @@ fn ScoreTable<'a>(
                         score: *score,
                         color_index: player.color_index,
                         has_bonus: player.bonus.contains_key(&game_count),
-                        enable_score_editing: *enable_score_editing,
-                        on_submit: |evt| on_submit.call(evt),
                     }
                 )
             })
@@ -219,17 +142,17 @@ fn ScoreTable<'a>(
 }
 
 #[inline_props]
-fn ScoreItem<'a>(
+fn ScoreItem(
     cx: Scope,
     id: i32,
     player_id: usize,
     score: i32,
     color_index: usize,
     has_bonus: bool,
-    enable_score_editing: bool,
-    on_submit: EventHandler<'a, FormEvent>,
 ) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
     let border = BORDER_COLORS[*color_index];
+    let enable_score_editing = state.read().settings.enable_score_editing;
 
     let bonus_visibility = if *has_bonus { "" } else { "hidden" };
 
@@ -238,11 +161,11 @@ fn ScoreItem<'a>(
             class: "flex flex-row justify-center relative rounded border-b-4 h-10 {border}",
             (enable_score_editing).then(|| rsx!(
                 form {
-                    onsubmit: |evt| on_submit.call(evt),
+                    onsubmit: move |evt| state.write().edit_score(evt),
                     prevent_default: "onsubmit",
                     input {
                         name: "score",
-                        onsubmit: |evt| on_submit.call(evt),
+                        onsubmit: move |evt| state.write().edit_score(evt),
                         class: "text-lg appearance-none leading-6 font-light bg-transparent h-10 w-full text-center",
                         style: "-moz-appearance:textfield",
                         value: "{score}",
@@ -296,7 +219,7 @@ fn ScoreInput<'a>(
     cx: Scope,
     id: usize,
     color_index: usize,
-    on_submit: EventHandler<'a, FormEvent>,
+    on_score_input: EventHandler<'a, FormEvent>,
 ) -> Element {
     let caret = CARET_COLORS[*color_index];
     let border = BORDER_COLORS[*color_index];
@@ -304,7 +227,7 @@ fn ScoreInput<'a>(
     log!("Rendering score input.");
     render!(
         form {
-            onsubmit: |evt| on_submit.call(evt),
+            onsubmit: |evt| on_score_input.call(evt),
             prevent_default: "onsubmit",
             input {
                 name: "score",
@@ -318,60 +241,45 @@ fn ScoreInput<'a>(
     )
 }
 
-#[inline_props]
-fn TileBonusButton<'a>(
-    cx: Scope,
-    lang_code: usize,
-    game_status: GameStatus,
-    tile_bonus_granted: bool,
-    button_pressed: bool,
-    on_click: EventHandler<'a, MouseEvent>,
-) -> Element {
+fn TileBonusButton(cx: Scope) -> Element {
     log!("Rendering tile bonus menu.");
+    let state = fermi::use_atom_ref(cx, STATE);
 
-    let hidden = if *game_status == GameStatus::Ongoing {
+    let grayscale = if state.read().game.tile_bonus_granted {
+        "grayscale"
+    } else {
         ""
-    } else {
-        "hidden"
-    };
-
-    let grayscale = if *tile_bonus_granted { "grayscale" } else { "" };
-
-    let shadow = if *button_pressed {
-        "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
-    } else {
-        "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
     };
 
     render!(
         div {
-            class: "z-20 absolute bottom-4 left-4 {hidden}",
+            class: "z-20 absolute bottom-4 left-4",
             button {
                 class: "flex flex-row gap-2 h-14 w-max p-2 border border-slate-100 rounded-full {grayscale}",
-                onclick: |evt| on_click.call(evt),
-                box_shadow: "{shadow}",
+                onclick: move |_| state.write().toggle_tile_bonus(),
+                box_shadow: if state.read().game.tile_bonus_button_active {
+                    "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
+                } else {
+                    "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
+                },
                 div {
                     class: "h-10 w-10 self-center rounded-full",
                     assets::BonusIcon {},
                 }
                 span {
                     class: "font-semibold text-lg self-center pr-2",
-                    get_text(*lang_code, "tile_bonus")
+                    get_text(cx, "tile_bonus")
                 }
             }
         }
     )
 }
 
-#[inline_props]
-fn NavBar<'a>(
-    cx: Scope,
-    game_status: GameStatus,
-    on_click_back: EventHandler<'a, MouseEvent>,
-    on_click_home: EventHandler<'a, MouseEvent>,
-    on_click_back_to_end: EventHandler<'a, MouseEvent>,
-) -> Element {
-    let button_position = if *game_status == GameStatus::Ongoing {
+fn NavBar(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
+    let game_status = state.read().game.status;
+
+    let button_position = if game_status == GameStatus::Ongoing {
         "col-start-3 justify-self-end"
     } else {
         "col-start-1 justify-self-start"
@@ -381,10 +289,10 @@ fn NavBar<'a>(
     render!(
         div {
             class: "z-10 h-16 grid grid-cols-3 sm:max-w-lg px-8",
-            (*game_status == GameStatus::Ongoing).then(|| rsx!(
+            (game_status == GameStatus::Ongoing).then(|| rsx!(
                 button {
                     class: "col-start-1 justify-self-start",
-                    onclick: |evt| on_click_back.call(evt),
+                    onclick: move |_| state.write().go_to_screen(Screen::PlayerSelect),
                     div {
                         class: "h-10 scale-x-[-1]",
                         assets::BackIcon {}
@@ -393,16 +301,16 @@ fn NavBar<'a>(
             )),
             button {
                 class: "{button_position}",
-                onclick: |evt| on_click_home.call(evt),
+                onclick: move |_| state.write().go_to_screen(Screen::Menu),
                 div {
                     class: "h-10",
                     assets::HomeIcon {},
                 }
             }
-            (*game_status != GameStatus::Ongoing).then(|| rsx!(
+            (game_status != GameStatus::Ongoing).then(|| rsx!(
                 button {
                     class: "col-start-3 justify-self-end",
-                    onclick: |evt| on_click_back_to_end.call(evt),
+                    onclick: move |_| state.write().go_to_screen(Screen::EndGame),
                     div {
                         class: "h-10",
                         assets::BackIcon {}
@@ -413,28 +321,28 @@ fn NavBar<'a>(
     )
 }
 
-#[derive(PartialEq)]
-enum BannerType {
-    Play,
-    Bonus,
-    Win,
-}
+fn Banner(cx: Scope) -> Element {
+    let state = fermi::use_atom_ref(cx, STATE);
 
-#[inline_props]
-fn Banner(cx: Scope, lang_code: usize, banner_type: BannerType, winner: String) -> Element {
-    let (banner_text, banner_color) = match banner_type {
-        BannerType::Play => (
-            get_text(*lang_code, "banner_play").to_string(),
-            String::from("border-green-500"),
-        ),
-        BannerType::Bonus => (
-            get_text(*lang_code, "banner_bonus").to_string(),
-            String::from("border-cyan-500"),
-        ),
-        BannerType::Win => (
-            (format!("{} {}", winner, get_text(*lang_code, "banner_win"))),
+    let (banner_text, banner_color) = if state.read().game.status == GameStatus::Finished {
+        (
+            format!(
+                "{} {}",
+                state.read().game.get_winner(),
+                get_text(cx, "banner_win")
+            ),
             String::from("border-red-600"),
-        ),
+        )
+    } else if state.read().game.tile_bonus_button_active {
+        (
+            get_text(cx, "banner_bonus").to_string(),
+            String::from("border-cyan-500"),
+        )
+    } else {
+        (
+            get_text(cx, "banner_play").to_string(),
+            String::from("border-green-500"),
+        )
     };
 
     log!("Render banner.");

@@ -45,9 +45,11 @@ pub fn BottomRightSphere(cx: Scope) -> Element {
     })
 }
 
-#[inline_props]
-pub fn DecorativeSpheres(cx: Scope, screen: Screen) -> Element {
+pub fn DecorativeSpheres(cx: Scope) -> Element {
     log!("Rendering decorations.");
+
+    let state = fermi::use_atom_ref(cx, STATE);
+    let screen = state.read().screen;
     render!(
         div {
             class: "z-0 absolute h-screen w-screen",
@@ -136,7 +138,8 @@ pub static ENGLISH: phf::Map<&'static str, &'static str> = phf_map! {
     "template_add" => "Save current players",
     "name_template" => "Name this template",
     "template_not_enough" => "Add some players first!",
-    "template_too_many" => "Only 6 templates allowed!"
+    "template_too_many" => "Only 5 templates are allowed!",
+    "template_prompt" => "Add up to 5 templates"
 };
 
 pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
@@ -167,12 +170,14 @@ pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
     "template_add" => "Salvați jucătorii actuali",
     "name_template" => "Numește acest șablon",
     "template_not_enough" => "Adaugă mai întâi niște jucători!",
-    "template_too_many" => "Poți avea doar 6 șabloane!"
+    "template_too_many" => "Poți avea doar 5 șabloane!",
+    "template_prompt" => "Adaugă până la 5 șabloane"
+
 
 };
 
-pub fn get_text(lang_code: usize, text_key: &str) -> &str {
-    match lang_code {
+pub fn get_text<'a>(cx: &ScopeState, text_key: &'a str) -> &'a str {
+    match fermi::use_atom_ref(cx, STATE).read().settings.language {
         2 => ROMANIAN.get(text_key).cloned().unwrap(),
         _ => ENGLISH.get(text_key).cloned().unwrap(),
     }

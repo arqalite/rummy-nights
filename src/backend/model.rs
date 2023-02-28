@@ -6,9 +6,7 @@ use crate::backend::prelude::*;
 use crate::backend::GameTemplate;
 use dioxus::prelude::*;
 
-pub static STATE: fermi::AtomRef<Model> = |_| {
-    Model::new()
-};
+pub static STATE: fermi::AtomRef<Model> = |_| Model::new();
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Model {

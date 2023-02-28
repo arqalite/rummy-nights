@@ -1,10 +1,10 @@
-<p align=center><img src="https://raw.githubusercontent.com/arqalite/rummy-nights/main/assets/img/logo_192.png"/></p>
+<p align=center><img src="https://raw.githubusercontent.com/arqalite/rummy-nights/main/public/logo_192.png"/></p>
 
 # <p align=center>Rummy Nights</p> 
 
 Rummy Nights is a rummy score counter PWA (progressive web app) written with [Rust], [Dioxus] and [Tailwind CSS].
 
-It aims to be a helpful tool for players of Romanian Tile Rummy ([rules here]), helping them keep track of scores, bonuses and dealers.
+Centered around Romanian Tile Rummy ([rules here]), it helps players keep track of scores, bonuses and dealers.
 
 ## Try the app
 The latest stable release is automatically built and uploaded to Vercel at https://rummy-nights.vercel.app/.

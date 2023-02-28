@@ -317,15 +317,22 @@ impl Model {
     pub fn enable_dealer_tracking(&mut self, enabled: bool) {
         self.settings.enable_dealer_tracking = enabled;
         log!(format!(
-            "Score editing enabled: {:?}",
+            "Dealer tracking enabled: {:?}",
             self.settings.enable_dealer_tracking
         ));
     }
     pub fn enable_max_score(&mut self, enabled: bool) {
         self.settings.end_game_at_score = enabled;
         log!(format!(
-            "Score editing enabled: {:?}",
+            "Max score enabled: {:?}",
             self.settings.end_game_at_score
+        ));
+    }
+    pub fn enable_score_checking(&mut self, enabled: bool) {
+        self.settings.enable_score_checking = enabled;
+        log!(format!(
+            "Score checking enabled: {:?}",
+            self.settings.enable_score_checking
         ));
     }
 }

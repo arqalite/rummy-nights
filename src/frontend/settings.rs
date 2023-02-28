@@ -40,32 +40,52 @@ pub fn SettingsScreen(cx: Scope) -> Element {
             }
             div {
                 class: "flex flex-col divide-y divide-slate-200 justify-evenly px-8",
+                SwitchSetting {
+                    label: get_text(cx, "score_editing"),
+                    setting: state.read().settings.enable_score_editing,
+                    on_switch: move |enabled| state.write().enable_score_editing(enabled),
+                }
+                SwitchSetting {
+                    label: get_text(cx, "score_checking"),
+                    setting: state.read().settings.enable_score_checking,
+                    on_switch: move |enabled| state.write().enable_score_checking(enabled),
+                }
+                SwitchSetting{
+                    label: get_text(cx, "dealer_tracking"),
+                    setting: state.read().settings.enable_dealer_tracking,
+                    on_switch: move |enabled| state.write().enable_dealer_tracking(enabled),
+                }
                 div {
                     class: "flex flex-col gap-4",
-                    EditEnable {},
-                },
-                div {
-                    class: "flex flex-col gap-4",
-                    DealerEnable {},
-                },
-                div {
-                    class: "flex flex-col gap-4",
-                    TileBonusEnable {},
+                    SwitchSetting {
+                        label: get_text(cx, "tile_bonus"),
+                        setting: state.read().settings.use_tile_bonus,
+                        on_switch: move |enabled| state.write().enable_tile_bonus(enabled),
+                    }
                     settings.use_tile_bonus.then(|| rsx!(
-                        TileBonusValueSetting {},
+                        ValueSetting {
+                            label: get_text(cx, "tile_bonus_value"),
+                            setting: state.read().settings.tile_bonus_value,
+                            on_submit: move |value| state.write().settings.set_tile_bonus(value),
+                        },
                     ))
                 },
                 div {
                     class: "flex flex-col gap-4",
-                    MaxScoreEnable {},
+                    SwitchSetting {
+                        label: get_text(cx, "end_at_max_score"),
+                        setting: state.read().settings.end_game_at_score,
+                        on_switch: move |enabled| state.write().enable_max_score(enabled),
+                    }
                     settings.end_game_at_score.then(|| rsx!(
-                        MaxScoreSetting {},
+                        ValueSetting {
+                            label: get_text(cx, "max_score"),
+                            setting: state.read().settings.max_score,
+                            on_submit: move |value| state.write().settings.set_max_score(value),
+                        },
                     ))
                 },
-                div {
-                    class: "flex flex-col gap-4",
-                    LanguageSelect  {},
-                },
+                LanguageSelect  {},
             }
             div {
                 class: "flex flex-col gap-2 mb-4",
@@ -121,7 +141,7 @@ fn LanguageSelect(cx: Scope) -> Element {
 
     render!(
         div {
-            class: "grid grid-cols-6 gap-4 h-16 pt-4",
+            class: "grid grid-cols-6 gap-4 h-12 py-4",
             span {
                 class: "col-span-4 justify-self-start font-semibold text-lg",
                 get_text(cx, "language")
@@ -141,16 +161,16 @@ fn LanguageSelect(cx: Scope) -> Element {
     )
 }
 
-fn EditEnable(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
-    let enabled = use_state(cx, || state.read().settings.enable_score_editing);
+#[inline_props]
+fn SwitchSetting<'a>(cx: Scope, label: &'a str, setting: bool, on_switch: EventHandler<'a, bool>) -> Element {
+    let enabled = use_state(cx, || *setting);
 
     render!(
         div {
-            class: "grid grid-cols-6 gap-4 h-16 pt-4",
+            class: "grid grid-cols-6 gap-4 h-12 items-center",
             span {
                 class: "col-span-5 justify-self-start font-semibold text-lg",
-                get_text(cx, "score_editing")
+                "{label}"
             }
             label {
                 class: "inline-flex relative cursor-pointer justify-self-end",
@@ -161,7 +181,7 @@ fn EditEnable(cx: Scope) -> Element {
                     checked: "{enabled}",
                     onchange: move |_| {
                         enabled.set(!enabled);
-                        state.write().enable_score_editing(*enabled.current());
+                        on_switch.call(*enabled.current());
                     }
                 }
                 div {
@@ -172,40 +192,9 @@ fn EditEnable(cx: Scope) -> Element {
     )
 }
 
-fn DealerEnable(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
-    let enabled = use_state(cx, || state.read().settings.enable_dealer_tracking);
-
-    render!(
-        div {
-            class: "grid grid-cols-6 gap-4 h-16 pt-4",
-            span {
-                class: "col-span-5 justify-self-start font-semibold text-lg",
-                get_text(cx, "dealer_tracking")
-            }
-            label {
-                class: "inline-flex relative cursor-pointer justify-self-end",
-                input {
-                    r#type: "checkbox",
-                    id: "default-toggle",
-                    class: "sr-only peer",
-                    checked: "{enabled}",
-                    onchange: move |_| {
-                        enabled.set(!enabled);
-                        state.write().enable_dealer_tracking(*enabled.current())
-                    }
-                }
-                div {
-                    class: "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ee609c]"
-                }
-            }
-        }
-    )
-}
-
-fn MaxScoreSetting(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
-    let max_score = use_state(cx, || state.read().settings.max_score);
+#[inline_props]
+fn ValueSetting<'a>(cx: Scope, label: &'a str, setting: i32, on_submit: EventHandler<'a, i32>) -> Element {
+    let max_score = use_state(cx, || *setting);
     let changed = use_state(cx, || false);
 
     let is_button_hidden = if **changed {
@@ -216,10 +205,10 @@ fn MaxScoreSetting(cx: Scope) -> Element {
 
     render!(
         div {
-            class: "grid grid-cols-2 gap-4 h-16",
+            class: "grid grid-cols-2 gap-4 h-12",
             span {
                 class: "col-span-1 justify-self-end font-semibold text-lg",
-                get_text(cx, "max_score")
+                "{label}"
             }
             form {
                 class: "flex flex-row w-full justify-evenly",
@@ -235,7 +224,7 @@ fn MaxScoreSetting(cx: Scope) -> Element {
 
                     if max_score > 0 {
                         changed.set(false);
-                        state.write().settings.set_max_score(max_score);
+                        on_submit.call(max_score);
                         use_eval(cx)(format!(
                             "document.getElementById('max_score').value = '{max_score}';"
                         ));
@@ -262,133 +251,6 @@ fn MaxScoreSetting(cx: Scope) -> Element {
                         r#type: "submit",
                         assets::AddIcon {},
                     }
-                }
-            }
-        }
-    )
-}
-
-fn TileBonusValueSetting(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
-    let value = use_state(cx, || state.read().settings.tile_bonus_value);
-    let changed = use_state(cx, || false);
-
-    let is_button_hidden = if **changed {
-        String::from("")
-    } else {
-        String::from("hidden")
-    };
-
-    render!(
-        div {
-            class: "grid grid-cols-2 gap-4 h-16",
-            span {
-                class: "col-span-1 justify-self-end font-semibold text-lg",
-                get_text(cx, "tile_bonus_value")
-            }
-            form {
-                class: "flex flex-row w-full justify-evenly",
-                onsubmit: move |evt| {
-                    let tile_bonus = evt
-                    .values
-                    .get("tile_bonus")
-                    .unwrap()
-                    .parse::<i32>()
-                    .unwrap_or(50);
-
-                    log!(format!("Input tile bonus value is {tile_bonus}"));
-
-                    if tile_bonus > 0 {
-                        changed.set(false);
-                        state.write().settings.set_tile_bonus(tile_bonus);
-                        use_eval(cx)(format!(
-                            "document.getElementById('max_score').value = '{tile_bonus}';"
-                        ));
-                    }
-                },
-                prevent_default: "onsubmit",
-                input {
-                    name: "tile_bonus",
-                    class: "text-lg appearance-none font-light bg-transparent h-10 w-3/4 text-center rounded focus:border-b-[8px] border-b-4 border-[#ee609c]",
-                    id: "tile_bonus",
-                    style: "-moz-appearance:textfield",
-                    outline: "none",
-                    r#type: "number",
-                    value: "{value}",
-                    oninput: move |evt: FormEvent| {
-                        changed.set(true);
-                        value.set(evt.value.parse::<i32>().unwrap_or(0));
-                    },
-                }
-                div {
-                    class: "w-10 h-10 flex justify-center items-center",
-                    button {
-                        class: "h-6 {is_button_hidden}",
-                        r#type: "submit",
-                        assets::AddIcon {},
-                    }
-                }
-            }
-        }
-    )
-}
-
-fn TileBonusEnable(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
-    let enabled = use_state(cx, || state.read().settings.use_tile_bonus);
-
-    render!(
-        div {
-            class: "grid grid-cols-2 gap-4 h-16 pt-4",
-            span {
-                class: "col-span-1 justify-self-start font-semibold text-lg",
-                get_text(cx, "tile_bonus")
-            }
-            label {
-                class: "inline-flex relative cursor-pointer justify-self-end",
-                input {
-                    r#type: "checkbox",
-                    id: "default-toggle",
-                    class: "sr-only peer",
-                    checked: "{enabled}",
-                    onchange: move |_| {
-                        enabled.set(!enabled);
-                        state.write().enable_tile_bonus(*enabled.current());
-                    }
-                }
-                div {
-                    class: "w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ee609c]"
-                }
-            }
-        }
-    )
-}
-
-fn MaxScoreEnable(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
-    let option_enabled = use_state(cx, || state.read().settings.end_game_at_score);
-
-    render!(
-        div {
-            class: "grid grid-cols-6 gap-4 h-16 pt-4",
-            span {
-                class: "col-span-5 justify-self-start font-semibold text-lg",
-                get_text(cx, "end_at_max_score")
-            }
-            label {
-                class: "inline-flex relative cursor-pointer justify-self-end",
-                input {
-                    r#type: "checkbox",
-                    id: "default-toggle",
-                    class: "sr-only peer",
-                    checked: "{option_enabled}",
-                    onchange: move |_| {
-                        option_enabled.set(!option_enabled);
-                        state.write().enable_max_score(*option_enabled.current())
-                    }
-                },
-                div {
-                    class: "w-11 h-6 bg-gray-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#ee609c]"
                 }
             }
         }

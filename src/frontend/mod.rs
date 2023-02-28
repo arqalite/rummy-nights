@@ -139,7 +139,8 @@ pub static ENGLISH: phf::Map<&'static str, &'static str> = phf_map! {
     "name_template" => "Name this template",
     "template_not_enough" => "Add some players first!",
     "template_too_many" => "Only 5 templates are allowed!",
-    "template_prompt" => "Add up to 5 templates"
+    "template_prompt" => "Add up to 5 templates",
+    "score_checking" => "Check scores"
 };
 
 pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
@@ -171,9 +172,8 @@ pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
     "name_template" => "Numește acest șablon",
     "template_not_enough" => "Adaugă mai întâi niște jucători!",
     "template_too_many" => "Poți avea doar 5 șabloane!",
-    "template_prompt" => "Adaugă până la 5 șabloane"
-
-
+    "template_prompt" => "Adaugă până la 5 șabloane",
+    "score_checking" => "Verifică scorurile adăugate"
 };
 
 pub fn get_text<'a>(cx: &ScopeState, text_key: &'a str) -> &'a str {

@@ -1,6 +1,7 @@
 use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
 
 use crate::backend::prelude::*;
 use crate::backend::GameTemplate;
@@ -19,6 +20,36 @@ pub struct Model {
 }
 
 impl Model {
+
+    #[cfg(debug_assertions)]
+    /// Instantly create a dummy game for testing/debugging/development.
+    pub fn _debug_game_screen(&mut self) {
+        self.settings = Settings::new();
+        self.game = Game::new();
+        self.game.status = GameStatus::Ongoing;
+        self.game.players = vec![
+            Player {
+                id: 1,
+                name: String::from("Antonio"),
+                score: BTreeMap::new(),
+                sum: 0,
+                bonus: BTreeMap::new(),
+                color_index: 0,
+                winner: false,
+            },
+            Player {
+                id: 2,
+                name: String::from("Vlad"),
+                score: BTreeMap::new(),
+                sum: 0,
+                bonus: BTreeMap::new(),
+                color_index: 1,
+                winner: false,
+            }
+        ];
+        self.screen = Screen::Game;
+    }
+
     pub fn new() -> Self {
         log!("Creating new state.");
         Self {

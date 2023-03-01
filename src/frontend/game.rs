@@ -69,7 +69,17 @@ fn PlayerTable(cx: Scope) -> Element {
 
                     }
                 )
-            })
+            }),
+            AddScoreButton {}
+        }
+    )
+}
+
+fn AddScoreButton(cx: Scope) -> Element {
+    render!(
+        div {
+            class: "h-12 justify-self-center",
+            assets::AddIcon {},
         }
     )
 }

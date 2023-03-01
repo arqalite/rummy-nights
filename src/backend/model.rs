@@ -83,8 +83,10 @@ impl Model {
 
     pub fn toggle_tile_bonus(&mut self) {
         if self.game.tile_bonus_button_active {
+            self.game.warn_incorrect_score = false;
             self.game.tile_bonus_button_active = false;
         } else if !self.game.tile_bonus_granted && self.game.status == GameStatus::Ongoing {
+            self.game.warn_incorrect_score = false;
             self.game.tile_bonus_button_active = true;
         };
     }
@@ -151,9 +153,15 @@ impl Model {
         log!("Adding score.");
 
         if let Ok(score) = evt.values.get("score").unwrap().parse::<i32>() {
-            self.game.add_score(player_id, score);
-            self.check_status();
-            true
+            if !self.settings.enable_score_checking || (score % 5 == 0) {
+                self.game.warn_incorrect_score = false;
+                self.game.add_score(player_id, score);
+                self.check_status();
+                true
+            } else {
+                self.game.warn_incorrect_score = true;
+                false
+            }
         } else {
             false
         }
@@ -164,16 +172,22 @@ impl Model {
         if let Ok(score) = evt.values.get("score").unwrap().parse::<i32>() {
             if let Ok(score_id) = evt.values.get("score_id").unwrap().parse::<usize>() {
                 if let Ok(player_id) = evt.values.get("player_id").unwrap().parse::<usize>() {
-                    for player in &mut self.game.players {
-                        if player_id == player.id {
-                            *player.score.get_mut(&(score_id - 1)).unwrap() = score;
-                            player.sum = player.score.values().sum::<i32>()
-                                + player.bonus.values().sum::<i32>();
+                    if !self.settings.enable_score_checking || (score % 5 == 0) {
+                        self.game.warn_incorrect_score = false;
+
+                        for player in &mut self.game.players {
+                            if player_id == player.id {
+                                *player.score.get_mut(&(score_id - 1)).unwrap() = score;
+                                player.sum = player.score.values().sum::<i32>()
+                                    + player.bonus.values().sum::<i32>();
+                            }
                         }
+                        self.game.check_round();
+                        self.game.save_game();
+                        self.check_status()
+                    }  else {
+                        self.game.warn_incorrect_score = true;
                     }
-                    self.game.check_round();
-                    self.game.save_game();
-                    self.check_status()
                 }
             }
         };

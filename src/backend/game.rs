@@ -18,6 +18,7 @@ pub struct Game {
     pub max_score: i32,
     pub tile_bonus_value: i32,
     pub winner_name: String,
+    pub warn_incorrect_score: bool,
 }
 
 impl Game {
@@ -36,6 +37,8 @@ impl Game {
             max_score: 1000,
             tile_bonus_value: 50,
             winner_name: String::new(),
+            warn_incorrect_score: false,
+
         }
     }
 

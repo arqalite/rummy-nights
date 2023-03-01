@@ -187,7 +187,7 @@ fn AddTemplateButton(cx: Scope) -> Element {
                 class: "h-10 w-10 self-center rounded-full",
                 assets::SaveIcon {},
             }
-            
+
         }
     )
 }

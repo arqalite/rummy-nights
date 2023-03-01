@@ -331,17 +331,22 @@ fn Banner(cx: Scope) -> Element {
                 state.read().game.get_winner(),
                 get_text(cx, "banner_win")
             ),
-            String::from("border-red-600"),
+            String::from("border-green-600"),
         )
     } else if state.read().game.tile_bonus_button_active {
         (
             get_text(cx, "banner_bonus").to_string(),
             String::from("border-cyan-500"),
         )
+    } else if state.read().game.warn_incorrect_score {
+        (
+            get_text(cx, "banner_wrong_score").to_string(),
+            String::from("border-red-500"),
+        )
     } else {
         (
             get_text(cx, "banner_play").to_string(),
-            String::from("border-green-500"),
+            String::from("border-violet-500"),
         )
     };
 

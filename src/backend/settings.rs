@@ -10,6 +10,7 @@ pub struct Settings {
     pub tile_bonus_value: i32,
     pub enable_dealer_tracking: bool,
     pub enable_score_editing: bool,
+    pub enable_score_checking: bool,
     pub checked_storage: bool,
     pub language: usize,
 }
@@ -24,6 +25,7 @@ impl Settings {
             tile_bonus_value: 50,
             enable_dealer_tracking: true,
             enable_score_editing: true,
+            enable_score_checking: true,
             checked_storage: false,
             language: 1,
         }

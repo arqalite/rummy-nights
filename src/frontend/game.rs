@@ -12,19 +12,25 @@ pub fn GameScreen(cx: Scope) -> Element {
         NavBar {},
         Banner {},
         PlayerTable {},
-        (state.read().settings.use_tile_bonus && state.read().game.status == GameStatus::Ongoing)
+        div {
+            class: "z-20 absolute bottom-4 left-4 flex flex-col gap-2",
+            DoubleGameButton {},
+            (state.read().settings.use_tile_bonus && state.read().game.status == GameStatus::Ongoing)
             .then(|| rsx!(TileBonusButton {})),
+        }
+
     )
 }
 
 fn PlayerTable(cx: Scope) -> Element {
     log!("Rendering player table.");
     let state = fermi::use_atom_ref(cx, STATE);
+    let executeJS = use_eval(cx);
 
     render!(
         div {
             //Main table
-            class: "z-10 flex justify-evenly gap-x-4 h-[65%] px-8",
+            class: "z-10 flex justify-evenly gap-x-4 h-max max-h-[50%] px-8",
             state.read().game.players.iter().map(|player| {
                 let player_id = player.id;
                 rsx!(
@@ -45,17 +51,16 @@ fn PlayerTable(cx: Scope) -> Element {
                                 ScoreInput {
                                     id: player_id,
                                     on_score_input: move |evt: FormEvent| {
-
                                         if state.write().add_score(evt, player_id) {
                                             let focus_id = match player_id.cmp(&state.read().game.players.len()) {
                                                 Ordering::Greater => 5,
                                                 Ordering::Equal => 1,
                                                 Ordering::Less => player_id + 1,
                                             };
-                                            use_eval(cx)(format!(
+                                            executeJS(format!(
                                                 "document.getElementById('{player_id}').value = '';"
                                             ));
-                                            use_eval(cx)(format!("document.getElementById('{focus_id}').focus();"));
+                                            executeJS(format!("document.getElementById('{focus_id}').focus();"));
                                         }
                                     },
                                     color_index: player.color_index
@@ -70,25 +75,28 @@ fn PlayerTable(cx: Scope) -> Element {
                     }
                 )
             }),
-            AddScoreButton {}
-        }
-    )
-}
-
-fn AddScoreButton(cx: Scope) -> Element {
-    render!(
-        div {
-            class: "h-12 justify-self-center",
-            assets::AddIcon {},
-        }
+        },
+        state.read().game.double_game_button_active.then(|| rsx!(
+            div {
+                class: "px-8 mt-4",
+                NameButton {
+                    name: String::from(get_text(cx, "everyone")),
+                    player_id: 0,
+                    color_index: 3,
+                }
+            }
+        ))
     )
 }
 
 #[inline_props]
 fn NameButton(cx: Scope, name: String, player_id: usize, color_index: usize) -> Element {
     let state = fermi::use_atom_ref(cx, STATE);
+    let is_tile_bonus_active = state.read().game.tile_bonus_button_active;
+    let is_double_game_button_active = state.read().game.double_game_button_active;
+
     let (player_name_button_style, player_background, player_text_color, tabindex) =
-        if state.read().game.tile_bonus_button_active {
+        if is_tile_bonus_active || is_double_game_button_active {
             (
                 "pointer-events-auto",
                 "bg-white outline outline-1 outline-black",
@@ -109,7 +117,18 @@ fn NameButton(cx: Scope, name: String, player_id: usize, color_index: usize) -> 
             // Name - first cell
             class: "relative rounded-full h-8 {player_background} {player_name_button_style} w-full",
             tabindex: "{tabindex}",
-            onclick: move |_| state.write().grant_bonus(*player_id),
+            onclick: move |_| {
+                if is_tile_bonus_active {
+                    state.write().grant_bonus(*player_id);
+                } else if is_double_game_button_active {
+                    if *player_id == 0 {
+                        state.write().double_game_total();
+                    } else {
+                        state.write().double_game_for_player(*player_id);
+                    }
+                };
+
+            },
             (state.read().get_dealer() == *player_id).then(|| rsx!(
                 DealerPin {}
             ))
@@ -144,6 +163,7 @@ fn ScoreTable(cx: Scope, player: Player) -> Element {
                         score: *score,
                         color_index: player.color_index,
                         has_bonus: player.bonus.contains_key(&game_count),
+                        has_double: player.doubles.contains_key(&game_count),
                     }
                 )
             })
@@ -159,12 +179,14 @@ fn ScoreItem(
     score: i32,
     color_index: usize,
     has_bonus: bool,
+    has_double: bool,
 ) -> Element {
     let state = fermi::use_atom_ref(cx, STATE);
     let border = BORDER_COLORS[*color_index];
     let enable_score_editing = state.read().settings.enable_score_editing;
 
     let bonus_visibility = if *has_bonus { "" } else { "hidden" };
+    let double_visibility = if *has_double { "" } else { "hidden" };
 
     render!(
         div {
@@ -201,8 +223,12 @@ fn ScoreItem(
                 }
             ))
             div {
-                class: "absolute right-0 self-center h-4 {bonus_visibility} rounded-full",
+                class: "absolute left-0 self-center h-4 {bonus_visibility} rounded-full",
                 assets::BonusIcon {}
+            }
+            div {
+                class: "absolute right-0 self-center {double_visibility} font-bold text-green-600 rounded-full",
+                "x2"
             }
         }
     )
@@ -251,6 +277,37 @@ fn ScoreInput<'a>(
     )
 }
 
+fn DoubleGameButton(cx: Scope) -> Element {
+    log!("Rendering double game menu.");
+    let state = fermi::use_atom_ref(cx, STATE);
+
+    let grayscale = if state.read().game.double_game_granted {
+        "grayscale"
+    } else {
+        ""
+    };
+
+    render!(
+        button {
+            class: "flex flex-row gap-2 h-14 w-full p-2 border border-slate-100 rounded-full {grayscale}",
+            onclick: move |_| state.write().toggle_double_game_button(),
+            box_shadow: if state.read().game.double_game_button_active {
+                "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
+            } else {
+                "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
+            },
+            div {
+                class: "h-10 w-10 text-2xl font-bold text-green-600 self-baseline rounded-full",
+                "x2"
+            }
+            span {
+                class: "font-semibold text-lg self-center pr-2",
+                get_text(cx, "double_game")
+            }
+        }
+    )
+}
+
 fn TileBonusButton(cx: Scope) -> Element {
     log!("Rendering tile bonus menu.");
     let state = fermi::use_atom_ref(cx, STATE);
@@ -262,24 +319,21 @@ fn TileBonusButton(cx: Scope) -> Element {
     };
 
     render!(
-        div {
-            class: "z-20 absolute bottom-4 left-4",
-            button {
-                class: "flex flex-row gap-2 h-14 w-max p-2 border border-slate-100 rounded-full {grayscale}",
-                onclick: move |_| state.write().toggle_tile_bonus(),
-                box_shadow: if state.read().game.tile_bonus_button_active {
-                    "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
-                } else {
-                    "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
-                },
-                div {
-                    class: "h-10 w-10 self-center rounded-full",
-                    assets::BonusIcon {},
-                }
-                span {
-                    class: "font-semibold text-lg self-center pr-2",
-                    get_text(cx, "tile_bonus")
-                }
+        button {
+            class: "flex flex-row gap-2 h-14 w-full p-2 border border-slate-100 rounded-full {grayscale}",
+            onclick: move |_| state.write().toggle_tile_bonus(),
+            box_shadow: if state.read().game.tile_bonus_button_active {
+                "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
+            } else {
+                "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
+            },
+            div {
+                class: "h-10 w-10 self-center rounded-full",
+                assets::BonusIcon {},
+            }
+            span {
+                class: "font-semibold text-lg self-center pr-2",
+                get_text(cx, "tile_bonus")
             }
         }
     )
@@ -346,6 +400,11 @@ fn Banner(cx: Scope) -> Element {
     } else if state.read().game.tile_bonus_button_active {
         (
             get_text(cx, "banner_bonus").to_string(),
+            String::from("border-pink-500"),
+        )
+    } else if state.read().game.double_game_button_active {
+        (
+            get_text(cx, "banner_double").to_string(),
             String::from("border-cyan-500"),
         )
     } else if state.read().game.warn_incorrect_score {

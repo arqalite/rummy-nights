@@ -133,6 +133,7 @@ pub static ENGLISH: phf::Map<&'static str, &'static str> = phf_map! {
     "banner_win" => "won!",
     "banner_bonus" => "Who gets the bonus?",
     "banner_play" => "Good luck and have fun!",
+    "banner_double" => "Double a player's score, or everyone's?",
     "winner_label" => "THE WINNER IS",
     "no_templates_yet" => "No templates saved yet - add some!",
     "template_add" => "Save current players",
@@ -141,7 +142,9 @@ pub static ENGLISH: phf::Map<&'static str, &'static str> = phf_map! {
     "template_too_many" => "Only 5 templates are allowed!",
     "template_prompt" => "Add up to 5 templates",
     "score_checking" => "Check scores",
-    "banner_wrong_score" => "Scores should be multiples of 5!"
+    "banner_wrong_score" => "Scores should be multiples of 5!",
+    "double_game" => "Double game",
+    "everyone" => "Everyone"
 };
 
 pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
@@ -167,6 +170,7 @@ pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
     "banner_win" => "a câștigat!",
     "banner_bonus" => "Cine primește atuuul?",
     "banner_play" => "Cel mai bun să câștige!",
+    "banner_double" => "Dublezi scorul unui singur jucător sau al tuturor?",
     "winner_label" => "CÂȘTIGĂTORUL ESTE",
     "no_templates_yet" => "Niciun șablon salvat - adaugă câteva!",
     "template_add" => "Salvați jucătorii actuali",
@@ -175,7 +179,9 @@ pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
     "template_too_many" => "Poți avea doar 5 șabloane!",
     "template_prompt" => "Adaugă până la 5 șabloane",
     "score_checking" => "Verifică scorurile adăugate",
-    "banner_wrong_score" => "Scorurile trebuie să fie multipli de 5!"
+    "banner_wrong_score" => "Scorurile trebuie să fie multipli de 5!",
+    "double_game" => "Joc dublu",
+    "everyone" => "Tuturor"
 };
 
 pub fn get_text<'a>(cx: &ScopeState, text_key: &'a str) -> &'a str {

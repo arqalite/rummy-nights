@@ -11,8 +11,6 @@ pub fn App(cx: Scope) -> Element {
         state.write()._debug_game_screen();
     };
 
-    
-
     log!("Start render.");
     render!(
         div {

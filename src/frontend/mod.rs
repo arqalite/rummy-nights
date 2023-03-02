@@ -18,6 +18,9 @@ pub fn TopLeftSphere(cx: Scope) -> Element {
         class: "w-[50vw] h-[50vw] top-[-25vw] left-[-25vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+        animation_name: "sphere",
+        animation_duration: "8s",
+        animation_iteration_count: "infinite",
     })
 }
 
@@ -26,6 +29,9 @@ pub fn TopRightSphere(cx: Scope) -> Element {
         class: "w-[50vw] h-[50vw] top-[-25vw] right-[-25vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+        animation_name: "sphere",
+        animation_duration: "8s",
+        animation_iteration_count: "infinite",
     })
 }
 
@@ -34,6 +40,9 @@ pub fn BottomLeftSphere(cx: Scope) -> Element {
         class: "w-[50vw] h-[50vw] bottom-[-25vw] left-[-25vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+        animation_name: "sphere",
+        animation_duration: "8s",
+        animation_iteration_count: "infinite",
     })
 }
 
@@ -42,6 +51,9 @@ pub fn BottomRightSphere(cx: Scope) -> Element {
         class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
+        animation_name: "sphere",
+        animation_duration: "8s",
+        animation_iteration_count: "infinite",
     })
 }
 

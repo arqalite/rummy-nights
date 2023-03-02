@@ -202,12 +202,22 @@ impl Game {
 
         for player in &mut self.players {
             log!(format!(
-                "Player {} has: score {}, bonus {}, doubles {}",
+                "Player {} has: score {:?}, bonus {:?}, doubles {:?}, list of doubles: {:?}",
                 player.name,
-                player.score.values().sum::<i32>(),
-                player.bonus.values().sum::<i32>(),
-                player.doubles.values().sum::<i32>()
+                player.score,
+                player.bonus,
+                player.doubles,
+                player.list_of_doubled_games,
             ));
+
+            for game in player.list_of_doubled_games.keys() {
+                log!(format!("trying {game}"));
+                if player.score.contains_key(&(game - 1)) {
+                    player
+                        .doubles
+                        .insert(*game, *player.score.get(&(game - 1)).unwrap());
+                }
+            }
 
             player.sum = player.score.values().sum::<i32>()
                 + player.bonus.values().sum::<i32>()

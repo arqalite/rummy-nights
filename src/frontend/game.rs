@@ -227,7 +227,7 @@ fn ScoreItem(
                 assets::BonusIcon {}
             }
             div {
-                class: "absolute right-0 self-center {double_visibility} font-bold text-green-600 rounded-full",
+                class: "absolute right-0 self-center {double_visibility} font-bold text-green-600 rounded-full text-sm",
                 "x2"
             }
         }
@@ -328,7 +328,7 @@ fn TileBonusButton(cx: Scope) -> Element {
                 "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
             },
             div {
-                class: "h-10 w-10 self-center rounded-full",
+                class: "h-8 w-8 self-center rounded-full",
                 assets::BonusIcon {},
             }
             span {

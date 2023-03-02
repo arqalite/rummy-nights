@@ -273,18 +273,15 @@ impl Model {
 
                         for player in &mut self.game.players {
                             if player_id == player.id {
-                                log!(format!("Player {} has score: {:?}, doubles: {:?}", player.name, player.score, player.doubles));
+                                log!(format!(
+                                    "Player {} has score: {:?}, doubles: {:?}",
+                                    player.name, player.score, player.doubles
+                                ));
                                 player.score.insert(score_id - 1, score);
 
-                                if player
-                                    .list_of_doubled_games
-                                    .contains_key(&score_id)
-                                {
+                                if player.list_of_doubled_games.contains_key(&score_id) {
                                     player.doubles.insert(score_id, score);
                                 }
-                                player.sum = player.score.values().sum::<i32>()
-                                    + player.bonus.values().sum::<i32>()
-                                    + player.doubles.values().sum::<i32>();
                             }
                         }
                         self.game.check_round();
@@ -412,12 +409,9 @@ impl Model {
                         .contains_key(&(self.game.round + 1))
                     {
                         player
-                                .doubles
-                                .insert(self.game.round + 1001, self.game.tile_bonus_value);
+                            .doubles
+                            .insert(self.game.round + 1001, self.game.tile_bonus_value);
                     }
-                    player.sum = player.score.values().sum::<i32>()
-                        + player.bonus.values().sum::<i32>()
-                        + player.doubles.values().sum::<i32>();
                 }
             }
             self.game.tile_bonus_granted = true;

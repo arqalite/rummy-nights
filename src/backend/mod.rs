@@ -51,6 +51,8 @@ pub struct Player {
     pub score: BTreeMap<usize, i32>,
     pub sum: i32,
     pub bonus: BTreeMap<usize, i32>,
+    pub list_of_doubled_games: BTreeMap<usize, bool>,
+    pub doubles: BTreeMap<usize, i32>,
     pub color_index: usize,
     pub winner: bool,
 }

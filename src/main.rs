@@ -1,5 +1,4 @@
 #![allow(non_snake_case)]
-
 use dioxus::prelude::*;
 use rummy_nights::prelude::*;
 
@@ -9,7 +8,8 @@ pub fn App(cx: Scope) -> Element {
 
     if !(state.read().checked_storage) {
         state.write().initialize_storage();
-    }
+        //state.write()._debug_game_screen();
+    };
 
     log!("Start render.");
     render!(

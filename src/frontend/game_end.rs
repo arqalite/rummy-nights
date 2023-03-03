@@ -40,7 +40,7 @@ fn PlayerItem(cx: Scope, player: Player) -> Element {
 
     let background = BG_COLORS[player.color_index];
     let border = BORDER_COLORS[player.color_index];
-    let score = player.score.values().sum::<i32>() + player.bonus.values().sum::<i32>();
+    let score = player.sum;
     let mut style;
     let style2;
 

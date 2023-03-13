@@ -27,15 +27,6 @@ Once set-up, run `trunk serve --open` and it should be good to go!
 ## Contributing
 Pull requests are accepted and encouraged - just go for it!
 
-### Our contributors (so far!):
-<br>
-
-<p align=center><a href="https://github.com/arqalite/rummy-nights/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=arqalite/rummy-nights" />
-</a></p>
-
-<sub>Made with [contrib.rocks](https://contrib.rocks)</sub>
-
 ## Credits
 Made with [Rust], [Dioxus], [Trunk](https://trunkrs.dev/) and [Tailwind CSS].
 

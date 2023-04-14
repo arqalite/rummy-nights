@@ -1,8 +1,9 @@
-name: Deploy to Vercel - Main
+name: Deploy to Vercel - Pull Request
 
 on:
-  push:
-    branches: [main]
+  pull_request:
+    branches:
+      - main
     
 jobs:
   vercel:

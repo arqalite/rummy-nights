@@ -1,0 +1,6 @@
+[submodule ".dioxus/plugins/core"]
+	path = .dioxus/plugins/core
+	url = https://github.com/arqalite/cli-plugin-library.git
+[submodule ".dioxus/plugins/tailwind-plugin"]
+	path = .dioxus/plugins/tailwind-plugin.git
+	url = https://github.com/DioxusPluginCommunity/tailwind-plugin.git

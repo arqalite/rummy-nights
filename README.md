@@ -19,22 +19,25 @@ The app is available in English and Romanian (the language can be changed in the
 In order to build the app, you need:
 - [Rust](https://www.rust-lang.org/)
 - Rust WASM target (run `rustup target add wasm32-unknown-unknown`)
-- [Trunk](https://trunkrs.dev/) (you can get it with `cargo install trunk`)
-- [Tailwind CSS](https://tailwindcss.com/) - make sure to have the [standalone CLI executable](https://tailwindcss.com/blog/standalone-cli) in your PATH (Trunk needs it to generate the CSS on-the-fly)
+- Then install our fork of [Dioxus CLI](https://github.com/DioxusLabs/cli): 
+`cargo install --git https://github.com/arqalite/dioxus-cli`.
 
-Once set-up, run `trunk serve --open` and it should be good to go!
+
+Once set-up, run `dioxus serve`, click on the IP address displayed on the screen, and it should be good to go!
 
 ## Contributing
 Pull requests are accepted and encouraged - just go for it!
 
 ## Credits
-Made with [Rust], [Dioxus], [Trunk](https://trunkrs.dev/) and [Tailwind CSS].
+Made with [Rust], [Dioxus], and [Tailwind CSS].
 
 Favicon derived from [this icon, created by Freepik at Flaticon].
 
 All other icons are made by [Ikonate] and [Charm Icons].
 
 Language flags from [Lipis's flag-icons].
+
+Special thanks to the [Trunk](https://trunkrs.dev/) team - we used Trunk until the Dioxus CLI was in usable shape.
 
 ## License
 This project is licensed under the [MIT license](https://github.com/arqalite/rummy-nights/blob/main/LICENSE).

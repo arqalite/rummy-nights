@@ -2,5 +2,5 @@
 	path = .dioxus/plugins/core
 	url = https://github.com/arqalite/cli-plugin-library.git
 [submodule ".dioxus/plugins/tailwind-plugin"]
-	path = .dioxus/plugins/tailwind-plugin.git
+	path = .dioxus/plugins/tailwind-plugin
 	url = https://github.com/DioxusPluginCommunity/tailwind-plugin.git

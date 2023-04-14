@@ -11,13 +11,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        
-      - name: Download Tailwind
-        uses: supplypike/setup-bin@v3
         with:
-          uri: 'https://github.com/tailwindlabs/tailwindcss/releases/latest/download/tailwindcss-linux-x64'
-          name: 'tailwindcss'
-          version: 'latest'
+          submodules: 'true'
 
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
@@ -38,23 +33,21 @@ jobs:
             target/
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Install trunk
+      - name: Install Dioxus CLI
         if: steps.cache.outputs.cache-hit != 'true'
         uses: actions-rs/cargo@v1
         with:
           use-cross: true
           command: install
-          args: trunk
+          args: --git https://github.com/arqalite/dioxus-cli
 
       - name: Build web pages
-        run: trunk build --release
+        run: dioxus build --release
 
-      - name: Deploy to Vercel (prod)
+      - name: Deploy to Vercel (dev)
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }} # Required
-          vercel-args: '--prod'
           vercel-org-id: ${{ secrets.ORG_ID }}  # Required
           vercel-project-id: ${{ secrets.PROJECT_ID }} # Required 
           working-directory: ./dist
-

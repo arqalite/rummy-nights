@@ -202,7 +202,7 @@ fn ScoreItem(
                         style: "-moz-appearance:textfield",
                         value: "{score}",
                         outline: "none",
-                        r#type: "number",
+                        r#type: "tel",
                     }
                     input {
                         name: "score_id",
@@ -271,7 +271,7 @@ fn ScoreInput<'a>(
                 id: "{id}",
                 style: "-moz-appearance:textfield",
                 outline: "none",
-                r#type: "number",
+                r#type: "tel",
             }
         }
     )

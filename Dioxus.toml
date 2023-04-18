@@ -1,17 +1,16 @@
 [application]
 
-# dioxus project name
+# App (Project) Name
 name = "rummy-nights"
 
-# default platfrom
-# you can also use `dioxus serve/build --platform XXX` to use other platform
-# value: web | desktop
+# Dioxus App Default Platform
+# desktop, web, mobile, ssr
 default_platform = "web"
 
-# Web `build` & `serve` dist path
+# `build` & `serve` dist path
 out_dir = "dist"
 
-# resource (static) file folder
+# resource (public) file folder
 asset_dir = "public"
 
 [web.app]
@@ -21,9 +20,11 @@ title = "Rummy Nights"
 
 [web.watcher]
 
-index_on_404 = true
+# when watcher trigger, regenerate the `index.html`
+reload_html = true
 
-watch_path = ["src"]
+# which files or dirs will be watcher monitoring
+watch_path = ["src", "public"]
 
 # include `assets` in web platform
 [web.resource]

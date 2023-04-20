@@ -15,7 +15,7 @@ use phf::phf_map;
 
 pub fn TopLeftSphere(cx: Scope) -> Element {
     render!(div {
-        class: "w-[50vw] h-[50vw] top-[-25vw] left-[-25vw] absolute rounded-full z-0",
+        class: "w-[50vw] h-[50vw] top-[-25vw] left-[-25vw] lg:w-[33vw] lg:h-[33vw] lg:top-[-16vw] lg:left-[-16vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
         animation_name: "sphere",
@@ -26,7 +26,7 @@ pub fn TopLeftSphere(cx: Scope) -> Element {
 
 pub fn TopRightSphere(cx: Scope) -> Element {
     render!(div {
-        class: "w-[50vw] h-[50vw] top-[-25vw] right-[-25vw] absolute rounded-full z-0",
+        class: "w-[50vw] h-[50vw] top-[-25vw] right-[-25vw] lg:w-[33vw] lg:h-[33vw] lg:top-[-16vw] lg:right-[-16vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
         animation_name: "sphere",
@@ -37,7 +37,7 @@ pub fn TopRightSphere(cx: Scope) -> Element {
 
 pub fn BottomLeftSphere(cx: Scope) -> Element {
     render!(div {
-        class: "w-[50vw] h-[50vw] bottom-[-25vw] left-[-25vw] absolute rounded-full z-0",
+        class: "w-[50vw] h-[50vw] bottom-[-25vw] left-[-25vw] lg:w-[33vw] lg:h-[33vw] lg:bottom-[-16vw] lg:left-[-16vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
         animation_name: "sphere",
@@ -48,7 +48,7 @@ pub fn BottomLeftSphere(cx: Scope) -> Element {
 
 pub fn BottomRightSphere(cx: Scope) -> Element {
     render!(div {
-        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] absolute rounded-full z-0",
+        class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] lg:w-[33vw] lg:h-[33vw] lg:bottom-[-16vw] lg:right-[-16vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
         animation_name: "sphere",
@@ -58,7 +58,7 @@ pub fn BottomRightSphere(cx: Scope) -> Element {
 }
 
 pub fn DecorativeSpheres(cx: Scope) -> Element {
-    log!("Rendering decorations.");
+    log!("Rendering decorations."); 
 
     let state = fermi::use_atom_ref(cx, STATE);
     let screen = state.read().screen;

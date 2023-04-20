@@ -8,7 +8,7 @@ pub fn App(cx: Scope) -> Element {
 
     if !(state.read().checked_storage) {
         state.write().initialize_storage();
-        //state.write()._debug_game_screen(); 
+        //state.write()._debug_game_screen();
     };
 
     log!("Start render.");

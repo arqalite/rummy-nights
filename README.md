@@ -19,9 +19,10 @@ The app is available in English and Romanian (the language can be changed in the
 In order to build the app, you need:
 - [Rust](https://www.rust-lang.org/)
 - Rust WASM target (run `rustup target add wasm32-unknown-unknown`)
-- Then install our fork of [Dioxus CLI](https://github.com/DioxusLabs/cli): 
-`cargo install --git https://github.com/arqalite/dioxus-cli`.
+- ~~Then install [Dioxus CLI](https://github.com/DioxusLabs/cli): `cargo install dioxus-cli`.~~
 
+NOTE: Temporarily, install @mrxiaozhuox's fork instead: `cargo install --git https://github.com/mrxiaozhuox/dioxus-cli`. 
+This enables the [Tailwind CSS plugin][1] so you can immediately see styling changes.
 
 Once set-up, run `dioxus serve`, click on the IP address displayed on the screen, and it should be good to go!
 
@@ -54,3 +55,4 @@ terms or conditions. We reserve the right to reject contributions that will not 
 [Charm Icons]: https://github.com/jaynewey/charm-icons
 [Lipis's flag-icons]: https://github.com/lipis/flag-icons
 [rules here]: https://www.pagat.com/rummy/romtile.html
+[1]: https://github.com/DioxusPluginCommunity/tailwind-plugin

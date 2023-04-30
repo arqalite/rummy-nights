@@ -38,7 +38,7 @@ jobs:
         with:
           use-cross: true
           command: install
-          args: --git https://github.com/arqalite/dioxus-cli
+          args: --git https://github.com/mrxiaozhuox/dioxus-cli
 
       - name: Build web pages
         run: dioxus build --release

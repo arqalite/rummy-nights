@@ -183,20 +183,6 @@ impl Game {
         log!("Finishing players worked.");
     }
 
-    pub fn reset_game(&mut self) {
-        log!("Actually resetting game.");
-        for player in &mut self.players {
-            player.score.clear();
-            player.bonus.clear();
-            player.sum = 0;
-        }
-
-        let mut new_game = Game::new();
-        new_game.players = self.players.clone();
-
-        *self = new_game;
-    }
-
     pub fn check_status(&mut self) {
         log!("Checking game status.");
 

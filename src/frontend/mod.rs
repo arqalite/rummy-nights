@@ -58,7 +58,7 @@ pub fn BottomRightSphere(cx: Scope) -> Element {
 }
 
 pub fn DecorativeSpheres(cx: Scope) -> Element {
-    log!("Rendering decorations."); 
+    log!("Rendering decorations.");
 
     let state = fermi::use_atom_ref(cx, STATE);
     let screen = state.read().screen;

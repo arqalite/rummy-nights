@@ -303,9 +303,24 @@ impl Model {
         };
     }
 
+    /// Start a new game with the same players and settings as the previous game.
     pub fn reset_game(&mut self) {
         log!("Resetting game.");
-        self.game.reset_game();
+
+        for player in &mut self.game.players {
+            player.score.clear();
+            player.bonus.clear();
+            player.sum = 0;
+            player.list_of_doubled_games.clear();
+            player.doubles.clear();
+            player.winner = false;
+        }
+
+        let mut new_game = Game::new();
+        new_game.players = self.game.players.clone();
+        new_game.status = GameStatus::Ongoing;
+
+        self.game = new_game;
         self.screen = Screen::Game;
         self.show_end_once = true;
     }

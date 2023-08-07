@@ -267,7 +267,7 @@ version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e24fd50a67f179f801ffe5316357d95c064676661614a38efd8902361dac9ef"
 dependencies = [
- "dioxus-core",
+ "dioxus-core 0.3.3",
  "dioxus-core-macro",
  "dioxus-hooks",
  "dioxus-hot-reload",
@@ -295,6 +295,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "dioxus-core"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fbd6a9201a64b1ba16872f0e901c07fa1a32deb922192488865a9b4b4eba8e0c"
+dependencies = [
+ "bumpalo",
+ "futures-channel",
+ "futures-util",
+ "log",
+ "longest-increasing-subsequence",
+ "rustc-hash",
+ "slab",
+ "smallbox",
+]
+
+[[package]]
 name = "dioxus-core-macro"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -312,7 +328,7 @@ version = "0.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9e79849e59470c6cf94ba7e18655e3b0da927b2beaba6c0095963ca9531be3b2"
 dependencies = [
- "dioxus-core",
+ "dioxus-core 0.3.3",
  "futures-channel",
  "log",
 ]
@@ -324,7 +340,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e478ed2d0f70aa51608e8672704e0f35925ddc7ad80a28d255bfe504dd5362bd"
 dependencies = [
  "chrono",
- "dioxus-core",
+ "dioxus-core 0.3.3",
  "dioxus-html",
  "dioxus-rsx 0.0.3",
  "execute",
@@ -343,7 +359,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7682a6615e4e5a460cd3293ce420451abffb719c84c4b54e297b17365f601fb4"
 dependencies = [
  "async-trait",
- "dioxus-core",
+ "dioxus-core 0.3.3",
  "dioxus-rsx 0.0.3",
  "enumset",
  "euclid",
@@ -374,7 +390,7 @@ version = "0.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "42b7fee07fccc5c3fb9b341a0000db47fc4ab0a2a5bf268c71f6f1c9fd3ed598"
 dependencies = [
- "dioxus-core",
+ "dioxus-core 0.3.3",
  "internment",
  "proc-macro2",
  "quote",
@@ -388,7 +404,7 @@ version = "0.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8544632e20f462a64f26502c91e7cf6ae3b30d82956e70543644d2c16b6659d"
 dependencies = [
- "dioxus-core",
+ "dioxus-core 0.3.3",
  "internment",
  "proc-macro2",
  "quote",
@@ -405,7 +421,7 @@ dependencies = [
  "anyhow",
  "async-trait",
  "console_error_panic_hook",
- "dioxus-core",
+ "dioxus-core 0.3.3",
  "dioxus-html",
  "dioxus-interpreter-js",
  "futures-channel",
@@ -509,11 +525,11 @@ dependencies = [
 
 [[package]]
 name = "fermi"
-version = "0.3.0"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f8cbef6a46bdda1730180e97a07e0cbeaee0fbc5aa9a436babc496c8d3f49032"
+checksum = "c22c2db162111e7047c38db05ef0916d00e82aa198997b3563eb0cfe0c800d8f"
 dependencies = [
- "dioxus-core",
+ "dioxus-core 0.4.0",
  "im-rc",
  "log",
 ]
@@ -914,9 +930,9 @@ dependencies = [
 
 [[package]]
 name = "log"
-version = "0.4.18"
+version = "0.4.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "518ef76f2f87365916b142844c16d8fefd85039bc5699050210a7778ee1cd1de"
+checksum = "b06a4cde4c0f271a446782e3eff8de789548ce57dbc8eca9292c27f4a42004b4"
 
 [[package]]
 name = "longest-increasing-subsequence"

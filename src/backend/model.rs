@@ -6,8 +6,9 @@ use std::collections::BTreeMap;
 use crate::backend::prelude::*;
 use crate::backend::GameTemplate;
 use dioxus::prelude::*;
+use fermi::AtomRef;
 
-pub static STATE: fermi::AtomRef<Model> = |_| Model::new();
+pub static STATE: fermi::AtomRef<Model> = AtomRef(|_| Model::new());
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Model {
@@ -99,7 +100,7 @@ impl Model {
     }
 
     pub fn edit_player_name(&mut self, evt: FormEvent, id: usize) {
-        let name = evt.values.get("player-name").unwrap().to_string();
+        let name = evt.values.get("player-name").unwrap().join("");
         if !name.is_empty() {
             self.game.edit_player_name(id - 1, name);
         };
@@ -248,7 +249,7 @@ impl Model {
     pub fn add_score(&mut self, evt: FormEvent, player_id: usize) -> bool {
         log!("Adding score.");
 
-        if let Ok(score) = evt.values.get("score").unwrap().parse::<i32>() {
+        if let Ok(score) = evt.values.get("score").unwrap().join("").parse::<i32>() {
             if !self.settings.enable_score_checking || (score % 5 == 0) {
                 self.game.warn_incorrect_score = false;
                 self.game.add_score(player_id, score, self.game.round);
@@ -265,9 +266,21 @@ impl Model {
 
     pub fn edit_score(&mut self, evt: FormEvent) {
         log!(format!("This has {:?}", evt.values));
-        if let Ok(score) = evt.values.get("score").unwrap().parse::<i32>() {
-            if let Ok(score_id) = evt.values.get("score_id").unwrap().parse::<usize>() {
-                if let Ok(player_id) = evt.values.get("player_id").unwrap().parse::<usize>() {
+        if let Ok(score) = evt.values.get("score").unwrap().join("").parse::<i32>() {
+            if let Ok(score_id) = evt
+                .values
+                .get("score_id")
+                .unwrap()
+                .join("")
+                .parse::<usize>()
+            {
+                if let Ok(player_id) = evt
+                    .values
+                    .get("player_id")
+                    .unwrap()
+                    .join("")
+                    .parse::<usize>()
+                {
                     if !self.settings.enable_score_checking || (score % 5 == 0) {
                         self.game.warn_incorrect_score = false;
 
@@ -361,9 +374,15 @@ impl Model {
     }
 
     pub fn edit_template(&mut self, evt: FormEvent, color_index: usize) {
-        let name = evt.values.get("template-name").unwrap().to_string();
+        let name = evt.values.get("template-name").unwrap().join("");
         if !name.is_empty() {
-            if let Ok(template_id) = evt.values.get("template_id").unwrap().parse::<usize>() {
+            if let Ok(template_id) = evt
+                .values
+                .get("template_id")
+                .unwrap()
+                .join("")
+                .parse::<usize>()
+            {
                 for template in &mut self.templates {
                     if template.id == template_id {
                         template.name = name.clone();

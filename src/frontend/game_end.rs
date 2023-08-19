@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 
 pub fn EndScreen(cx: Scope) -> Element {
     log!("Rendering end screen.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     if !state.read().game.is_sorted {
         state.write().game.sort_players();
     }
@@ -77,7 +77,7 @@ fn PlayerItem(cx: Scope, player: Player) -> Element {
 
 fn NavBar(cx: Scope) -> Element {
     log!("Rendering nav bar.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     render!(
         div {
             class: "h-16 grid grid-cols-3 px-8",

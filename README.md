@@ -1,5 +1,6 @@
 <p align=center><img src="https://raw.githubusercontent.com/arqalite/rummy-nights/main/public/logo_192.png"/></p>
 
+
 # <p align=center>Rummy Nights</p> 
 
 Rummy Nights is a rummy score counter PWA (progressive web app) written with [Rust], [Dioxus] and [Tailwind CSS].
@@ -19,12 +20,17 @@ The app is available in English and Romanian (the language can be changed in the
 In order to build the app, you need:
 - [Rust](https://www.rust-lang.org/)
 - Rust WASM target (run `rustup target add wasm32-unknown-unknown`)
-- ~~Then install [Dioxus CLI](https://github.com/DioxusLabs/cli): `cargo install dioxus-cli`.~~
+- Install [Tailwind CSS](https://tailwindcss.com/):
+    - We prefer the [standalone CLI](https://github.com/tailwindlabs/tailwindcss/releases/latest). Download it and place it in your PATH as `./tailwindcss`.
+    - You can also install it via npm: 
+        ```
+        npm install -D tailwindcss
+        npx tailwindcss init
+        ```
+- Install [mkcert](https://github.com/FiloSottile/mkcert#installation) otherwise HTTPS will not work.
+- Then install [Dioxus CLI](https://github.com/DioxusLabs/dioxus/tree/master/packages/cli): `cargo install dioxus-cli`.
 
-NOTE: Temporarily, install @mrxiaozhuox's fork instead: `cargo install --git https://github.com/mrxiaozhuox/dioxus-cli`. 
-This enables the [Tailwind CSS plugin][1] so you can immediately see styling changes.
-
-Once set-up, run `dioxus serve`, click on the IP address displayed on the screen, and it should be good to go!
+Once set-up, run `dx serve`, click on the IP address displayed on the screen, and it should be good to go!
 
 ## Contributing
 Pull requests are accepted and encouraged - just go for it!

@@ -11,7 +11,7 @@ pub fn TemplateScreen(cx: Scope) -> Element {
 fn TemplateList(cx: Scope) -> Element {
     log!("Rendering template list.");
 
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     let templates = state.read().templates.clone();
 
     render!(
@@ -73,7 +73,7 @@ fn TemplateList(cx: Scope) -> Element {
 #[inline_props]
 fn TemplateItem(cx: Scope, template: GameTemplate) -> Element {
     log!("Rendering template.");
-    let state = use_atom_ref(cx, STATE);
+    let state = use_atom_ref(cx, &STATE);
 
     let id = template.id;
     let background_color = BG_COLORS[template.color];
@@ -118,9 +118,8 @@ fn TemplateItem(cx: Scope, template: GameTemplate) -> Element {
             form {
                 id: "template_name_input",
                 class: "flex flex-row w-full justify-evenly items-center h-16 rounded-full bg-slate-200",
-                prevent_default: "onsubmit",
                 onsubmit: move |evt| {
-                    let name = evt.values.get("template-name").unwrap().to_string();
+                    let name = evt.values.get("template-name").unwrap().join("");
                     if !name.is_empty() {
                         state.write().edit_template(evt, **color_index);
                         show_template_edit.set(!show_template_edit);
@@ -173,7 +172,7 @@ fn TemplateItem(cx: Scope, template: GameTemplate) -> Element {
 
 fn AddTemplateButton(cx: Scope) -> Element {
     log!("Rendering add template button.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
 
     render!(
         button {
@@ -194,7 +193,7 @@ fn AddTemplateButton(cx: Scope) -> Element {
 
 fn TopBar(cx: Scope) -> Element {
     log!("Rendering top bar.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
 
     render!(
         div {

@@ -1,10 +1,9 @@
 use crate::prelude::*;
 use dioxus::prelude::*;
-use dioxus_web::use_eval;
 use std::cmp::Ordering;
 
 pub fn GameScreen(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     log!(format!("game status is {:?}", state.read().game.status));
     log!("Rendering game screen.");
 
@@ -24,7 +23,7 @@ pub fn GameScreen(cx: Scope) -> Element {
 
 fn PlayerTable(cx: Scope) -> Element {
     log!("Rendering player table.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     let executeJS = use_eval(cx);
 
     render!(
@@ -33,6 +32,11 @@ fn PlayerTable(cx: Scope) -> Element {
             class: "z-10 flex justify-evenly gap-x-4 h-max max-h-[50%] px-8",
             state.read().game.players.iter().map(|player| {
                 let player_id = player.id;
+
+                let get_score = format!(
+                    "document.getElementById('{player_id}').value = '';"
+                );
+
                 rsx!(
                     div {
                         class: "flex flex-col gap-2 w-full",
@@ -57,10 +61,9 @@ fn PlayerTable(cx: Scope) -> Element {
                                                 Ordering::Equal => 1,
                                                 Ordering::Less => player_id + 1,
                                             };
-                                            executeJS(format!(
-                                                "document.getElementById('{player_id}').value = '';"
-                                            ));
-                                            executeJS(format!("document.getElementById('{focus_id}').focus();"));
+                                            let focus_score = format!("document.getElementById('{focus_id}').focus();");
+                                            let _ = executeJS(&get_score);
+                                            let _ = executeJS(&focus_score);
                                         }
                                     },
                                     color_index: player.color_index
@@ -91,7 +94,7 @@ fn PlayerTable(cx: Scope) -> Element {
 
 #[inline_props]
 fn NameButton(cx: Scope, name: String, player_id: usize, color_index: usize) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     let is_tile_bonus_active = state.read().game.tile_bonus_button_active;
     let is_double_game_button_active = state.read().game.double_game_button_active;
 
@@ -181,7 +184,7 @@ fn ScoreItem(
     has_bonus: bool,
     has_double: bool,
 ) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     let border = BORDER_COLORS[*color_index];
     let enable_score_editing = state.read().settings.enable_score_editing;
 
@@ -194,7 +197,7 @@ fn ScoreItem(
             (enable_score_editing).then(|| rsx!(
                 form {
                     onsubmit: move |evt| state.write().edit_score(evt),
-                    prevent_default: "onsubmit",
+
                     input {
                         name: "score",
                         onsubmit: move |evt| state.write().edit_score(evt),
@@ -264,7 +267,7 @@ fn ScoreInput<'a>(
     render!(
         form {
             onsubmit: |evt| on_score_input.call(evt),
-            prevent_default: "onsubmit",
+
             input {
                 name: "score",
                 class: "{caret} {border} text-lg appearance-none font-light bg-transparent h-10 w-full text-center rounded focus:border-b-[8px] border-b-4",
@@ -279,7 +282,7 @@ fn ScoreInput<'a>(
 
 fn DoubleGameButton(cx: Scope) -> Element {
     log!("Rendering double game menu.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
 
     let grayscale = if state.read().game.double_game_granted {
         "grayscale"
@@ -310,7 +313,7 @@ fn DoubleGameButton(cx: Scope) -> Element {
 
 fn TileBonusButton(cx: Scope) -> Element {
     log!("Rendering tile bonus menu.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
 
     let grayscale = if state.read().game.tile_bonus_granted {
         "grayscale"
@@ -340,7 +343,7 @@ fn TileBonusButton(cx: Scope) -> Element {
 }
 
 fn NavBar(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     let game_status = state.read().game.status;
 
     let button_position = if game_status == GameStatus::Ongoing {
@@ -386,7 +389,7 @@ fn NavBar(cx: Scope) -> Element {
 }
 
 fn Banner(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
 
     let (banner_text, banner_color) = if state.read().game.status == GameStatus::Finished {
         (

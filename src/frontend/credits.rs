@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 
 pub fn CreditsScreen(cx: Scope) -> Element {
     log!("Rendering credits.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
 
     render!(
         button {

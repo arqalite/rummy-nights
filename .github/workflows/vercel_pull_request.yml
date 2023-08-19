@@ -39,10 +39,10 @@ jobs:
         with:
           use-cross: true
           command: install
-          args: --git https://github.com/mrxiaozhuox/dioxus-cli
+          args: dioxus-cli
 
       - name: Build web pages
-        run: dioxus build --release
+        run: dx build --release
 
       - name: Deploy to Vercel (dev)
         uses: amondnet/vercel-action@v25

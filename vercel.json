@@ -1,0 +1,6 @@
+{
+    "buildcommand": "dx build --release",
+    "framework": "null",
+    "installCommand": "amazon-linux-extras install rust1 && cargo install dioxus-cli",
+    "outputDirectory": "dist"
+}

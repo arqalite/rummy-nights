@@ -1,11 +1,10 @@
 use crate::prelude::*;
 use dioxus::prelude::*;
-use dioxus_web::use_eval;
 use fermi::use_atom_ref;
 
 pub fn PlayerSelectScreen(cx: Scope) -> Element {
     log!("Rendering player select.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
 
     render!(
         TopBar {}
@@ -28,7 +27,7 @@ pub fn PlayerSelectScreen(cx: Scope) -> Element {
 
 #[inline_props]
 fn PlayerItem(cx: Scope, player: Player) -> Element {
-    let state = use_atom_ref(cx, STATE);
+    let state = use_atom_ref(cx, &STATE);
 
     let show_player_edit = use_state(cx, || false);
     let hide_color_bar = use_state(cx, || true);
@@ -83,15 +82,14 @@ fn PlayerItem(cx: Scope, player: Player) -> Element {
             form {
                 id: "player_name_input",
                 class: "flex flex-row w-full justify-evenly items-center h-14 rounded-full bg-slate-200",
-                prevent_default: "onsubmit",
                 onsubmit: move |evt| {
-                    let name = evt.values.get("player-name").unwrap().to_string();
+                    let name = evt.values.get("player-name").unwrap().join("");
                     if !name.is_empty() {
                         state.write().edit_player_name(evt, id);
                         show_player_edit.set(!show_player_edit);
                         hide_color_bar.set(true);
                     }
-                    use_eval(cx)("document.getElementById('player_name_input').reset();");
+                    let _ = use_eval(cx)("document.getElementById('player_name_input').reset();");
                 },
                 input {
                     name: "player-name",
@@ -139,7 +137,7 @@ fn PlayerItem(cx: Scope, player: Player) -> Element {
 
 fn PlayerSelectTable(cx: Scope) -> Element {
     log!("Rendering player list.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
 
     render!(
         div {
@@ -159,7 +157,7 @@ fn PlayerSelectTable(cx: Scope) -> Element {
 }
 
 fn PlayerInput(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     let hide_color_bar = use_state(cx, || true);
     let color_index = use_state(cx, || 0);
     let selected_color = BG_COLORS[**color_index];
@@ -172,15 +170,14 @@ fn PlayerInput(cx: Scope) -> Element {
             form {
                 id: "name_input",
                 class: "flex flex-row w-full justify-evenly items-center h-16 rounded-full bg-slate-200",
-                prevent_default: "onsubmit",
                 onsubmit: move |evt| {
-                    let name = evt.values.get("player-name").unwrap().to_string();
+                    let name = evt.values.get("player-name").unwrap().join("");
 
                     if !name.is_empty() {
                         state.write().add_player(name, **color_index);
                     }
                     //Execute some JS on the spot - weird ergonomics but it works
-                    use_eval(cx)("document.getElementById('name_input').reset();");
+                    let _ = use_eval(cx)("document.getElementById('name_input').reset();");
                 },
                 input {
                     name: "player-name",
@@ -194,7 +191,6 @@ fn PlayerInput(cx: Scope) -> Element {
                 }
                 button {
                     class: "flex flex-col justify-center h-16 w-8",
-                    prevent_default: "onclick",
                     onclick: move |_| hide_color_bar.set(!hide_color_bar),
                     div {
                         class: "h-6 w-6 rounded-full {selected_color} place-self-center"
@@ -221,7 +217,7 @@ fn PlayerInput(cx: Scope) -> Element {
 }
 
 fn BeginGameButton(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
 
     log!("Rendering begin game button.");
     render!(
@@ -242,7 +238,7 @@ fn BeginGameButton(cx: Scope) -> Element {
 
 fn TopBar(cx: Scope) -> Element {
     log!("Rendering top bar.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
 
     render!(
         div {

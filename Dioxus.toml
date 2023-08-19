@@ -18,6 +18,13 @@ asset_dir = "public"
 # HTML title tag content
 title = "Rummy Nights"
 
+[web.https]
+enabled = true
+mkcert = false
+key_path = "ssl/key.pem"
+cert_path = "ssl/cert.pem"
+
+
 [web.watcher]
 
 # when watcher trigger, regenerate the `index.html`

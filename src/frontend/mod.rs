@@ -60,7 +60,7 @@ pub fn BottomRightSphere(cx: Scope) -> Element {
 pub fn DecorativeSpheres(cx: Scope) -> Element {
     log!("Rendering decorations.");
 
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     let screen = state.read().screen;
     render!(
         div {
@@ -197,7 +197,7 @@ pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
 };
 
 pub fn get_text<'a>(cx: &ScopeState, text_key: &'a str) -> &'a str {
-    match fermi::use_atom_ref(cx, STATE).read().settings.language {
+    match fermi::use_atom_ref(cx, &STATE).read().settings.language {
         2 => ROMANIAN.get(text_key).cloned().unwrap(),
         _ => ENGLISH.get(text_key).cloned().unwrap(),
     }

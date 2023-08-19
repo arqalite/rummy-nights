@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 use rummy_nights::prelude::*;
 
 pub fn App(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     let screen = state.read().screen;
 
     if !(state.read().checked_storage) {

@@ -1,13 +1,12 @@
 use crate::prelude::*;
 use dioxus::events::FormEvent;
 use dioxus::prelude::*;
-use dioxus_web::use_eval;
 use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
 pub fn SettingsScreen(cx: Scope) -> Element {
     log!("Rendering settings menu.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     let settings = state.read().settings;
 
     render!(
@@ -93,7 +92,7 @@ pub fn SettingsScreen(cx: Scope) -> Element {
                     class: "flex flex-row gap-2 items-center w-full place-self-center justify-center",
                     onclick: move |_| {
                         SessionStorage::clear();
-                        use_eval(cx)("location.reload()");
+                        let _ = use_eval(cx)("location.reload()");
                     },
                     div {
                         class: "h-8",
@@ -109,7 +108,7 @@ pub fn SettingsScreen(cx: Scope) -> Element {
                     onclick: move |_| {
                         LocalStorage::clear();
                         SessionStorage::clear();
-                        use_eval(cx)("location.reload()");
+                        let _ = use_eval(cx)("location.reload()");
                     },
                     div {
                         class: "h-8",
@@ -126,7 +125,7 @@ pub fn SettingsScreen(cx: Scope) -> Element {
 }
 
 fn LanguageSelect(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
     let mut ro_enabled = "";
     let mut en_enabled = "";
 
@@ -227,20 +226,23 @@ fn ValueSetting<'a>(
                     .values
                     .get("max_score")
                     .unwrap()
+                    .join("")
                     .parse::<i32>()
                     .unwrap_or(1000);
 
                     log!(format!("Input value is {max_score}"));
 
+                    let update_score = format!(
+                        "document.getElementById('max_score').value = '{max_score}';"
+                    );
+
                     if max_score > 0 {
                         changed.set(false);
                         on_submit.call(max_score);
-                        use_eval(cx)(format!(
-                            "document.getElementById('max_score').value = '{max_score}';"
-                        ));
+                        let _ = use_eval(cx)(&update_score);
                     }
                 },
-                prevent_default: "onsubmit",
+
                 input {
                     name: "max_score",
                     class: "text-lg appearance-none font-light bg-transparent h-10 w-3/4 text-center rounded focus:border-b-[8px] border-b-4 border-[#ee609c]",

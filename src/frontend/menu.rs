@@ -4,7 +4,7 @@ use dioxus::prelude::*;
 
 pub fn MenuScreen(cx: Scope) -> Element {
     log!("Rendering main menu.");
-    let state = fermi::use_atom_ref(cx, STATE);
+    let state = fermi::use_atom_ref(cx, &STATE);
 
     render!(
         button {

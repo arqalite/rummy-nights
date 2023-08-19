@@ -1,5 +1,6 @@
 <p align=center><img src="https://raw.githubusercontent.com/arqalite/rummy-nights/main/public/logo_192.png"/></p>
 
+
 # <p align=center>Rummy Nights</p> 
 
 Rummy Nights is a rummy score counter PWA (progressive web app) written with [Rust], [Dioxus] and [Tailwind CSS].

@@ -27,7 +27,6 @@ In order to build the app, you need:
         npm install -D tailwindcss
         npx tailwindcss init
         ```
-- Install [mkcert](https://github.com/FiloSottile/mkcert#installation) otherwise HTTPS will not work.
 - Then install [Dioxus CLI](https://github.com/DioxusLabs/dioxus/tree/master/packages/cli): `cargo install dioxus-cli`.
 
 Once set-up, run `dx serve`, click on the IP address displayed on the screen, and it should be good to go!

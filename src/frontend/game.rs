@@ -1,102 +1,83 @@
+use crate::backend::prelude::STATE;
 use crate::prelude::*;
 use dioxus::prelude::*;
 use std::cmp::Ordering;
 
-pub fn GameScreen(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, &STATE);
-    log!(format!("game status is {:?}", state.read().game.status));
+pub fn GameScreen() -> Element {
+    log!(format!("game status is {:?}", STATE.read().game.status));
     log!("Rendering game screen.");
 
-    render!(
+    rsx!(
         NavBar {},
         Banner {},
         PlayerTable {},
         div {
             class: "z-20 absolute bottom-4 left-4 flex flex-col gap-2",
             DoubleGameButton {},
-            (state.read().settings.use_tile_bonus && state.read().game.status == GameStatus::Ongoing)
-            .then(|| rsx!(TileBonusButton {})),
+            if STATE.read().settings.use_tile_bonus && STATE.read().game.status == GameStatus::Ongoing {
+                TileBonusButton {}
+            }
         }
 
     )
 }
 
-fn PlayerTable(cx: Scope) -> Element {
+fn PlayerTable() -> Element {
     log!("Rendering player table.");
-    let state = fermi::use_atom_ref(cx, &STATE);
-    let executeJS = use_eval(cx);
 
-    render!(
+    let players = STATE.read().game.players.clone();
+
+    rsx!(
         div {
             //Main table
             class: "z-10 flex justify-evenly gap-x-4 h-max max-h-[50%] px-8",
-            state.read().game.players.iter().map(|player| {
-                let player_id = player.id;
-
-                let get_score = format!(
-                    "document.getElementById('{player_id}').value = '';"
-                );
-
-                rsx!(
+            for player in players.clone().iter() {
+                div {
+                    class: "flex flex-col gap-2 w-full",
+                    NameButton {
+                        name: player.name.clone(),
+                        player_id: player.id,
+                        color_index: player.color_index
+                    }
+                    if !player.score.is_empty() {
+                        ScoreTable {
+                            player: player.clone()
+                        }
+                    }
                     div {
                         class: "flex flex-col gap-2 w-full",
-                        NameButton {
-                            name: player.name.clone(),
-                            player_id: player_id,
-                            color_index: player.color_index
+                        if STATE.read().game.status == GameStatus::Ongoing {
+                            ScoreInput {
+                                id: player.id,
+                                color_index: player.color_index
+                            },
                         }
-                        (!player.score.is_empty()).then(|| rsx!(
-                            ScoreTable {
-                                player: player.clone()                            }
-                        ))
-                        div {
-                            class: "flex flex-col gap-2 w-full",
-                            (state.read().game.status == GameStatus::Ongoing).then(|| rsx!(
-                                ScoreInput {
-                                    id: player_id,
-                                    on_score_input: move |evt: FormEvent| {
-                                        if state.write().add_score(evt, player_id) {
-                                            let focus_id = match player_id.cmp(&state.read().game.players.len()) {
-                                                Ordering::Greater => 5,
-                                                Ordering::Equal => 1,
-                                                Ordering::Less => player_id + 1,
-                                            };
-                                            let focus_score = format!("document.getElementById('{focus_id}').focus();");
-                                            let _ = executeJS(&get_score);
-                                            let _ = executeJS(&focus_score);
-                                        }
-                                    },
-                                    color_index: player.color_index
-                                },
-                            ))
-                            ScoreTotal {
-                                color_index: player.color_index,
-                                sum: player.sum
-                            }
+                        ScoreTotal {
+                            color_index: player.color_index,
+                            sum: player.sum
                         }
-
                     }
-                )
-            }),
+
+                }
+            }
         },
-        state.read().game.double_game_button_active.then(|| rsx!(
+        if STATE.read().game.double_game_button_active {
             div {
                 class: "px-8 mt-4",
                 NameButton {
-                    name: String::from(get_text(cx, "everyone")),
+                    name: String::from(get_text( "everyone")),
                     player_id: 0,
                     color_index: 3,
                 }
             }
-        ))
+        }
     )
 }
 
-#[inline_props]
-fn NameButton(cx: Scope, name: String, player_id: usize, color_index: usize) -> Element {
-    let state = fermi::use_atom_ref(cx, &STATE);
-    let is_tile_bonus_active = state.read().game.tile_bonus_button_active;
-    let is_double_game_button_active = state.read().game.double_game_button_active;
+#[component]
+fn NameButton(name: String, player_id: usize, color_index: usize) -> Element {
+    let is_tile_bonus_active = STATE.read().game.tile_bonus_button_active;
+    let is_double_game_button_active = STATE.read().game.double_game_button_active;
 
     let (player_name_button_style, player_background, player_text_color, tabindex) =
         if is_tile_bonus_active || is_double_game_button_active {
@@ -109,32 +90,32 @@ fn NameButton(cx: Scope, name: String, player_id: usize, color_index: usize) -> 
         } else {
             (
                 "pointer-events-none",
-                BG_COLORS[*color_index],
+                BG_COLORS[color_index],
                 "text-white",
                 "-1",
             )
         };
 
-    render!(
+    rsx!(
         button {
             // Name - first cell
             class: "relative rounded-full h-8 {player_background} {player_name_button_style} w-full",
             tabindex: "{tabindex}",
             onclick: move |_| {
                 if is_tile_bonus_active {
-                    state.write().grant_bonus(*player_id);
+                    STATE.write().grant_bonus(player_id);
                 } else if is_double_game_button_active {
-                    if *player_id == 0 {
-                        state.write().double_game_total();
+                    if player_id == 0 {
+                        STATE.write().double_game_total();
                     } else {
-                        state.write().double_game_for_player(*player_id);
+                        STATE.write().double_game_for_player(player_id);
                     }
                 };
 
             },
-            (state.read().get_dealer() == *player_id).then(|| rsx!(
+            if STATE.read().get_dealer() == player_id {
                 DealerPin {}
-            ))
+            }
             p {
                 class: "text-center my-auto {player_text_color} font-semibold",
                 "{name}"
@@ -143,40 +124,29 @@ fn NameButton(cx: Scope, name: String, player_id: usize, color_index: usize) -> 
     )
 }
 
-#[inline_props]
-fn ScoreTable(cx: Scope, player: Player) -> Element {
-    let mut game_count = 0;
-    let mut score_id = 0;
-
-    let player_id = player.id;
-
-    render!(
+#[component]
+fn ScoreTable(player: Player) -> Element {
+    rsx!(
         div {
             class: "flex flex-col gap-2 w-full overflow-auto scroll-smooth",
-            id: "score_{player_id}",
+            id: "score_{player.id}",
             style: "scrollbar-width: none;",
-            player.score.values().map(|score| {
-                game_count += 1;
-                score_id += 1;
-
-                rsx!(
-                    ScoreItem {
-                        id: score_id,
-                        player_id: player_id,
-                        score: *score,
-                        color_index: player.color_index,
-                        has_bonus: player.bonus.contains_key(&game_count),
-                        has_double: player.doubles.contains_key(&game_count),
-                    }
-                )
-            })
+            for (index, score) in player.score.values().enumerate() {
+                ScoreItem {
+                    id: index.try_into().unwrap_or(0),
+                    player_id: player.id,
+                    score: *score,
+                    color_index: player.color_index,
+                    has_bonus: player.bonus.contains_key(&index),
+                    has_double: player.doubles.contains_key(&index),
+                }
+            }
         }
     )
 }
 
-#[inline_props]
+#[component]
 fn ScoreItem(
-    cx: Scope,
     id: i32,
     player_id: usize,
     score: i32,
@@ -184,23 +154,22 @@ fn ScoreItem(
     has_bonus: bool,
     has_double: bool,
 ) -> Element {
-    let state = fermi::use_atom_ref(cx, &STATE);
-    let border = BORDER_COLORS[*color_index];
-    let enable_score_editing = state.read().settings.enable_score_editing;
+    let border = BORDER_COLORS[color_index];
+    let enable_score_editing = STATE.read().settings.enable_score_editing;
 
-    let bonus_visibility = if *has_bonus { "" } else { "hidden" };
-    let double_visibility = if *has_double { "" } else { "hidden" };
+    let bonus_visibility = if has_bonus { "" } else { "hidden" };
+    let double_visibility = if has_double { "" } else { "hidden" };
 
-    render!(
+    rsx!(
         div {
             class: "flex flex-row justify-center relative rounded border-b-4 h-10 {border}",
-            (enable_score_editing).then(|| rsx!(
+            if enable_score_editing {
                 form {
-                    onsubmit: move |evt| state.write().edit_score(evt),
+                    onsubmit: move |evt| STATE.write().edit_score(evt),
 
                     input {
                         name: "score",
-                        onsubmit: move |evt| state.write().edit_score(evt),
+                        onsubmit: move |evt| STATE.write().edit_score(evt),
                         class: "text-lg appearance-none leading-6 font-light bg-transparent h-10 w-full text-center",
                         style: "-moz-appearance:textfield",
                         value: "{score}",
@@ -213,18 +182,17 @@ fn ScoreItem(
                         value: "{id}",
                     }
                     input {
-                        name: "player_id",
+                        name: "player.id",
                         r#type: "hidden",
                         value: "{player_id}",
                     }
                 }
-            )),
-            (!enable_score_editing).then(|| rsx!(
+            } else {
                 p {
                     class: "text-lg text-center self-center leading-6",
                     "{score}"
                 }
-            ))
+            }
             div {
                 class: "absolute left-0 self-center h-4 {bonus_visibility} rounded-full",
                 assets::BonusIcon {}
@@ -237,11 +205,11 @@ fn ScoreItem(
     )
 }
 
-#[inline_props]
-fn ScoreTotal(cx: Scope, color_index: usize, sum: i32) -> Element {
-    let border = BORDER_COLORS[*color_index];
+#[component]
+fn ScoreTotal(color_index: usize, sum: i32) -> Element {
+    let border = BORDER_COLORS[color_index];
 
-    render!(
+    rsx!(
         div {
             //Total box
             class: "rounded border-b-[7px] {border} h-10",
@@ -253,21 +221,28 @@ fn ScoreTotal(cx: Scope, color_index: usize, sum: i32) -> Element {
     )
 }
 
-#[inline_props]
-fn ScoreInput<'a>(
-    cx: Scope,
-    id: usize,
-    color_index: usize,
-    on_score_input: EventHandler<'a, FormEvent>,
-) -> Element {
-    let caret = CARET_COLORS[*color_index];
-    let border = BORDER_COLORS[*color_index];
+#[component]
+fn ScoreInput(id: usize, color_index: usize) -> Element {
+    let caret = CARET_COLORS[color_index];
+    let border = BORDER_COLORS[color_index];
+
+    let on_score_input = move |evt: FormEvent| {
+        if STATE.write().add_score(evt, id) {
+            let focus_id = match id.cmp(&STATE.read().game.players.len()) {
+                Ordering::Greater => 5,
+                Ordering::Equal => 1,
+                Ordering::Less => id + 1,
+            };
+            let focus_score = format!("document.getElementById('{focus_id}').focus();");
+            document::eval(&format!("document.getElementById('{0}').value = '';", id));
+            document::eval(&focus_score);
+        }
+    };
 
     log!("Rendering score input.");
-    render!(
+    rsx!(
         form {
-            onsubmit: |evt| on_score_input.call(evt),
-
+            onsubmit: on_score_input,
             input {
                 name: "score",
                 class: "{caret} {border} text-lg appearance-none font-light bg-transparent h-10 w-full text-center rounded focus:border-b-[8px] border-b-4",
@@ -280,21 +255,20 @@ fn ScoreInput<'a>(
     )
 }
 
-fn DoubleGameButton(cx: Scope) -> Element {
+fn DoubleGameButton() -> Element {
     log!("Rendering double game menu.");
-    let state = fermi::use_atom_ref(cx, &STATE);
 
-    let grayscale = if state.read().game.double_game_granted {
+    let grayscale = if STATE.read().game.double_game_granted {
         "grayscale"
     } else {
         ""
     };
 
-    render!(
+    rsx!(
         button {
             class: "flex flex-row gap-2 h-14 w-full p-2 border border-slate-100 rounded-full {grayscale}",
-            onclick: move |_| state.write().toggle_double_game_button(),
-            box_shadow: if state.read().game.double_game_button_active {
+            onclick: move |_| STATE.write().toggle_double_game_button(),
+            box_shadow: if STATE.read().game.double_game_button_active {
                 "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
             } else {
                 "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
@@ -305,27 +279,26 @@ fn DoubleGameButton(cx: Scope) -> Element {
             }
             span {
                 class: "font-semibold text-lg self-center pr-2",
-                get_text(cx, "double_game")
+                {get_text("double_game")}
             }
         }
     )
 }
 
-fn TileBonusButton(cx: Scope) -> Element {
+fn TileBonusButton() -> Element {
     log!("Rendering tile bonus menu.");
-    let state = fermi::use_atom_ref(cx, &STATE);
 
-    let grayscale = if state.read().game.tile_bonus_granted {
+    let grayscale = if STATE.read().game.tile_bonus_granted {
         "grayscale"
     } else {
         ""
     };
 
-    render!(
+    rsx!(
         button {
             class: "flex flex-row gap-2 h-14 w-full p-2 border border-slate-100 rounded-full {grayscale}",
-            onclick: move |_| state.write().toggle_tile_bonus(),
-            box_shadow: if state.read().game.tile_bonus_button_active {
+            onclick: move |_| STATE.write().toggle_tile_bonus(),
+            box_shadow: if STATE.read().game.tile_bonus_button_active {
                 "inset 0 2px 4px 0 rgb(0 0 0 / 0.25)"
             } else {
                 "0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.25)"
@@ -336,15 +309,14 @@ fn TileBonusButton(cx: Scope) -> Element {
             }
             span {
                 class: "font-semibold text-lg self-center pr-2",
-                get_text(cx, "tile_bonus")
+                {get_text("tile_bonus")}
             }
         }
     )
 }
 
-fn NavBar(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, &STATE);
-    let game_status = state.read().game.status;
+fn NavBar() -> Element {
+    let game_status = STATE.read().game.status;
 
     let button_position = if game_status == GameStatus::Ongoing {
         "col-start-3 justify-self-end"
@@ -353,77 +325,75 @@ fn NavBar(cx: Scope) -> Element {
     };
 
     log!("Render nav bar.");
-    render!(
+    rsx!(
         div {
             class: "z-10 h-16 grid grid-cols-3 sm:max-w-lg px-8",
-            (game_status == GameStatus::Ongoing).then(|| rsx!(
+            if game_status == GameStatus::Ongoing {
                 button {
                     class: "col-start-1 justify-self-start",
-                    onclick: move |_| state.write().go_to_screen(Screen::PlayerSelect),
+                    onclick: move |_| STATE.write().go_to_screen(Screen::PlayerSelect),
                     div {
                         class: "h-10 scale-x-[-1]",
                         assets::BackIcon {}
                     }
                 }
-            )),
+            }
             button {
                 class: "{button_position}",
-                onclick: move |_| state.write().go_to_screen(Screen::Menu),
+                onclick: move |_| STATE.write().go_to_screen(Screen::Menu),
                 div {
                     class: "h-10",
                     assets::HomeIcon {},
                 }
             }
-            (game_status != GameStatus::Ongoing).then(|| rsx!(
+            if game_status != GameStatus::Ongoing {
                 button {
                     class: "col-start-3 justify-self-end",
-                    onclick: move |_| state.write().go_to_screen(Screen::EndGame),
+                    onclick: move |_| STATE.write().go_to_screen(Screen::EndGame),
                     div {
                         class: "h-10",
                         assets::BackIcon {}
                     }
                 }
-            ))
+            }
         }
     )
 }
 
-fn Banner(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, &STATE);
-
-    let (banner_text, banner_color) = if state.read().game.status == GameStatus::Finished {
+fn Banner() -> Element {
+    let (banner_text, banner_color) = if STATE.read().game.status == GameStatus::Finished {
         (
             format!(
                 "{} {}",
-                state.read().game.get_winner(),
-                get_text(cx, "banner_win")
+                STATE.read().game.get_winner(),
+                get_text("banner_win")
             ),
             String::from("border-green-600"),
         )
-    } else if state.read().game.tile_bonus_button_active {
+    } else if STATE.read().game.tile_bonus_button_active {
         (
-            get_text(cx, "banner_bonus").to_string(),
+            get_text("banner_bonus").to_string(),
             String::from("border-pink-500"),
         )
-    } else if state.read().game.double_game_button_active {
+    } else if STATE.read().game.double_game_button_active {
         (
-            get_text(cx, "banner_double").to_string(),
+            get_text("banner_double").to_string(),
             String::from("border-cyan-500"),
         )
-    } else if state.read().game.warn_incorrect_score {
+    } else if STATE.read().game.warn_incorrect_score {
         (
-            get_text(cx, "banner_wrong_score").to_string(),
+            get_text("banner_wrong_score").to_string(),
             String::from("border-red-500"),
         )
     } else {
         (
-            get_text(cx, "banner_play").to_string(),
+            get_text("banner_play").to_string(),
             String::from("border-violet-500"),
         )
     };
 
     log!("Render banner.");
-    render!(
+    rsx!(
         span {
             class: "mb-8 w-max mx-auto font-semibold text-lg border-b-2 {banner_color}",
             "{banner_text}",
@@ -431,9 +401,9 @@ fn Banner(cx: Scope) -> Element {
     )
 }
 
-fn DealerPin(cx: Scope) -> Element {
+fn DealerPin() -> Element {
     log!("Render dealer pin.");
-    render!(
+    rsx!(
         div {
             class: "h-7 absolute -top-4 -right-4 scale-x-[-1]",
             assets::DealerIcon {}

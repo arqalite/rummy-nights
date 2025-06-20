@@ -2,14 +2,16 @@ use crate::backend::VersionNumber;
 use crate::prelude::*;
 use dioxus::prelude::*;
 
-pub fn CreditsScreen(cx: Scope) -> Element {
-    log!("Rendering credits.");
-    let state = fermi::use_atom_ref(cx, &STATE);
+static ICON: Asset = asset!("/public/intro_logo.gif");
 
-    render!(
+pub fn CreditsScreen() -> Element {
+    log!("Rendering credits.");
+    
+
+    rsx!(
         button {
             class: "absolute top-4 left-4",
-            onclick: move |_| state.write().go_to_screen(Screen::Settings),
+            onclick: move |_| STATE.write().go_to_screen(Screen::Settings),
             div {
                 class: "h-12 scale-x-[-1]",
                 assets::BackIcon {}
@@ -21,7 +23,7 @@ pub fn CreditsScreen(cx: Scope) -> Element {
                 class: "flex flex-col items-center gap-8",
                 img {
                     class: "w-2/3",
-                    src: "intro_logo.gif",
+                    src: ICON,
                 }
                 p {
                     class: "text-white font-semibold text-lg text-center w-max max-w-1/2 px-2 rounded-full",
@@ -35,7 +37,7 @@ pub fn CreditsScreen(cx: Scope) -> Element {
                     class: "w-3/4 text-center",
                     p {
                         class: "font-semibold",
-                        get_text(cx,"programmer")
+                        {get_text("programmer")}
                     }
                     p {
                         "Antonio Curăvalea",
@@ -45,7 +47,7 @@ pub fn CreditsScreen(cx: Scope) -> Element {
                     class: "w-3/4 text-center",
                     p {
                         class: "font-semibold",
-                        get_text(cx,"design")
+                        {get_text("design")}
                     }
                     p {
                         "Vlad Țânțărean",
@@ -57,7 +59,7 @@ pub fn CreditsScreen(cx: Scope) -> Element {
                         class: "w-full text-center col-span-1",
                         p {
                             class: "font-semibold",
-                            get_text(cx,"icons")
+                            {get_text("icons")}
                         }
                         p {
                             "Freepik/Flaticon",
@@ -76,7 +78,7 @@ pub fn CreditsScreen(cx: Scope) -> Element {
                         class: "w-full text-center col-span-1",
                         p {
                             class: "font-semibold",
-                            get_text(cx,"tech")
+                            {get_text("tech")}
                         }
                         p {
                             "Rust",
@@ -97,7 +99,7 @@ pub fn CreditsScreen(cx: Scope) -> Element {
                 class: "flex flex-col justify-center items-center gap-2 w-full",
                 p {
                     class: "w-3/4 text-center",
-                    get_text(cx,"love")
+                    {get_text("love")}
                 }
             }
             div {

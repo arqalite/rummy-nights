@@ -3,7 +3,6 @@ use dioxus::prelude::*;
 use rummy_nights::prelude::*;
 
 pub fn App() -> Element {
-    
     let screen = STATE.read().screen;
 
     if !(STATE.read().checked_storage) {

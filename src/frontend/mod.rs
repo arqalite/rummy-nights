@@ -60,7 +60,6 @@ pub fn BottomRightSphere() -> Element {
 pub fn DecorativeSpheres() -> Element {
     log!("Rendering decorations.");
 
-    
     let screen = STATE.read().screen;
     rsx!(
         div {

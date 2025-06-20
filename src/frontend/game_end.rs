@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 
 pub fn EndScreen() -> Element {
     log!("Rendering end screen.");
-    
+
     if !STATE.read().game.is_sorted {
         STATE.write().game.sort_players();
     }
@@ -75,7 +75,7 @@ fn PlayerItem(player: Player) -> Element {
 
 fn NavBar() -> Element {
     log!("Rendering nav bar.");
-    
+
     rsx!(
         div {
             class: "h-16 grid grid-cols-3 px-8",

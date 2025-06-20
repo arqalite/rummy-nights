@@ -203,7 +203,7 @@ fn PlayerInput() -> Element {
                 }
             }
             if !hide_color_bar() {
-                ColorBar { 
+                ColorBar {
                     color_signal: color
                 }
             }

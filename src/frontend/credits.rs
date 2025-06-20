@@ -6,7 +6,6 @@ static ICON: Asset = asset!("/public/intro_logo.gif");
 
 pub fn CreditsScreen() -> Element {
     log!("Rendering credits.");
-    
 
     rsx!(
         button {

@@ -6,7 +6,6 @@ static ICON: Asset = asset!("/public/intro_logo.gif");
 
 pub fn MenuScreen() -> Element {
     log!("Rendering main menu.");
-    
 
     rsx!(
         button {
@@ -49,11 +48,7 @@ pub fn MenuScreen() -> Element {
 }
 
 #[component]
-fn MenuButton(
-    on_click: EventHandler<MouseEvent>,
-    label: String,
-    icon: Element,
-) -> Element {
+fn MenuButton(on_click: EventHandler<MouseEvent>, label: String, icon: Element) -> Element {
     log!(format!("Rendering main menu button: {label}"));
 
     rsx!(

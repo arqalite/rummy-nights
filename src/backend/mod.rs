@@ -65,5 +65,5 @@ pub struct Player {
 pub fn VersionNumber() -> Element {
     log!("Calculating version number/timestamp.");
     let version = env!("BUILD_VERSION");
-    rsx!{"{version}"}
+    rsx! {"{version}"}
 }

@@ -49,7 +49,7 @@ impl Game {
         log!("Adding player.");
 
         if self.players.len() < 4 && !name.is_empty() {
-            let id = self.players.len() + 1;
+            let id = self.players.len();
 
             self.players.push(Player {
                 id,

@@ -101,7 +101,7 @@ impl Model {
     pub fn edit_player_name(&mut self, evt: FormEvent, id: usize) {
         let name = evt.values().get("player-name").unwrap().join("");
         if !name.is_empty() {
-            self.game.edit_player_name(id - 1, name);
+            self.game.edit_player_name(id, name);
         };
     }
 

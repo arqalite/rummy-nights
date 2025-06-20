@@ -196,7 +196,7 @@ pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
     "everyone" => "Tuturor"
 };
 
-pub fn get_text<'a>(text_key: &'a str) -> &'a str {
+pub fn get_text(text_key: &str) -> &str {
     match STATE.read().settings.language {
         2 => ROMANIAN.get(text_key).cloned().unwrap(),
         _ => ENGLISH.get(text_key).cloned().unwrap(),

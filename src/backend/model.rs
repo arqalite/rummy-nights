@@ -7,7 +7,7 @@ use crate::backend::prelude::*;
 use crate::backend::GameTemplate;
 use dioxus::prelude::*;
 
-pub static STATE: GlobalSignal<Model> = Global::new(|| Model::new());
+pub static STATE: GlobalSignal<Model> = Global::new(Model::new);
 
 #[derive(Clone, Serialize, Deserialize)]
 pub struct Model {

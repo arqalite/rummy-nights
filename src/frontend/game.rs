@@ -182,7 +182,7 @@ fn ScoreItem(
                         value: "{id}",
                     }
                     input {
-                        name: "player.id",
+                        name: "player_id",
                         r#type: "hidden",
                         value: "{player_id}",
                     }

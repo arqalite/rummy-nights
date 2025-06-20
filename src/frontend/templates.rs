@@ -148,7 +148,7 @@ fn TemplateItem(template: GameTemplate) -> Element {
                         button {
                             id: "{color_id}",
                             class: "h-6 w-6 rounded-full {color} place-self-center",
-                            onclick: move |_| color_index.set(color_id-1),
+                            onclick: move |_| color_index.set(color_id),
                         }
                     }
                 }

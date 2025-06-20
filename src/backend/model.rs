@@ -289,7 +289,7 @@ impl Model {
                                     "Player {} has score: {:?}, doubles: {:?}",
                                     player.name, player.score, player.doubles
                                 ));
-                                player.score.insert(score_id - 1, score);
+                                player.score.insert(score_id, score);
 
                                 if player.list_of_doubled_games.contains_key(&score_id) {
                                     player.doubles.insert(score_id, score);

@@ -2,8 +2,6 @@
 use dioxus::prelude::*;
 use rummy_nights::prelude::*;
 
-static CSS: Asset = asset!("/public/style.css");
-
 pub fn App() -> Element {
     
     let screen = STATE.read().screen;
@@ -15,7 +13,6 @@ pub fn App() -> Element {
 
     log!("Start render.");
     rsx!(
-        document::Stylesheet { href: CSS }
         div {
             class: "flex flex-col bg-white h-screen w-screen relative overflow-hidden",
             rummy_nights::frontend::DecorativeSpheres {},

@@ -1,49 +1,6 @@
 [application]
-
-# App (Project) Name
-name = "rummy-nights"
-
-# Dioxus App Default Platform
-# desktop, web, mobile, ssr
-default_platform = "web"
-
-# `build` & `serve` dist path
+asset_dir = "public"
 out_dir = "dist"
 
-# resource (public) file folder
-asset_dir = "public"
-
 [web.app]
-
-# HTML title tag content
 title = "Rummy Nights"
-
-[web.https]
-enabled = true
-mkcert = false
-key_path = "ssl/key.pem"
-cert_path = "ssl/cert.pem"
-
-
-[web.watcher]
-
-# when watcher trigger, regenerate the `index.html`
-reload_html = true
-
-# which files or dirs will be watcher monitoring
-watch_path = ["src", "public"]
-
-# include `assets` in web platform
-[web.resource]
-
-# CSS style file
-style = ["style.css"]
-
-# Javascript code file
-script = []
-
-[web.resource.dev]
-
-# Javascript code file
-# serve: [dev-server] only
-script = []

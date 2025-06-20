@@ -17,16 +17,30 @@ lto = true
 codegen-units = 1
 panic = "abort"
 
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"
+
 [dependencies]
 gloo-storage = "0.3"
 gloo-console = "0.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-phf = { version = "0.11", features = ["macros"] }
+phf = { version = "0.12", features = ["macros"] }
 time = "0.3"
-dioxus = "0.4.0"
-dioxus-web = "0.4.0"
-fermi = "0.4.0"
+dioxus = { version = "0.6.3", features = [] }
 
 [build-dependencies]
 chrono = "0.4"
+
+[features]
+default = ["web"]
+web = ["dioxus/web"]
+desktop = ["dioxus/desktop"]
+mobile = ["dioxus/mobile"]

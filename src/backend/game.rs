@@ -49,7 +49,7 @@ impl Game {
         log!("Adding player.");
 
         if self.players.len() < 4 && !name.is_empty() {
-            let id = self.players.len() + 1;
+            let id = self.players.len();
 
             self.players.push(Player {
                 id,
@@ -103,7 +103,7 @@ impl Game {
     pub fn change_player_color(&mut self, player_id: usize, color_id: usize) {
         for player in &mut self.players {
             if player_id == player.id {
-                player.color_index = color_id - 1;
+                player.color_index = color_id;
             }
         }
     }
@@ -198,10 +198,10 @@ impl Game {
 
             for game in player.list_of_doubled_games.keys() {
                 log!(format!("trying {game}"));
-                if player.score.contains_key(&(game - 1)) {
+                if player.score.contains_key(&(game)) {
                     player
                         .doubles
-                        .insert(*game, *player.score.get(&(game - 1)).unwrap());
+                        .insert(*game, *player.score.get(&(game)).unwrap());
                 }
             }
 

@@ -4,12 +4,12 @@ use dioxus::prelude::*;
 use gloo_console::log;
 use gloo_storage::{LocalStorage, SessionStorage, Storage};
 
-pub fn SettingsScreen(cx: Scope) -> Element {
+pub fn SettingsScreen() -> Element {
     log!("Rendering settings menu.");
-    let state = fermi::use_atom_ref(cx, &STATE);
-    let settings = state.read().settings;
 
-    render!(
+    let settings = STATE.read().settings;
+
+    rsx!(
         section {
             class: "flex flex-col grow justify-between",
             div {
@@ -17,8 +17,8 @@ pub fn SettingsScreen(cx: Scope) -> Element {
                 button {
                     class: "",
                     onclick: move |_| {
-                        state.write().settings.save();
-                        state.write().go_to_screen(Screen::Menu);
+                        STATE.write().settings.save();
+                        STATE.write().go_to_screen(Screen::Menu);
                     },
                     div {
                         class: "h-12 scale-x-[-1]",
@@ -28,8 +28,8 @@ pub fn SettingsScreen(cx: Scope) -> Element {
                 button {
                     class: "",
                     onclick: move |_| {
-                        state.write().settings.save();
-                        state.write().go_to_screen(Screen::Credits);
+                        STATE.write().settings.save();
+                        STATE.write().go_to_screen(Screen::Credits);
                     },
                     div {
                         class: "h-12",
@@ -40,49 +40,49 @@ pub fn SettingsScreen(cx: Scope) -> Element {
             div {
                 class: "flex flex-col grow justify-evenly px-8 max-h-[70%]",
                 SwitchSetting {
-                    label: get_text(cx, "score_editing"),
-                    setting: state.read().settings.enable_score_editing,
-                    on_switch: move |enabled| state.write().enable_score_editing(enabled),
+                    label: get_text( "score_editing"),
+                    setting: STATE.read().settings.enable_score_editing,
+                    on_switch: move |enabled| STATE.write().enable_score_editing(enabled),
                 }
                 SwitchSetting {
-                    label: get_text(cx, "score_checking"),
-                    setting: state.read().settings.enable_score_checking,
-                    on_switch: move |enabled| state.write().enable_score_checking(enabled),
+                    label: get_text( "score_checking"),
+                    setting: STATE.read().settings.enable_score_checking,
+                    on_switch: move |enabled| STATE.write().enable_score_checking(enabled),
                 }
                 SwitchSetting{
-                    label: get_text(cx, "dealer_tracking"),
-                    setting: state.read().settings.enable_dealer_tracking,
-                    on_switch: move |enabled| state.write().enable_dealer_tracking(enabled),
+                    label: get_text( "dealer_tracking"),
+                    setting: STATE.read().settings.enable_dealer_tracking,
+                    on_switch: move |enabled| STATE.write().enable_dealer_tracking(enabled),
                 }
                 div {
                     class: "flex flex-col grow gap-4 max-h-32",
                     SwitchSetting {
-                        label: get_text(cx, "tile_bonus"),
-                        setting: state.read().settings.use_tile_bonus,
-                        on_switch: move |enabled| state.write().enable_tile_bonus(enabled),
+                        label: get_text( "tile_bonus"),
+                        setting: STATE.read().settings.use_tile_bonus,
+                        on_switch: move |enabled| STATE.write().enable_tile_bonus(enabled),
                     }
-                    settings.use_tile_bonus.then(|| rsx!(
+                    if settings.use_tile_bonus {
                         ValueSetting {
-                            label: get_text(cx, "tile_bonus_value"),
-                            setting: state.read().settings.tile_bonus_value,
-                            on_submit: move |value| state.write().settings.set_tile_bonus(value),
+                            label: get_text( "tile_bonus_value"),
+                            setting: STATE.read().settings.tile_bonus_value,
+                            on_submit: move |value| STATE.write().settings.set_tile_bonus(value),
                         },
-                    ))
+                    }
                 },
                 div {
                     class: "flex flex-col grow gap-4 max-h-32",
                     SwitchSetting {
-                        label: get_text(cx, "end_at_max_score"),
-                        setting: state.read().settings.end_game_at_score,
-                        on_switch: move |enabled| state.write().enable_max_score(enabled),
+                        label: get_text( "end_at_max_score"),
+                        setting: STATE.read().settings.end_game_at_score,
+                        on_switch: move |enabled| STATE.write().enable_max_score(enabled),
                     }
-                    settings.end_game_at_score.then(|| rsx!(
+                    if settings.end_game_at_score {
                         ValueSetting {
-                            label: get_text(cx, "max_score"),
-                            setting: state.read().settings.max_score,
-                            on_submit: move |value| state.write().settings.set_max_score(value),
+                            label: get_text( "max_score"),
+                            setting: STATE.read().settings.max_score,
+                            on_submit: move |value| STATE.write().settings.set_max_score(value),
                         },
-                    ))
+                    }
                 },
                 LanguageSelect  {},
             }
@@ -92,7 +92,7 @@ pub fn SettingsScreen(cx: Scope) -> Element {
                     class: "flex flex-row gap-2 items-center w-full place-self-center justify-center",
                     onclick: move |_| {
                         SessionStorage::clear();
-                        let _ = use_eval(cx)("location.reload()");
+                        document::eval("location.reload()");
                     },
                     div {
                         class: "h-8",
@@ -100,7 +100,7 @@ pub fn SettingsScreen(cx: Scope) -> Element {
                     }
                     span {
                         class: "font-semibold text-lg leading-8 h-8",
-                        get_text(cx, "restart")
+                        {get_text( "restart")}
                     }
                 }
                 button {
@@ -108,7 +108,7 @@ pub fn SettingsScreen(cx: Scope) -> Element {
                     onclick: move |_| {
                         LocalStorage::clear();
                         SessionStorage::clear();
-                        let _ = use_eval(cx)("location.reload()");
+                        document::eval("location.reload()");
                     },
                     div {
                         class: "h-8",
@@ -116,7 +116,7 @@ pub fn SettingsScreen(cx: Scope) -> Element {
                     }
                     span {
                         class: "font-semibold text-lg leading-8 h-8",
-                        get_text(cx, "clear_data")
+                        {get_text("clear_data")}
                     }
                 }
             }
@@ -124,12 +124,11 @@ pub fn SettingsScreen(cx: Scope) -> Element {
     )
 }
 
-fn LanguageSelect(cx: Scope) -> Element {
-    let state = fermi::use_atom_ref(cx, &STATE);
+fn LanguageSelect() -> Element {
     let mut ro_enabled = "";
     let mut en_enabled = "";
 
-    match state.read().settings.language {
+    match STATE.read().settings.language {
         2 => {
             ro_enabled = "outline";
         }
@@ -138,21 +137,21 @@ fn LanguageSelect(cx: Scope) -> Element {
         }
     }
 
-    render!(
+    rsx!(
         div {
             class: "grid grid-cols-6 gap-4 h-12 py-4 items-center",
             span {
                 class: "col-span-4 justify-self-start font-semibold text-lg",
-                get_text(cx, "language")
+                {get_text("language")}
             },
             button {
                 class: "h-8 w-max {ro_enabled} outline-2 outline-offset-4 outline-[#ee609c]",
-                onclick: move |_| state.write().set_language(2),
+                onclick: move |_| STATE.write().set_language(2),
                 assets::RomanianFlagIcon {},
             },
             button {
                 class: "h-8 w-max {en_enabled} outline-2 outline-offset-4 outline-[#ee609c]",
-                onclick: move |_| state.write().set_language(1),
+                onclick: move |_| STATE.write().set_language(1),
                 assets::EnglishFlagIcon {},
             }
 
@@ -160,16 +159,10 @@ fn LanguageSelect(cx: Scope) -> Element {
     )
 }
 
-#[inline_props]
-fn SwitchSetting<'a>(
-    cx: Scope,
-    label: &'a str,
-    setting: bool,
-    on_switch: EventHandler<'a, bool>,
-) -> Element {
-    let enabled = use_state(cx, || *setting);
-
-    render!(
+#[component]
+fn SwitchSetting(label: String, setting: bool, on_switch: EventHandler<bool>) -> Element {
+    let mut enabled = use_signal(|| setting);
+    rsx!(
         div {
             class: "grid grid-cols-6 gap-4 items-center grow max-h-16",
             span {
@@ -184,8 +177,8 @@ fn SwitchSetting<'a>(
                     class: "sr-only peer",
                     checked: "{enabled}",
                     onchange: move |_| {
-                        enabled.set(!enabled);
-                        on_switch.call(*enabled.current());
+                        enabled.set(!enabled());
+                        on_switch.call(enabled());
                     }
                 }
                 div {
@@ -196,23 +189,18 @@ fn SwitchSetting<'a>(
     )
 }
 
-#[inline_props]
-fn ValueSetting<'a>(
-    cx: Scope,
-    label: &'a str,
-    setting: i32,
-    on_submit: EventHandler<'a, i32>,
-) -> Element {
-    let max_score = use_state(cx, || *setting);
-    let changed = use_state(cx, || false);
+#[component]
+fn ValueSetting(label: String, setting: i32, on_submit: EventHandler<i32>) -> Element {
+    let mut max_score = use_signal(|| setting);
+    let mut changed = use_signal(|| false);
 
-    let is_button_hidden = if **changed {
+    let is_button_hidden = if changed() {
         String::from("")
     } else {
         String::from("hidden")
     };
 
-    render!(
+    rsx!(
         div {
             class: "grid grid-cols-2 gap-4 h-12 pb-2",
             span {
@@ -223,7 +211,7 @@ fn ValueSetting<'a>(
                 class: "flex flex-row w-full justify-evenly",
                 onsubmit: move |evt| {
                     let max_score = evt
-                    .values
+                    .values()
                     .get("max_score")
                     .unwrap()
                     .join("")
@@ -239,7 +227,7 @@ fn ValueSetting<'a>(
                     if max_score > 0 {
                         changed.set(false);
                         on_submit.call(max_score);
-                        let _ = use_eval(cx)(&update_score);
+                        document::eval(&update_score);
                     }
                 },
 
@@ -253,7 +241,7 @@ fn ValueSetting<'a>(
                     value: "{max_score}",
                     oninput: move |evt: FormEvent| {
                         changed.set(true);
-                        max_score.set(evt.value.parse::<i32>().unwrap_or(0));
+                        max_score.set(evt.value().parse::<i32>().unwrap_or(0));
                     },
                 }
                 div {

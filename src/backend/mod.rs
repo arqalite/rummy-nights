@@ -61,8 +61,9 @@ pub struct Player {
 /// (for dev builds).
 ///
 /// It uses the `BUILD_VERSION` environment variable created in build.rs.
-pub fn VersionNumber(cx: Scope) -> Element {
+#[component]
+pub fn VersionNumber() -> Element {
     log!("Calculating version number/timestamp.");
     let version = env!("BUILD_VERSION");
-    render!("{version}")
+    rsx! {"{version}"}
 }

@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
-pub fn OkayIcon(cx: Scope) -> Element {
-    render!(
+pub fn OkayIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -26,8 +26,8 @@ pub fn OkayIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn EnglishFlagIcon(cx: Scope) -> Element {
-    render!(
+pub fn EnglishFlagIcon() -> Element {
+    rsx!(
         svg {
             id: "flag-icons-gb",
             xmlns: "http://www.w3.org/2000/svg",
@@ -58,8 +58,8 @@ pub fn EnglishFlagIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn RomanianFlagIcon(cx: Scope) -> Element {
-    render!(
+pub fn RomanianFlagIcon() -> Element {
+    rsx!(
         svg {
             id: "flag-icons-ro",
             xmlns: "http://www.w3.org/2000/svg",
@@ -86,8 +86,8 @@ pub fn RomanianFlagIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn AddIcon(cx: Scope) -> Element {
-    render!(
+pub fn AddIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -112,8 +112,8 @@ pub fn AddIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn RightArrowIcon(cx: Scope) -> Element {
-    render!(
+pub fn RightArrowIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -145,8 +145,8 @@ pub fn RightArrowIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn BackIcon(cx: Scope) -> Element {
-    render!(
+pub fn BackIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -169,8 +169,8 @@ pub fn BackIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn BinIcon(cx: Scope) -> Element {
-    render!(
+pub fn BinIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -190,8 +190,8 @@ pub fn BinIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn BonusIcon(cx: Scope) -> Element {
-    render!(
+pub fn BonusIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -206,8 +206,8 @@ pub fn BonusIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn GithubIcon(cx: Scope) -> Element {
-    render!(
+pub fn GithubIcon() -> Element {
+    rsx!(
         svg {
             stroke: "currentColor",
             width: "100%",
@@ -229,8 +229,8 @@ pub fn GithubIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn HomeIcon(cx: Scope) -> Element {
-    render!(
+pub fn HomeIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -256,8 +256,8 @@ pub fn HomeIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn InfoIcon(cx: Scope) -> Element {
-    render!(
+pub fn InfoIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -288,8 +288,8 @@ pub fn InfoIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn NewGameIcon(cx: Scope) -> Element {
-    render!(
+pub fn NewGameIcon() -> Element {
+    rsx!(
         svg {
             stroke_linecap: "round",
             fill: "none",
@@ -314,8 +314,8 @@ pub fn NewGameIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn DealerIcon(cx: Scope) -> Element {
-    render!(
+pub fn DealerIcon() -> Element {
+    rsx!(
         svg {
             fill: "none",
             height: "100%",
@@ -334,8 +334,8 @@ pub fn DealerIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn RemoveIcon(cx: Scope) -> Element {
-    render!(
+pub fn RemoveIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -358,8 +358,8 @@ pub fn RemoveIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn ReplayIcon(cx: Scope) -> Element {
-    render!(
+pub fn ReplayIcon() -> Element {
+    rsx!(
         svg {
             xmlns: "http://www.w3.org/2000/svg",
             stroke_width: "1.5",
@@ -400,8 +400,8 @@ pub fn ReplayIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn RestartIcon(cx: Scope) -> Element {
-    render!(
+pub fn RestartIcon() -> Element {
+    rsx!(
         svg {
             xmlns: "http://www.w3.org/2000/svg",
             stroke_width: "1.5",
@@ -423,8 +423,8 @@ pub fn RestartIcon(cx: Scope) -> Element {
         }
     )
 }
-pub fn ResumeIcon(cx: Scope) -> Element {
-    render!(
+pub fn ResumeIcon() -> Element {
+    rsx!(
         svg {
             xmlns: "http://www.w3.org/2000/svg",
             height: "100%",
@@ -449,8 +449,8 @@ pub fn ResumeIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn SaveIcon(cx: Scope) -> Element {
-    render!(
+pub fn SaveIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -482,8 +482,8 @@ pub fn SaveIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn SettingsIcon(cx: Scope) -> Element {
-    render!(
+pub fn SettingsIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",
@@ -508,8 +508,8 @@ pub fn SettingsIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn TrophyIcon(cx: Scope) -> Element {
-    render!(
+pub fn TrophyIcon() -> Element {
+    rsx!(
         svg {
             color: "#000",
             width: "100%",
@@ -539,8 +539,8 @@ pub fn TrophyIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn UpIcon(cx: Scope) -> Element {
-    render!(
+pub fn UpIcon() -> Element {
+    rsx!(
         svg {
             view_box: "0 0 16 12",
             fill: "none",
@@ -559,8 +559,8 @@ pub fn UpIcon(cx: Scope) -> Element {
     )
 }
 
-pub fn PlayIcon(cx: Scope) -> Element {
-    render!(
+pub fn PlayIcon() -> Element {
+    rsx!(
         svg {
             role: "img",
             xmlns: "http://www.w3.org/2000/svg",

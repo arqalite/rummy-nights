@@ -13,8 +13,8 @@ use crate::prelude::*;
 use dioxus::prelude::*;
 use phf::phf_map;
 
-pub fn TopLeftSphere(cx: Scope) -> Element {
-    render!(div {
+pub fn TopLeftSphere() -> Element {
+    rsx!(div {
         class: "w-[50vw] h-[50vw] top-[-25vw] left-[-25vw] lg:w-[33vw] lg:h-[33vw] lg:top-[-16vw] lg:left-[-16vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
@@ -24,8 +24,8 @@ pub fn TopLeftSphere(cx: Scope) -> Element {
     })
 }
 
-pub fn TopRightSphere(cx: Scope) -> Element {
-    render!(div {
+pub fn TopRightSphere() -> Element {
+    rsx!(div {
         class: "w-[50vw] h-[50vw] top-[-25vw] right-[-25vw] lg:w-[33vw] lg:h-[33vw] lg:top-[-16vw] lg:right-[-16vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
@@ -35,8 +35,8 @@ pub fn TopRightSphere(cx: Scope) -> Element {
     })
 }
 
-pub fn BottomLeftSphere(cx: Scope) -> Element {
-    render!(div {
+pub fn BottomLeftSphere() -> Element {
+    rsx!(div {
         class: "w-[50vw] h-[50vw] bottom-[-25vw] left-[-25vw] lg:w-[33vw] lg:h-[33vw] lg:bottom-[-16vw] lg:left-[-16vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
@@ -46,8 +46,8 @@ pub fn BottomLeftSphere(cx: Scope) -> Element {
     })
 }
 
-pub fn BottomRightSphere(cx: Scope) -> Element {
-    render!(div {
+pub fn BottomRightSphere() -> Element {
+    rsx!(div {
         class: "w-[50vw] h-[50vw] bottom-[-25vw] right-[-25vw] lg:w-[33vw] lg:h-[33vw] lg:bottom-[-16vw] lg:right-[-16vw] absolute rounded-full z-0",
         background:
             "linear-gradient(270deg, #B465DA 0%, #CF6CC9 28.04%, #EE609C 67.6%, #EE609C 100%)",
@@ -57,12 +57,11 @@ pub fn BottomRightSphere(cx: Scope) -> Element {
     })
 }
 
-pub fn DecorativeSpheres(cx: Scope) -> Element {
+pub fn DecorativeSpheres() -> Element {
     log!("Rendering decorations.");
 
-    let state = fermi::use_atom_ref(cx, &STATE);
-    let screen = state.read().screen;
-    render!(
+    let screen = STATE.read().screen;
+    rsx!(
         div {
             class: "z-0 absolute h-screen w-screen",
             match screen {
@@ -196,8 +195,8 @@ pub static ROMANIAN: phf::Map<&'static str, &'static str> = phf_map! {
     "everyone" => "Tuturor"
 };
 
-pub fn get_text<'a>(cx: &ScopeState, text_key: &'a str) -> &'a str {
-    match fermi::use_atom_ref(cx, &STATE).read().settings.language {
+pub fn get_text(text_key: &str) -> &str {
+    match STATE.read().settings.language {
         2 => ROMANIAN.get(text_key).cloned().unwrap(),
         _ => ENGLISH.get(text_key).cloned().unwrap(),
     }

@@ -1,15 +1,15 @@
 use crate::prelude::*;
 use dioxus::prelude::*;
 
-pub fn EndScreen(cx: Scope) -> Element {
+pub fn EndScreen() -> Element {
     log!("Rendering end screen.");
-    let state = fermi::use_atom_ref(cx, &STATE);
-    if !state.read().game.is_sorted {
-        state.write().game.sort_players();
-    }
-    let sorted_players = state.read().game.sorted_players.clone();
 
-    render!(
+    if !STATE.read().game.is_sorted {
+        STATE.write().game.sort_players();
+    }
+    let sorted_players = &STATE.read().game.sorted_players;
+
+    rsx!(
         NavBar {
         },
         div {
@@ -21,21 +21,19 @@ pub fn EndScreen(cx: Scope) -> Element {
             }
             p {
                 class: "text-center font-bold text-4xl",
-                get_text(cx,"winner_label")
+                {get_text("winner_label")}
             }
-            sorted_players.iter().map(|player| {
-                rsx!(
-                    PlayerItem {
-                        player: player.clone(),
-                    }
-                )
-            })
+            for player in sorted_players.iter() {
+                PlayerItem {
+                    player: player.clone(),
+                }
+            }
         }
     )
 }
 
-#[inline_props]
-fn PlayerItem(cx: Scope, player: Player) -> Element {
+#[component]
+fn PlayerItem(player: Player) -> Element {
     log!("Rendering player: ");
 
     let background = BG_COLORS[player.color_index];
@@ -54,7 +52,7 @@ fn PlayerItem(cx: Scope, player: Player) -> Element {
         style2 = String::new();
     };
 
-    render!(
+    rsx!(
         div {
             class: "flex flex-row basis-1/2 justify-evenly items-center",
             div {
@@ -75,15 +73,15 @@ fn PlayerItem(cx: Scope, player: Player) -> Element {
     )
 }
 
-fn NavBar(cx: Scope) -> Element {
+fn NavBar() -> Element {
     log!("Rendering nav bar.");
-    let state = fermi::use_atom_ref(cx, &STATE);
-    render!(
+
+    rsx!(
         div {
             class: "h-16 grid grid-cols-3 px-8",
             button {
                 class: "col-start-1 justify-self-start",
-                onclick: move |_| state.write().go_to_screen(Screen::Game),
+                onclick: move |_| STATE.write().go_to_screen(Screen::Game),
                 div {
                     class: "h-10 scale-x-[-1]",
                     assets::BackIcon {}
@@ -91,7 +89,7 @@ fn NavBar(cx: Scope) -> Element {
             }
             button {
                 class: "col-start-2 justify-self-center",
-                onclick: move |_| state.write().finish_game(),
+                onclick: move |_| STATE.write().finish_game(),
                 div {
                     class: "h-10",
                     assets::HomeIcon {}
@@ -99,7 +97,7 @@ fn NavBar(cx: Scope) -> Element {
             }
             button {
                 class: "col-start-3 justify-self-end",
-                onclick: move |_| state.write().reset_game(),
+                onclick: move |_| STATE.write().reset_game(),
                 div {
                     class: "h-10",
                     assets::ReplayIcon {}

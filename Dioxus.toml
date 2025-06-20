@@ -1,5 +1,6 @@
 [application]
 asset_dir = "public"
+out_dir = "dist"
 
 [web.app]
 title = "Rummy Nights"

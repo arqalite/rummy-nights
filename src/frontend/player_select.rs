@@ -147,10 +147,26 @@ fn PlayerSelectTable() -> Element {
     )
 }
 
+#[component]
+fn ColorBar(mut color_signal: Signal<usize>) -> Element {
+    rsx!(
+        div {
+            class: "flex flex-row w-full justify-evenly h-10 mt-2 rounded-full bg-slate-200",
+            for (color_id, color) in BG_COLORS.iter().enumerate() {
+                button {
+                    id: "{color_id}",
+                    class: "h-6 w-6 rounded-full {color} place-self-center",
+                    onclick: move |_| color_signal.set(color_id),
+                }
+            }
+        }
+    )
+}
+
 fn PlayerInput() -> Element {
     let mut hide_color_bar = use_signal(|| true);
-    let mut color_index = use_signal(|| 0);
-    let selected_color = BG_COLORS[color_index()];
+    let color = use_signal(|| 0);
+    let selected_color = BG_COLORS[color()];
 
     log!("Rendering player input.");
 
@@ -163,7 +179,7 @@ fn PlayerInput() -> Element {
                     let name = evt.values().get("player-name").unwrap().join("");
 
                     if !name.is_empty() {
-                        STATE.write().add_player(name, color_index());
+                        STATE.write().add_player(name, color());
                     }
                     //Execute some JS on the spot - weird ergonomics but it works
                     document::eval("document.getElementById('name_input').reset();");
@@ -187,15 +203,8 @@ fn PlayerInput() -> Element {
                 }
             }
             if !hide_color_bar() {
-                div {
-                    class: "flex flex-row w-full justify-evenly h-10 mt-2 rounded-full bg-slate-200",
-                    for (color_id, color) in BG_COLORS.iter().enumerate() {
-                        button {
-                            id: "{color_id}",
-                            class: "h-6 w-6 rounded-full {color} place-self-center",
-                            onclick: move |_| color_index.set(color_id-1),
-                        }
-                    }
+                ColorBar { 
+                    color_signal: color
                 }
             }
         }
